@@ -1,0 +1,27 @@
+# Runs on every commit once installed with `uv run pre-commit install`.
+# `uv run pre-commit autoupdate` bumps the versions below. Keep Ruff's in step
+# with uv.lock, so the hook and `uv run ruff` always agree.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.4
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.13.7
+    hooks:
+      # Fails the commit if pyproject.toml changed without updating uv.lock.
+      - id: uv-lock

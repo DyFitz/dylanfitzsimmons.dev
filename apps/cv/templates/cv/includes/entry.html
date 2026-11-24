@@ -1,0 +1,24 @@
+{# One degree or job on the timeline. The filled node marks what's still going on. #}
+<li class="entry{% if entry.is_current %} entry--now{% endif %}">
+  <p class="entry__when"><b>{{ entry.started }}</b>to {{ entry.ended|default:"now" }}</p>
+  <div class="entry__card">
+    <h3 class="entry__title">{{ entry.title }}</h3>
+    <p class="entry__where">{{ entry.organisation }}</p>
+    {% if entry.summary %}<p{% if entry.kind == "experience" and not entry.point_list %} class="entry__note"{% endif %}>{{ entry.summary }}</p>{% endif %}
+    {% if entry.point_list %}
+      <ul>
+        {% for point in entry.point_list %}<li>{{ point }}</li>{% endfor %}
+      </ul>
+    {% endif %}
+    {% if entry.award %}<p class="award">{{ entry.award }}</p>{% endif %}
+    {% if entry.more or entry.project.is_published %}
+      <details class="more">
+        <summary>More</summary>
+        <div class="more__body">
+          {% if entry.more %}{{ entry.more_html }}{% endif %}
+          {% if entry.project.is_published %}<p><a class="project__link" href="{{ entry.project.get_absolute_url }}">Read the {{ entry.project.title }} write-up →</a></p>{% endif %}
+        </div>
+      </details>
+    {% endif %}
+  </div>
+</li>

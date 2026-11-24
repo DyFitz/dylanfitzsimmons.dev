@@ -1,0 +1,18 @@
+{% load static %}
+<aside class="uplink__station" aria-label="Where your message goes">
+  {# The globe turns with Glasgow marked; on the confirmation page it shows the message arriving. #}
+  <div class="station__globe" aria-hidden="true">
+    <img class="still" src="{% static 'img/globe.svg' %}" alt="" width="290" height="290">
+    <canvas class="live" data-uplink-globe{% if sent %} data-sent{% endif %}></canvas>
+  </div>
+  <dl class="station__rows">
+    <dt>station</dt><dd>Glasgow, UK · 55.86° N 4.25° W</dd>
+    <dt>local</dt><dd>{% now "H:i" %} in Glasgow</dd>
+    <dt>operator</dt><dd>{{ site.name }}</dd>
+    {% if profile.looking_for %}<dt>open to</dt><dd>{{ profile.looking_for }}</dd>{% endif %}
+    <dt>reply</dt><dd>by email, within {{ reply_within }}</dd>
+    {% if profile.github_url %}<dt>git</dt><dd><a href="{{ profile.github_url }}">{{ profile.github_text }}</a></dd>{% endif %}
+    {% if profile.linkedin_url %}<dt>in</dt><dd><a href="{{ profile.linkedin_url }}">{{ profile.linkedin_text }}</a></dd>{% endif %}
+    <dt>cv</dt><dd><a href="{% url 'cv:page' %}">read my CV</a></dd>
+  </dl>
+</aside>

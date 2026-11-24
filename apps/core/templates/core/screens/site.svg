@@ -1,0 +1,18 @@
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+  <g class="art-outline">
+    <rect x="10" y="10" width="220" height="130" rx="6"/>
+    <path d="M10 30H230"/>
+    <circle cx="24" cy="20" r="3"/>
+    <circle cx="36" cy="20" r="3"/>
+    <circle cx="48" cy="20" r="3"/>
+    <rect x="28" y="86" width="56" height="38"/>
+    <rect x="92" y="86" width="56" height="38"/>
+    <rect x="156" y="86" width="56" height="38"/>
+  </g>
+  <g class="art-globe">
+    <circle cx="186" cy="58" r="19"/>
+    <ellipse cx="186" cy="58" rx="13.4" ry="19"/>
+    <path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"/>
+  </g>
+  <path class="art-bars" d="M28 52H140M28 64H110"/>
+</svg>

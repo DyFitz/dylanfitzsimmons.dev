@@ -1,0 +1,783 @@
+/* The CV page: a spec sheet. An ID card down the left that stays in view, with the download
+   and the index; the CV itself on the right in numbered sections, with education and
+   experience as timelines. The extra detail opens with <details>, and the only script
+   lights the section being read in the index. Loaded after main.css, whose layers and
+   tokens it uses, including the page heading. */
+
+@layer components {
+  /* ---------------------------------------------------------------- the index */
+
+  .contents__title {
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+  }
+
+  .contents__list {
+    margin-block-start: 12px;
+    padding: 0;
+    border-inline-start: 1px solid var(--rule);
+    list-style: none;
+  }
+
+  .contents__link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-block-size: 44px;
+    margin-inline-start: -1px;
+    padding-inline-start: 16px;
+    border-inline-start: 2px solid transparent;
+    color: var(--muted);
+    font-size: 0.9375rem;
+    text-decoration: none;
+    text-transform: lowercase;
+  }
+
+  .contents__link[aria-current] {
+    border-inline-start-color: var(--link);
+    color: var(--text);
+  }
+
+  .contents__number {
+    color: var(--link);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+  }
+
+  @media (hover: hover) {
+    .contents__link:hover {
+      color: var(--text);
+    }
+  }
+
+  .cv {
+    --card-width: 320px;
+
+    display: grid;
+    grid-template-columns: var(--card-width) minmax(0, 1fr);
+    gap: clamp(40px, 5vw, 80px);
+    align-items: start;
+    margin-block-start: 40px;
+  }
+
+  /* ---------------------------------------------------------------- the ID card */
+
+  .id-card {
+    position: sticky;
+    inset-block-start: 24px;
+    display: grid;
+    gap: 22px;
+    padding: 26px 24px 24px;
+    overflow: hidden;
+    border: 1px solid var(--rule);
+    border-radius: 14px;
+    background:
+      linear-gradient(rgb(var(--accent-rgb) / 0.05) 1px, transparent 1px) 0 0 / 100% 22px,
+      linear-gradient(160deg, rgb(255 255 255 / 0.03), transparent 40%),
+      var(--surface);
+  }
+
+  /* A holographic strip across the top, like the security film on a card of the time. */
+  .id-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto;
+    block-size: 5px;
+    background: linear-gradient(90deg, rgb(var(--accent-rgb)), #8fd3ff 35%, #c9b8ff 65%, rgb(var(--accent-rgb)));
+    opacity: 0.85;
+  }
+
+  .id-card__head {
+    display: grid;
+    gap: 4px;
+  }
+
+  .id-card__label {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .id-card__name {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+
+  .id-card__role {
+    margin: 0;
+    color: var(--muted);
+  }
+
+  /* What I'm after, as a status readout with a lamp. */
+  .id-card__status {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid rgb(var(--accent-rgb) / 0.35);
+    border-radius: 8px;
+    background: rgb(var(--accent-rgb) / 0.06);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+
+  .id-card__status::before {
+    content: "";
+    flex: none;
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+    background-color: var(--accent);
+    box-shadow: 0 0 8px rgb(var(--accent-rgb) / 0.9);
+    translate: 0 -1px;
+  }
+
+  .id-card .button {
+    inline-size: 100%;
+  }
+
+  .id-card__file {
+    margin: -12px 0 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    text-align: center;
+  }
+
+  .id-card__links {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+  }
+
+  .id-card__links a {
+    display: flex;
+    gap: 10px;
+    padding: 6px 0;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .id-card__links span {
+    min-inline-size: 5.5ch;
+    color: var(--muted);
+  }
+
+  .id-card__links a:hover {
+    color: var(--accent);
+  }
+
+  .id-card .contents {
+    padding-block-start: 18px;
+    border-block-start: 1px solid var(--rule);
+  }
+
+  /* ---------------------------------------------------------------- sections */
+
+  .cv__body {
+    display: grid;
+    gap: 64px;
+    min-inline-size: 0;
+  }
+
+  .cv-section {
+    display: grid;
+    gap: 22px;
+    scroll-margin-block-start: 24px;
+  }
+
+  /* "01 // profile", with a rule running off to the edge and a tick at its end. */
+  .cv-section__title {
+    display: flex;
+    gap: 14px;
+    align-items: center;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+
+  .cv-section__number {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+  }
+
+  .cv-section__title::after {
+    content: "";
+    flex: 1;
+    block-size: 1px;
+    background: linear-gradient(90deg, var(--rule), var(--rule) calc(100% - 28px), var(--accent) calc(100% - 28px));
+  }
+
+  .cv-lede {
+    max-inline-size: 68ch;
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.6;
+  }
+
+  /* Three facts at a glance, as readouts. */
+  .readouts {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .readout {
+    display: grid;
+    gap: 6px;
+    padding: 16px 18px;
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    background: linear-gradient(180deg, rgb(var(--accent-rgb) / 0.05), transparent);
+  }
+
+  .readout__value {
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 1.25rem;
+  }
+
+  .readout__label {
+    color: var(--muted);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  /* ---------------------------------------------------------------- the timeline */
+
+  .timeline {
+    --line-x: 9.5rem;
+
+    position: relative;
+    display: grid;
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* The line itself, fading out at the far end. */
+  .timeline::before {
+    content: "";
+    position: absolute;
+    inset: 8px auto 0 var(--line-x);
+    inline-size: 1px;
+    background: linear-gradient(to bottom, rgb(var(--accent-rgb) / 0.7), rgb(var(--accent-rgb) / 0.3) 80%, transparent);
+  }
+
+  .entry {
+    display: grid;
+    grid-template-columns: calc(var(--line-x) - 28px) minmax(0, 1fr);
+    gap: 56px;
+  }
+
+  .entry__when {
+    margin: 0;
+    padding-block-start: 3px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    text-align: end;
+  }
+
+  .entry__when b {
+    display: block;
+    color: var(--text);
+    font-weight: 400;
+  }
+
+  .entry__card {
+    position: relative;
+    display: grid;
+    gap: 10px;
+  }
+
+  /* The node on the line: a ring, filled in for what is going on now. */
+  .entry__card::before {
+    content: "";
+    position: absolute;
+    inset: 5px auto auto -33px;
+    inline-size: 11px;
+    block-size: 11px;
+    border: 1px solid var(--accent);
+    border-radius: 50%;
+    background-color: var(--page);
+  }
+
+  .entry--now .entry__card::before {
+    background-color: var(--accent);
+    box-shadow: 0 0 0 4px rgb(var(--accent-rgb) / 0.15), 0 0 10px rgb(var(--accent-rgb) / 0.8);
+  }
+
+  .entry__title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .entry__where {
+    margin: -6px 0 0;
+    color: var(--muted);
+  }
+
+  .entry__note {
+    margin: 0;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .entry ul,
+  .project ul {
+    display: grid;
+    gap: 6px;
+    margin: 0;
+    padding-inline-start: 1.1em;
+    line-height: 1.55;
+  }
+
+  .entry li::marker,
+  .project li::marker {
+    color: var(--accent);
+  }
+
+  .award {
+    justify-self: start;
+    margin: 0;
+    padding: 4px 10px;
+    border: 1px solid rgb(var(--accent-rgb) / 0.45);
+    border-radius: 4px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  /* ---------------------------------------------------------------- more detail */
+
+  .more {
+    border-block-start: 1px dashed var(--rule);
+  }
+
+  .more summary {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-block: 10px 2px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    list-style: none;
+    cursor: pointer;
+  }
+
+  .more summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .more summary::before {
+    content: "+";
+    display: grid;
+    place-items: center;
+    inline-size: 16px;
+    block-size: 16px;
+    border: 1px solid currentColor;
+    border-radius: 3px;
+    line-height: 1;
+  }
+
+  .more[open] summary::before {
+    content: "−";
+  }
+
+  .more__body {
+    display: grid;
+    gap: 10px;
+    padding-block: 10px 4px;
+    line-height: 1.6;
+  }
+
+  .more__body p {
+    margin: 0;
+  }
+
+  /* ---------------------------------------------------------------- projects */
+
+  .projects-cv {
+    display: grid;
+    gap: 16px;
+  }
+
+  .project {
+    display: grid;
+    gap: 12px;
+    padding: 22px 24px;
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    background: var(--surface);
+  }
+
+  .project--key {
+    border-color: rgb(var(--accent-rgb) / 0.45);
+    box-shadow: inset 3px 0 0 var(--accent);
+  }
+
+  .project__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .project__title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+  }
+
+  .project__meta {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  .project__stack {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  .project__link {
+    justify-self: start;
+    color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    text-decoration: none;
+  }
+
+  .project__link:hover {
+    text-decoration: underline;
+  }
+
+  .projects-cv__others {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  /* ---------------------------------------------------------------- skills by evidence */
+
+  .skills {
+    display: grid;
+    gap: 28px;
+  }
+
+  .skills__group {
+    display: grid;
+    gap: 4px;
+  }
+
+  .skills__group-title {
+    margin: 0 0 6px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
+  }
+
+  /* Each skill, then a dotted leader, then where it was used. */
+  .skill {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 16px;
+    align-items: baseline;
+    padding-block: 9px;
+    border-block-end: 1px solid rgb(var(--accent-rgb) / 0.1);
+  }
+
+  .skill__name {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .skill__evidence {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .skill__evidence li {
+    padding: 2px 9px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  .skill__evidence a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .skill__evidence li:has(a) {
+    border-color: rgb(var(--accent-rgb) / 0.4);
+  }
+
+  .cv__updated {
+    margin: 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.8125rem;
+  }
+
+  /* ---------------------------------------------------------------- the jump strip */
+
+  /* On narrower screens the index moves out of the ID card into a strip that stays at the
+     top of the screen as the page scrolls. */
+  .jump {
+    display: none;
+  }
+
+  .jump__list {
+    display: flex;
+    gap: 6px;
+    margin: 0;
+    padding: 8px max(var(--gutter), env(safe-area-inset-left));
+    overflow-x: auto;
+    list-style: none;
+    scroll-behavior: smooth;
+    scroll-padding-inline: var(--gutter);
+    scrollbar-width: none;
+  }
+
+  .jump__link {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    min-block-size: 40px;
+    padding: 9px 12px;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--text);
+    font-size: 0.8125rem;
+    text-decoration: none;
+    text-transform: lowercase;
+    white-space: nowrap;
+    transition:
+      border-color 0.2s,
+      background-color 0.2s;
+  }
+
+  .jump__link[aria-current] {
+    border-color: var(--link);
+    background: rgb(var(--accent-rgb) / 0.12);
+  }
+
+  .jump__number {
+    color: var(--link);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+  }
+
+  /* ---------------------------------------------------------------- narrower windows */
+
+  /* Below this width the ID card sits above the CV rather than beside it, and the index
+     becomes the strip. */
+  @media (max-width: 64em) {
+    .cv {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .id-card {
+      position: static;
+    }
+
+    .id-card .contents {
+      display: none;
+    }
+
+    .jump {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 30;
+      display: block;
+      margin: 24px calc(var(--gutter) * -1) 0;
+      border-block: 1px solid var(--rule);
+      background: color-mix(in srgb, var(--page) 88%, transparent);
+      backdrop-filter: blur(10px);
+    }
+
+    /* A fade at the right-hand end, so it's clear there are more sections along. */
+    .jump::after {
+      content: "";
+      position: absolute;
+      inset: 0 0 0 auto;
+      inline-size: 36px;
+      pointer-events: none;
+      background: linear-gradient(to right, transparent, var(--page));
+    }
+
+    /* Sections stop below the strip when it's used to jump to them. */
+    .cv-section {
+      scroll-margin-block-start: 72px;
+    }
+
+    .readouts,
+    .projects-cv__others {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .timeline {
+      --line-x: 6.5rem;
+    }
+
+    .skill {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 6px;
+    }
+  }
+
+  /* Phones */
+  @media (max-width: 40em) {
+    .cv {
+      gap: 28px;
+      margin-block-start: 24px;
+    }
+
+    .id-card {
+      gap: 16px;
+    }
+
+    .timeline {
+      --line-x: 5.25rem;
+    }
+
+    .cv-section__number {
+      white-space: nowrap;
+    }
+
+    .cv-section__title::after {
+      display: none;
+    }
+  }
+}
+
+@layer utilities {
+  /* Printed, the page is the CV alone, in black on white: no header, footer or ID card
+     decoration, every "More" shown, and links written out after their text. */
+  @media print {
+    :root {
+      --page: #fff;
+      --surface: #fff;
+      --text: #000;
+      --muted: #333;
+      --rule: #bbb;
+      --accent: #0d6b56;
+      --accent-rgb: 13 107 86;
+    }
+
+    body {
+      background: #fff;
+      color: #000;
+    }
+
+    .site-header,
+    .site-footer,
+    .skip-link,
+    .page-head__lede,
+    .id-card .button,
+    .id-card__file,
+    .id-card .contents,
+    .id-card__label,
+    .id-card__status::before,
+    .more summary,
+    .cv__updated {
+      display: none !important;
+    }
+
+    .tt-glitch {
+      text-shadow: none;
+    }
+
+    .cv {
+      display: block;
+      margin: 0;
+    }
+
+    .id-card {
+      position: static;
+      margin-block-end: 24px;
+      padding: 0;
+      border: 0;
+      background: none;
+    }
+
+    .id-card::before {
+      content: none;
+    }
+
+    .id-card__links a::after {
+      content: " (" attr(href) ")";
+      color: var(--muted);
+    }
+
+    .cv__body {
+      gap: 28px;
+    }
+
+    .entry,
+    .project,
+    .skill {
+      break-inside: avoid;
+    }
+
+    .project,
+    .readout {
+      background: none;
+      box-shadow: none;
+    }
+
+    /* Closed <details> still print their contents. */
+    .more::details-content {
+      content-visibility: visible;
+      block-size: auto;
+    }
+
+    .more:not([open]) .more__body {
+      display: grid;
+    }
+  }
+}

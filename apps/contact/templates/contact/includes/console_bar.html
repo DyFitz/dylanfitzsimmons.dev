@@ -1,0 +1,12 @@
+{# The lamp reads "link ok" on the form. Once sent, it flashes "tx" and settles on "delivered". #}
+<p class="uplink__bar">
+  <span>uplink // {{ site.domain }}</span>
+  <span class="lamp" aria-hidden="true">
+    {% if sent %}
+      <span class="lamp__state lamp__state--tx">tx…</span>
+      <span class="lamp__state lamp__state--done">delivered</span>
+    {% else %}
+      <span class="lamp__state lamp__state--ok">link ok</span>
+    {% endif %}
+  </span>
+</p>

@@ -1,0 +1,16 @@
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
+      <stop class="art-shade-start" offset="0"/>
+      <stop class="art-shade-end" offset="1"/>
+    </linearGradient>
+  </defs>
+  <path class="art-grid" d="M10 30H230M10 65H230M10 100H230"/>
+  <path class="art-axis" d="M10 135H230"/>
+  <path class="art-now" d="M150 14V135"/>
+  <path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"/>
+  <path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"/>
+  <polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"/>
+  <polyline class="art-forecast" points="150,78 230,66"/>
+  <circle class="art-point" cx="150" cy="78" r="3.5"/>
+</svg>

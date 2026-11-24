@@ -1,0 +1,37 @@
+{% load static %}<!doctype html>
+<html lang="en-GB"{% block html_attributes %}{% endblock %}>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>{% block title %}{% if page_title %}{{ page_title }} – {{ site.name }}{% else %}{{ site.name }} – {{ site.tagline }}{% endif %}{% endblock %}</title>
+    <meta name="description" content="{{ page_description|default:site.description }}">
+    {% block canonical %}<link rel="canonical" href="{{ site.base_url }}{{ request.path }}">{% endblock %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ site.name }}">
+    <meta property="og:title" content="{{ page_title|default:site.name }}">
+    <meta property="og:description" content="{{ page_description|default:site.description }}">
+    <meta property="og:url" content="{{ site.base_url }}{{ request.path }}">
+    <meta property="og:locale" content="en_GB">
+    <meta name="color-scheme" content="dark">
+    {# Night page colour. The theme toggle updates it to match the page. #}
+    <meta name="theme-color" content="#0c1824">
+    <link rel="icon" href="{% static 'img/favicon.svg' %}" type="image/svg+xml">
+    <link rel="preload" href="{% static 'fonts/texgyreheros-bold.woff' %}" as="font" type="font/woff" crossorigin>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    {# Not deferred, so the saved theme and motion setting apply before first paint. #}
+    <script src="{% static 'js/head.js' %}"></script>
+    <script type="module" src="{% static 'js/site.js' %}"></script>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    {% block intro %}{% endblock %}
+    <div class="page" data-page>
+      <a class="skip-link" href="#main">Skip to main content</a>
+      {% include "includes/site_header.html" %}
+      <main class="site-main" id="main" tabindex="-1">
+        {% block content %}{% endblock %}
+      </main>
+      {% include "includes/site_footer.html" %}
+    </div>
+  </body>
+</html>

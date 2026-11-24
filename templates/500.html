@@ -1,0 +1,22 @@
+{% load static %}<!doctype html>
+{# Rendered without context processors, so it can't extend base.html. #}
+<html lang="en-GB">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>Something went wrong</title>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+  </head>
+  <body>
+    <div class="page">
+      <main class="site-main">
+        <section class="error-page" aria-labelledby="error-title">
+          <h1 id="error-title">Something went wrong</h1>
+          <p>The server hit an error while building this page, and the error has been logged. Try again in a minute.</p>
+          <p><a href="/">Go to the home page</a></p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

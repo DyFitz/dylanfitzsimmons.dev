@@ -1,0 +1,13 @@
+{# The monitor picker. Filled in by static/js/modules/template.js, so the braces are its, not Django's. #}
+{% verbatim %}
+<section class="picker" aria-labelledby="picker-title">
+<h2 class="picker__title" id="picker-title">Change monitor</h2>
+<div class="picker__options" role="group" aria-labelledby="picker-title">
+<template data-each="monitorOptions" data-as="opt"><button class="picker__option" type="button" aria-pressed="{{opt.pressed}}" data-on-click="opt.pick"><span class="picker__mini picker__mini--{{opt.key}}" aria-hidden="true"><span class="picker__glass"></span></span><span class="picker__label">{{opt.label}}</span><span class="picker__year">{{opt.year}}</span></button></template>
+</div>
+<div class="picker__links">
+<template data-if="canReplay"><button class="picker__replay" type="button" data-on-click="replayIntro">replay intro</button></template>
+<button class="picker__replay" type="button" data-on-click="showList">list view</button>
+</div>
+</section>
+{% endverbatim %}

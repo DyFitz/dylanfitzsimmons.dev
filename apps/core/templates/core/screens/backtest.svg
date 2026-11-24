@@ -1,0 +1,9 @@
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+  <path class="art-grid" d="M6 28H234M6 64H234M6 100H234"/>
+  <path class="art-axis" d="M6 138H234"/>
+  <polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"/>
+  <path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"/>
+  <polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"/>
+  <path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"/>
+  <path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"/>
+</svg>

@@ -1,0 +1,18 @@
+<footer class="site-footer">
+  <p>© {% now "Y" %} {{ site.name }}</p>
+  {% if site.source_url %}
+    <p><a href="{{ site.source_url }}">Source code</a></p>
+  {% endif %}
+  {% if site.short_sha %}
+    <p class="site-footer__build">
+      Build
+      {% if site.commit_url %}<a href="{{ site.commit_url }}"><code>{{ site.short_sha }}</code></a>{% else %}<code>{{ site.short_sha }}</code>{% endif %}
+    </p>
+  {% endif %}
+  {# Unhidden by site.js and home.js, so they never show without JavaScript. #}
+  <div class="site-footer__controls">
+    <button class="button button--quiet motion-toggle" type="button" aria-pressed="false" data-motion-toggle hidden><span class="motion-toggle__led" aria-hidden="true"></span>Motion</button>
+    <button class="button button--quiet" type="button" data-intro-replay hidden>Replay intro</button>
+    <button class="button button--quiet" type="button" data-theme-toggle hidden>Switch to day</button>
+  </div>
+</footer>

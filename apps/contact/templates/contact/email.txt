@@ -1,0 +1,11 @@
+{% autoescape off %}{{ message.name }} <{{ message.email }}> sent a message through the contact form.
+
+Reason: {{ message.get_reason_display }}
+Sent: {{ message.sent_at|date:"j M Y, H:i" }}
+Reference: {{ message.reference }}
+
+{{ message.body }}
+
+--
+Reply to this email to answer them. The message is also in the admin, and is deleted after 12 months.
+{% endautoescape %}

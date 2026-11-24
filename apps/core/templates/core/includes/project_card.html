@@ -1,0 +1,14 @@
+<article class="project-card">
+  <div class="project-card__screen screen screen--{{ project.screen }}">
+    <canvas class="screen__canvas live" data-screen="{{ project.screen }}" aria-hidden="true"></canvas>
+    {% include project.still_template %}
+    <p class="screen__label" aria-hidden="true">~/projects/{{ project.slug }}</p>
+    {% if project.in_progress %}<p class="screen__status" aria-hidden="true">in progress</p>{% endif %}
+  </div>
+  {# The link covers the whole card, so the screen and summary can be clicked too. #}
+  <h3 class="project-card__title"><a class="project-card__link" href="{{ project.url }}">{{ project.title }}{% if project.in_progress %}<span class="visually-hidden"> (in progress)</span>{% endif %}</a></h3>
+  <p class="project-card__summary">{{ project.summary }}</p>
+  <ul class="tags" role="list" aria-label="Built with">
+    {% for tag in project.tags %}<li class="tag">{{ tag }}</li>{% endfor %}
+  </ul>
+</article>

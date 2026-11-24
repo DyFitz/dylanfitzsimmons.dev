@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{# head.js reads this before first paint to decide whether the monitor, the phone desktop #}
+{# or the plain list is shown. #}
+{% block html_attributes %} data-desk="available"{% endblock %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/projects.css' %}">
+  {# The page opens on this photograph on a wide screen, so it is fetched straight away. #}
+  <link rel="preload" as="image" href="{% static 'img/projects/crt.webp' %}" media="(min-width: 75em)">
+  <script type="module" src="{% static 'js/projects.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  {# Where the monitor is shown, this heading sits tight over the room with the picker in it. #}
+  <section class="page-head page-head--monitors" aria-labelledby="projects-title">
+    <div>
+      <p class="path">~/projects</p>
+      <h1 class="page-head__title tt-glitch" id="projects-title" data-text="projects">Projects</h1>
+    </div>
+    <div data-desk-picker>
+      {# For a visitor who chose the list where the monitor or the '95 desktop could run. #}
+      {# projects.js shows it; the monitor's picker replaces it otherwise. #}
+      <button class="picker__replay" type="button" data-desk-back hidden>back to the monitor</button>
+    </div>
+  </section>
+
+  {# The plain list is the page without JavaScript, and between phone and laptop widths. #}
+  {# projects.js replaces it with a monitor in its room on a wide screen, and with the '95 #}
+  {# desktop on a phone. #}
+  <div data-desk-room>
+    <p class="page-head__lede">Software projects, each with a write-up of how it works and what was learned along the way.</p>
+    <ul class="project-list" role="list">
+      {% for project in projects %}
+        <li class="project-list__item">
+          <a class="project-list__title" href="{{ project.get_absolute_url }}">{{ project.title }}</a>
+          <p>{{ project.summary }}</p>
+          <p class="project-list__meta">{{ project.stack }}{% if project.period %} · {{ project.period }}{% endif %}{% if project.status %} · {{ project.status }}{% endif %}</p>
+        </li>
+      {% empty %}
+        <li class="project-list__item">No projects yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  {{ desk_data|json_script:"projects-data" }}
+  <template id="desk-picker-template">{% include "projects/includes/picker.html" %}</template>
+  <template id="desk-room-template">{% include "projects/includes/room.html" %}</template>
+  <template id="desk-phone-template">{% include "projects/includes/phone.html" %}</template>
+{% endblock %}

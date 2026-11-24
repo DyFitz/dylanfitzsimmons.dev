@@ -1,0 +1,2 @@
+# LF everywhere, including Windows checkouts, to match CI and the Docker image.
+* text=auto eol=lf

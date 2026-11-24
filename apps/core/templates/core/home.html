@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block html_attributes %} data-intro="available"{% endblock %}
+
+{% block head %}
+  <script type="module" src="{% static 'js/home.js' %}"></script>
+{% endblock %}
+
+{% block intro %}
+  {# head.js shows this before first paint on the first visit, and home.js plays it. #}
+  <button class="intro" type="button" aria-label="Skip intro" data-intro-screen>
+    <canvas class="intro__canvas" aria-hidden="true"></canvas>
+    <span class="intro__tube" aria-hidden="true"></span>
+    <span class="intro__skip" aria-hidden="true">skip</span>
+  </button>
+{% endblock %}
+
+{% block content %}
+  <section class="hero screen" aria-labelledby="hero-name">
+    <div class="hero__floor" aria-hidden="true"><div class="hero__grid"></div></div>
+    <div class="hero__glow" aria-hidden="true"></div>
+    <div class="hero__frame" aria-hidden="true"></div>
+
+    <div class="hero__body">
+      <div class="hero__meta hero__meta--top" aria-hidden="true">
+        <p class="hero__rec">REC</p>
+        <p>SP <span data-hero-counter>0:00:00</span></p>
+      </div>
+
+      <div class="hero__main">
+        <div class="hero__text">
+          <div class="hero__title">
+            <h1 class="hero__name" id="hero-name">{{ site.name }}</h1>
+            <span class="hero__slice hero__slice--upper" aria-hidden="true">{{ site.name }}</span>
+            <span class="hero__slice hero__slice--lower" aria-hidden="true">{{ site.name }}</span>
+          </div>
+          <p class="hero__role">{{ site.tagline }}</p>
+          {% include "core/includes/console.html" %}
+          <div class="hero__actions">
+            <a class="button button--primary" href="#projects">View projects</a>
+          </div>
+        </div>
+
+        <div class="hero__visual" aria-hidden="true">
+          <img class="hero__globe still" src="{% static 'img/globe.svg' %}" alt="" width="470" height="470">
+          <canvas class="hero__globe live" data-globe></canvas>
+          <img class="hero__rain still" src="{% static 'img/code-rain.svg' %}" alt="" width="56" height="430">
+          <canvas class="hero__rain live" data-code-rain></canvas>
+        </div>
+      </div>
+
+      <div class="hero__meta hero__meta--bottom" aria-hidden="true">
+        <p class="hero__uplink">uplink: {{ site.domain }}</p>
+        <p class="hero__date" data-hero-date>{% now "d M Y H:i" %}</p>
+      </div>
+    </div>
+
+    <div class="hero__noise" aria-hidden="true"></div>
+  </section>
+
+  <section class="projects" id="projects" aria-labelledby="projects-title">
+    <div class="section-head">
+      <h2 class="section-head__title" id="projects-title">Projects</h2>
+      <a class="section-head__link" href="{% url 'projects:list' %}">all projects →</a>
+    </div>
+    <div class="project-grid">
+      {% for project in featured_projects %}
+        {% include "core/includes/project_card.html" %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <div class="panels">
+    <section class="panel panel--cv screen" id="cv" aria-labelledby="cv-title">
+      <p class="panel__label" aria-hidden="true">~/cv.pdf</p>
+      <h2 class="panel__title" id="cv-title">My CV</h2>
+      <p class="panel__text">Experience, education and skills. Download the PDF or read it on this site.</p>
+      <p class="panel__actions">
+        <a class="button button--secondary" href="{% url 'cv:page' %}">Read my CV</a>
+        <a class="button button--secondary" href="{% static 'files/Dylan_Fitzsimmons_CV.pdf' %}" download>Download PDF</a>
+      </p>
+    </section>
+    <section class="panel panel--contact screen" id="contact" aria-labelledby="contact-title">
+      <p class="panel__label" aria-hidden="true">~/contact</p>
+      <h2 class="panel__title" id="contact-title">Get in touch</h2>
+      <p class="panel__text">Got a role or a project in mind? Send me a message and I'll reply by email.</p>
+      <p class="panel__actions">
+        <a class="button button--secondary" href="{% url 'contact:page' %}">Send a message</a>
+      </p>
+    </section>
+  </div>
+{% endblock %}

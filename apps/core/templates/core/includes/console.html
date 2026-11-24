@@ -1,0 +1,26 @@
+{# console.js types each script out in turn. Without it, the first one shows finished. #}
+<div class="console" data-console>
+  <div class="console__bar" aria-hidden="true"><span>~/dylan</span><span>console</span></div>
+  <div class="console__screen" aria-hidden="true">
+    <ol class="console__script" role="list" data-console-script>
+      <li class="console__command">cd ~/projects/dylanfitzsimmons.dev</li>
+      <li class="console__command">uv run ruff check .</li>
+      <li class="console__ok">All checks passed!</li>
+      <li class="console__command">uv run pytest -q</li>
+      <li class="console__ok">...........................................  [100%]</li>
+      <li class="console__ok">61 passed in 1.92s</li>
+      <li class="console__command">uv run python manage.py runserver</li>
+      <li class="console__output">Starting development server at http://127.0.0.1:8000/</li>
+    </ol>
+    <ol class="console__script" role="list" data-console-script hidden>
+      <li class="console__command">cd ~/projects/opus-equi</li>
+      <li class="console__command">uvicorn app.main:app --port 8001 &amp;</li>
+      <li class="console__output">[1] 4182</li>
+      <li class="console__ok">INFO:     Application startup complete.</li>
+      <li class="console__output">INFO:     Uvicorn running on http://127.0.0.1:8001</li>
+      <li class="console__command">dotnet run --project OpusEqui.Desktop</li>
+      <li class="console__ok">Build succeeded in 3.8s</li>
+    </ol>
+  </div>
+  <p class="visually-hidden">A console starting two of my projects in turn: this site, where Ruff finds no problems, all the tests pass and the Django server starts; then Opus Equi, where the API and the desktop app start.</p>
+</div>

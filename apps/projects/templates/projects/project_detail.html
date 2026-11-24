@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/case-study.css' %}">
+  <script type="module" src="{% static 'js/project.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <article class="case-study" aria-labelledby="case-title">
+    <header class="case-head">
+      <div class="case-head__intro">
+        <p class="path">~/<a href="{% url 'projects:list' %}">projects</a>/{{ project.slug }}</p>
+        <h1 class="page-head__title" id="case-title">{{ project.title }}</h1>
+        <p class="page-head__lede">{{ project.summary }}</p>
+      </div>
+
+      {# The project's animated preview, in a window. Its still image shows when motion is off. #}
+      <figure class="case-head__screen window">
+        <div class="window__bar"><span>{{ project.slug }}</span><span class="window__buttons" aria-hidden="true"><i></i><i></i><i></i></span></div>
+        <div class="window__body screen screen--{{ project.screen }}">
+          <canvas class="screen__canvas live" data-screen="{{ project.screen }}" aria-hidden="true"></canvas>
+          {% include project.still_template %}
+        </div>
+        <figcaption class="window__status"><span>Preview</span><span>{{ project.get_screen_display }}</span></figcaption>
+      </figure>
+
+      <div class="case-head__facts">
+        {% if project.status %}
+          <p class="cert-box">
+            <span class="cert-box__rating">{{ project.status_code }}</span>
+            <span class="cert-box__text"><strong>{{ project.status }}</strong>{% if project.status_code == "WIP" %}Features may change before release.{% endif %}</span>
+          </p>
+        {% endif %}
+        <dl class="glance">
+          {% if project.role %}
+            <dt>Role</dt>
+            <dd>{{ project.role }}</dd>
+          {% endif %}
+          {% if project.period %}
+            <dt>When</dt>
+            <dd>{{ project.period }}</dd>
+          {% endif %}
+          <dt>Built with</dt>
+          <dd>
+            <ul class="tags" role="list">
+              {% for tag in project.tags %}<li class="tag">{{ tag }}</li>{% endfor %}
+            </ul>
+          </dd>
+        </dl>
+        {% if project.repo_url %}
+          <div class="case-links">
+            <a class="button button--primary" href="{{ project.repo_url }}">View the code</a>
+          </div>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="case-body">
+      {% if write_up.sections %}
+        <nav class="case-body__contents contents" aria-labelledby="contents-title">
+          <h2 class="contents__title" id="contents-title">On this page</h2>
+          <ol class="contents__list" role="list">
+            {% for section in write_up.sections %}
+              <li><a class="contents__link" href="#{{ section.anchor }}"><span class="contents__number">{{ forloop.counter|stringformat:"02d" }}</span>{{ section.title }}</a></li>
+            {% endfor %}
+          </ol>
+        </nav>
+      {% endif %}
+
+      <div class="case-body__sections">
+        {% if write_up.intro %}
+          <div class="prose">{{ write_up.intro }}</div>
+        {% endif %}
+        {% for section in write_up.sections %}
+          <section class="case-section" id="{{ section.anchor }}" aria-labelledby="{{ section.anchor }}-title">
+            <h2 class="case-section__title" id="{{ section.anchor }}-title"><span class="case-section__number">{{ forloop.counter|stringformat:"02d" }}</span>{{ section.title }}</h2>
+            <div class="prose">{{ section.html }}</div>
+          </section>
+        {% endfor %}
+        {% if not write_up.intro and not write_up.sections %}
+          <div class="prose"><p>The write-up for this project is on its way.</p></div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if previous_project and next_project %}
+      <nav class="pager pager--transport" aria-label="More projects">
+        <a class="pager__link pager__link--prev" href="{{ previous_project.get_absolute_url }}">
+          <span class="pager__thumb screen screen--{{ previous_project.screen }}" aria-hidden="true">
+            <canvas class="screen__canvas live" data-screen="{{ previous_project.screen }}"></canvas>
+            {% include previous_project.still_template %}
+          </span>
+          <span><svg class="pager__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 5v14L2 12ZM22 5v14l-9-7Z"></path></svg><span class="pager__label">rew · previous project</span><span class="pager__title">{{ previous_project.title }}</span></span>
+        </a>
+        <a class="pager__link pager__link--next" href="{{ next_project.get_absolute_url }}">
+          <span class="pager__thumb screen screen--{{ next_project.screen }}" aria-hidden="true">
+            <canvas class="screen__canvas live" data-screen="{{ next_project.screen }}"></canvas>
+            {% include next_project.still_template %}
+          </span>
+          <span><svg class="pager__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M13 5v14l9-7ZM2 5v14l9-7Z"></path></svg><span class="pager__label">next project · ff</span><span class="pager__title">{{ next_project.title }}</span></span>
+        </a>
+      </nav>
+    {% endif %}
+  </article>
+{% endblock %}

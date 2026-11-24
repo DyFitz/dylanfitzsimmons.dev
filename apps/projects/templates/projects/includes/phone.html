@@ -1,0 +1,108 @@
+{# The projects page on a phone: the '95 desktop filling the screen, like an app. #}
+{# static/js/modules/phone-desk.js puts it on the page and works its windows. #}
+<div class="p95" data-phone-desk>
+  {% include "projects/includes/w95_icons.html" %}
+
+  <div class="p95-boot" aria-hidden="true" data-phone-boot hidden>
+    <p class="p95-boot__name"><span class="p95-start__logo">df</span>{{ site.name|lower }}</p>
+    <p>Starting up…</p>
+    <span class="p95-boot__bar"></span>
+  </div>
+
+  <div class="p95__desktop">
+    <h1 class="visually-hidden">Projects</h1>
+    <nav aria-label="Desktop">
+      <ul class="p95__icons" role="list">
+        <li><a class="p95-icon" href="{% url 'core:home' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-home"></use></svg><span>Home</span></a></li>
+        <li><a class="p95-icon" href="{% url 'cv:page' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg><span>CV</span></a></li>
+        <li><a class="p95-icon" href="{% url 'contact:page' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg><span>Contact</span></a></li>
+        {% if site.source_url %}<li><a class="p95-icon" href="{{ site.source_url }}"><svg aria-hidden="true" focusable="false"><use href="#ico-code"></use></svg><span>Source code</span></a></li>{% endif %}
+        <li><button class="p95-icon" type="button" data-phone-open="bin"><svg aria-hidden="true" focusable="false"><use href="#ico-bin"></use></svg><span>Recycle Bin</span></button></li>
+      </ul>
+    </nav>
+
+    <section class="p95-win p95-win--files" aria-labelledby="p95-files-title" data-phone-files>
+      <div class="p95-win__bar">
+        <svg class="p95-win__icon" aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg>
+        <h2 class="p95-win__title" id="p95-files-title">Projects</h2>
+        <span class="p95-win__buttons">
+          <button class="p95-cap" type="button" aria-label="Minimise" data-phone-minimise><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 8h6v1H2z"></path></svg></button>
+          <button class="p95-cap" type="button" aria-label="Maximise" disabled><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1 1h8v8H1zM2 3v5h6V3z" fill-rule="evenodd" fill="currentColor"></path></svg></button>
+        </span>
+      </div>
+      <p class="p95-menu" aria-hidden="true"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>H</u>elp</span></p>
+      <p class="p95-address" aria-hidden="true"><span>Address</span><span class="p95-field">C:\Projects</span></p>
+      <div class="p95-list">
+        <p class="p95-list__head" aria-hidden="true"><span>Name</span><span>Built with</span><span>Status</span></p>
+        <ul class="p95-list__rows" role="list">
+          {% for project in projects %}
+            <li><button class="p95-list__row" type="button" aria-haspopup="dialog" data-phone-project="{{ forloop.counter0 }}"><span class="p95-list__name"><svg aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg>{{ project.title }}</span><span>{{ project.short_stack }}</span><span>{{ project.status }}</span></button></li>
+          {% endfor %}
+        </ul>
+      </div>
+      <p class="p95-status"><span>{{ projects|length }} object(s)</span><span>Tap a project to open it</span></p>
+    </section>
+
+    {% for project in projects %}
+      <section class="p95-win p95-win--project" role="dialog" aria-labelledby="p95-project-{{ forloop.counter0 }}" data-phone-window="{{ forloop.counter0 }}" hidden>
+        <div class="p95-win__bar">
+          <svg class="p95-win__icon" aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg>
+          <p class="p95-win__title" aria-hidden="true">{{ project.title }}</p>
+          <button class="p95-cap" type="button" aria-label="Close" data-phone-close><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1 2l1-1 3 3 3-3 1 1-3 3 3 3-1 1-3-3-3 3-1-1 3-3z"></path></svg></button>
+        </div>
+        <div class="p95-project">
+          <div class="p95-preview screen screen--{{ project.screen }}">{% include project.still_template %}</div>
+          <h2 class="p95-project__title" id="p95-project-{{ forloop.counter0 }}">{{ project.title }}</h2>
+          <p class="p95-project__summary">{{ project.summary }}</p>
+          <dl class="p95-props">
+            <dt>Built with</dt><dd>{{ project.tags|join:", " }}</dd>
+            {% if project.year %}<dt>Year</dt><dd>{{ project.year }}</dd>{% endif %}
+            {% if project.status %}<dt>Status</dt><dd>{{ project.status }}</dd>{% endif %}
+          </dl>
+          <p class="p95-actions">
+            <a class="p95-button p95-button--default" href="{{ project.get_absolute_url }}">Read the case study</a>
+            {% if projects|length > 1 %}<button class="p95-button" type="button" data-phone-next>Next &gt;</button>{% endif %}
+            <button class="p95-button" type="button" data-phone-close>Close</button>
+          </p>
+        </div>
+      </section>
+    {% endfor %}
+
+    <section class="p95-win p95-win--msg" role="alertdialog" aria-labelledby="p95-bin-title" aria-describedby="p95-bin-text" data-phone-window="bin" hidden>
+      <div class="p95-win__bar"><h2 class="p95-win__title" id="p95-bin-title">Recycle Bin</h2></div>
+      <div class="p95-msg">
+        <svg aria-hidden="true" focusable="false"><use href="#ico-bin"></use></svg>
+        <p id="p95-bin-text">The Recycle Bin is empty. Nothing here gets thrown away.</p>
+        <p class="p95-actions"><button class="p95-button p95-button--default" type="button" data-phone-close>OK</button></p>
+      </div>
+    </section>
+
+    <section class="p95-win p95-win--tip" aria-labelledby="p95-tip-title" data-phone-tip>
+      <div class="p95-win__bar"><h2 class="p95-win__title" id="p95-tip-title">Welcome</h2></div>
+      <div class="p95-tip">
+        <span class="p95-tip__bulb" aria-hidden="true">💡</span>
+        <div><p class="p95-tip__title">Did you know…</p><p>Tap a project to open it. The icons and the Start button lead to the rest of the site.</p></div>
+        <p class="p95-actions"><button class="p95-button" type="button" data-phone-tip-close>Close</button></p>
+      </div>
+    </section>
+  </div>
+
+  <nav class="p95-startmenu" id="p95-startmenu" aria-label="Start" data-phone-startmenu hidden>
+    <span class="p95-startmenu__band" aria-hidden="true">{{ site.name|lower }}</span>
+    <ul class="p95-startmenu__list" role="list">
+      <li><a class="p95-startmenu__item" href="{% url 'core:home' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-home"></use></svg>Home</a></li>
+      <li><a class="p95-startmenu__item" href="{% url 'cv:page' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg>CV</a></li>
+      <li><a class="p95-startmenu__item" href="{% url 'contact:page' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg>Contact</a></li>
+      <li class="p95-startmenu__rule" aria-hidden="true"></li>
+      {# Back to the ordinary page, with the plain list of projects. #}
+      <li><button class="p95-startmenu__item" type="button" data-phone-exit><svg aria-hidden="true" focusable="false"><use href="#ico-off"></use></svg>Plain list</button></li>
+    </ul>
+  </nav>
+
+  <div class="p95-taskbar">
+    <button class="p95-start" type="button" aria-expanded="false" aria-controls="p95-startmenu" data-phone-start><span class="p95-start__logo" aria-hidden="true">df</span>Start</button>
+    <button class="p95-task p95-task--on" type="button" aria-pressed="true" data-phone-files-task><svg aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg><span>Projects</span></button>
+    <span class="p95-task p95-task--on" aria-hidden="true" data-phone-task hidden><span data-phone-task-title></span></span>
+    <span class="p95-clock" data-phone-clock></span>
+  </div>
+</div>

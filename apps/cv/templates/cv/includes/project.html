@@ -1,0 +1,25 @@
+{# A project on the CV. The key one runs the full width with its stack and bullet points. #}
+<article class="project{% if project.is_key %} project--key{% endif %}">
+  <div class="project__head">
+    <h3 class="project__title">{{ project.title }}</h3>
+    {% if project.meta %}<p class="project__meta">{{ project.meta }}</p>{% endif %}
+  </div>
+  {% if project.stack_list %}<p class="project__stack">{{ project.stack_list|join:" · " }}</p>{% endif %}
+  {% if project.summary %}<p>{{ project.summary }}</p>{% endif %}
+  {% if project.point_list %}
+    <ul>
+      {% for point in project.point_list %}<li>{{ point }}</li>{% endfor %}
+    </ul>
+  {% endif %}
+  {% if project.more_point_list %}
+    <details class="more">
+      <summary>{{ project.more_point_list|length }} more</summary>
+      <div class="more__body">
+        <ul>
+          {% for point in project.more_point_list %}<li>{{ point }}</li>{% endfor %}
+        </ul>
+      </div>
+    </details>
+  {% endif %}
+  {% if project.write_up.is_published %}<a class="project__link" href="{{ project.write_up.get_absolute_url }}">Read the write-up →</a>{% endif %}
+</article>

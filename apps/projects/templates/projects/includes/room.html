@@ -1,0 +1,799 @@
+{# The room and its three monitors. Filled in by static/js/modules/template.js, so the braces are its, not Django's. #}
+{% verbatim %}
+<div class="room room--wire room--pull room--cyber room--y2k" data-ref="roomRef" data-style="{{fit}}" data-zoom="{{zoom}}" data-power="{{power}}">
+<div class="room__backdrop" aria-hidden="true">
+<div class="room__rain" aria-hidden="true"><canvas></canvas></div>
+<svg class="room__wire" viewBox="-3200 -1900 9800 6600" aria-hidden="true" focusable="false"><g class="room__globe"><circle cx="1700" cy="800" r="1040"></circle><ellipse cx="1700" cy="800" rx="300" ry="1040"></ellipse><ellipse cx="1700" cy="800" rx="620" ry="1040"></ellipse><ellipse cx="1700" cy="800" rx="880" ry="1040"></ellipse><path d="M1012 20H2388"></path><path d="M800 280H2600"></path><path d="M693 540H2707"></path><path d="M660 800H2740"></path><path d="M693 1060H2707"></path><path d="M800 1320H2600"></path><path d="M1012 1580H2388"></path><ellipse cx="1700" cy="800" rx="1420" ry="330" transform="rotate(-16 1700 800)"></ellipse></g></svg>
+<div class="room__floor"><div class="room__grid"></div></div>
+</div>
+<div class="room__camera">
+<span class="room__surface" aria-hidden="true"></span>
+<span class="room__glow" aria-hidden="true"></span>
+<div class="stage" data-phase="{{phase}}">
+<template data-if="isW95">
+<div class="pm pm--crt pm--tube" data-power="{{power}}" data-signal="{{signal}}" data-style="{{levels}}">
+<div class="pm__body">
+<img class="pm__photo" src="{{images.crt}}" alt="" width="1110" height="949" draggable="false">
+<div class="pm__screen ">
+<div class="pm__picture">
+<div class="pm__level">
+<div class="pm__jolt">
+<div class="w95">
+{% endverbatim %}{% include "projects/includes/w95_icons.html" %}{% verbatim %}
+<template data-each="icons" data-as="icon"><a class="{{icon.cls}}" href="{{icon.href}}" draggable="false" data-style="{{icon.place}}" data-on-pointerdown="icon.drag" data-on-click="icon.press"><template data-if="icon.isHome"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-home"></use></svg></template><template data-if="icon.isProjects"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg></template><template data-if="icon.isCv"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg></template><template data-if="icon.isContact"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg></template><template data-if="icon.isCode"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-code"></use></svg></template><template data-if="icon.isBin"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-bin"></use></svg></template><span class="desk-icon__label">{{icon.label}}</span></a></template>
+
+<section class="{{filesCls}}" data-win="explorer" data-window="{{explorerState}}" data-style="{{explorerPlace}}" aria-label="Projects" data-on-pointerdown="explorerFront">
+<div class="w95-win__bar" data-on-pointerdown="explorerDrag"><svg class="w95-win__icon" aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg><p class="w95-win__title">Projects</p><span class="w95-win__buttons">
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Minimise" data-on-click="minimiseExplorer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 8h6v1H2z"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Maximise" data-on-click="maximiseExplorer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1 1h8v8H1zM2 3v5h6V3z" fill-rule="evenodd"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Close" data-on-click="closeExplorer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2l6 6M8 2l-6 6" stroke="#000" stroke-width="1.6"></path></svg></button>
+</span></div>
+<p class="w95-menu" aria-hidden="true"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>H</u>elp</span></p>
+<p class="w95-address" aria-hidden="true"><span>Address</span><span class="w95-address__box"><svg focusable="false"><use href="#ico-projects"></use></svg>C:\Projects</span></p>
+<div class="w95-files">
+<p class="w95-files__head" aria-hidden="true"><span>Name</span><span>Built with</span><span>Year</span><span>Status</span></p>
+<ol class="w95-files__list" role="list">
+<template data-each="rows" data-as="row"><li class="{{row.cls}}"><a class="w95-file__link" href="{{row.href}}" data-on-click="row.pick" data-on-dblclick="row.open"><span class="w95-file__name"><svg aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg>{{row.title}}</span><span>{{row.lead}}</span><span>{{row.year}}</span><span>{{row.status}}</span></a></li></template>
+</ol>
+</div>
+<p class="w95-status"><span>{{count}} object(s)</span><span>Double-click a project to open it</span></p>
+</section>
+
+<section class="{{aboutCls}}" data-win="about" data-window="{{aboutState}}" data-style="{{aboutPlace}}" aria-label="About this project" data-on-pointerdown="aboutFront">
+<div class="w95-win__bar" data-on-pointerdown="aboutDrag"><svg class="w95-win__icon" aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg><p class="w95-win__title">{{cur.title}}</p><span class="w95-win__buttons">
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Minimise" data-on-click="minimiseAbout"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 8h6v1H2z"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Maximise" data-on-click="maximiseAbout"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1 1h8v8H1zM2 3v5h6V3z" fill-rule="evenodd"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Close" data-on-click="closeAbout"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2l6 6M8 2l-6 6" stroke="#000" stroke-width="1.6"></path></svg></button>
+</span></div>
+<div class="w95-about">
+<div class="w95-about__screen screen screen--{{cur.screen}} screen--live">
+<canvas class="screen__canvas live" data-ref="artRef" aria-hidden="true"></canvas>
+<template data-if="cur.isSite">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<g class="art-outline">
+<rect x="10" y="10" width="220" height="130" rx="6"></rect>
+<path d="M10 30H230"></path>
+<circle cx="24" cy="20" r="3"></circle>
+<circle cx="36" cy="20" r="3"></circle>
+<circle cx="48" cy="20" r="3"></circle>
+<rect x="28" y="86" width="56" height="38"></rect>
+<rect x="92" y="86" width="56" height="38"></rect>
+<rect x="156" y="86" width="56" height="38"></rect>
+</g>
+<g class="art-globe">
+<circle cx="186" cy="58" r="19"></circle>
+<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
+<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
+</g>
+<path class="art-bars" d="M28 52H140M28 64H110"></path>
+</svg>
+</template>
+<template data-if="cur.isForecast">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
+<stop class="art-shade-start" offset="0"></stop>
+<stop class="art-shade-end" offset="1"></stop>
+</linearGradient>
+</defs>
+<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
+<path class="art-axis" d="M10 135H230"></path>
+<path class="art-now" d="M150 14V135"></path>
+<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
+<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
+<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
+<polyline class="art-forecast" points="150,78 230,66"></polyline>
+<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
+</svg>
+</template>
+<template data-if="cur.isBacktest">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
+<path class="art-axis" d="M6 138H234"></path>
+<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
+<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
+<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
+<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
+<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
+</svg>
+</template>
+</div>
+<p class="w95-about__title">{{cur.title}}</p>
+<p>{{cur.summary}}</p>
+<p class="w95-about__meta">Built with: {{cur.stack}}</p>
+<p class="w95-about__meta">Role: {{cur.role}}</p>
+<p class="w95-about__meta">When: {{cur.when}}</p>
+<div class="w95-about__buttons">
+<a class="w95-btn" href="{{cur.href}}">Read the case study</a>
+<button class="w95-btn" type="button" data-on-click="next">Next &gt;</button>
+</div>
+</div>
+</section>
+
+<section class="{{cvCls}}" data-win="paper" data-window="{{cvState}}" data-style="{{cvPlace}}" aria-label="CV" data-on-pointerdown="cvFront">
+<div class="w95-win__bar" data-on-pointerdown="cvDrag"><svg class="w95-win__icon" aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg><p class="w95-win__title">cv.doc - Document</p><span class="w95-win__buttons">
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Minimise" data-on-click="minimiseCv"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 8h6v1H2z"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Maximise" data-on-click="maximiseCv"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1 1h8v8H1zM2 3v5h6V3z" fill-rule="evenodd"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Close" data-on-click="closeCv"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2l6 6M8 2l-6 6" stroke="#000" stroke-width="1.6"></path></svg></button>
+</span></div>
+<p class="w95-menu" aria-hidden="true"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>I</u>nsert</span><span>F<u>o</u>rmat</span><span><u>H</u>elp</span></p>
+<p class="w95-ruler" aria-hidden="true"></p>
+<div class="w95-doc">
+<article class="paper">
+<h2 class="paper__name">{{cv.name}}</h2>
+<p class="paper__line">{{cv.role}} · dylanfitzsimmons.dev</p>
+<h3>Profile</h3>
+<p>{{cv.profile}}</p>
+<h3>Education</h3>
+<template data-each="cv.education" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p></template>
+<h3>Experience</h3>
+<template data-each="cv.experience" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p><p>{{item.summary}}</p></template>
+<h3>Projects</h3>
+<ul><template data-each="cv.projects" data-as="item"><li><b>{{item.title}}</b>: {{item.stack}}</li></template></ul>
+<h3>Languages</h3>
+<p>{{cv.skills}}</p>
+</article>
+</div>
+<p class="w95-status"><span>Page 1 of 1</span><span><a href="{{cvUrl}}">Open the full CV</a></span></p>
+</section>
+
+<section class="{{contactCls}}" data-win="letter" data-window="{{contactState}}" data-style="{{contactPlace}}" aria-label="New message" data-on-pointerdown="contactFront">
+<div class="w95-win__bar" data-on-pointerdown="contactDrag"><svg class="w95-win__icon" aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg><p class="w95-win__title">New Message</p><span class="w95-win__buttons">
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Minimise" data-on-click="minimiseContact"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 8h6v1H2z"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Maximise" data-on-click="maximiseContact"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1 1h8v8H1zM2 3v5h6V3z" fill-rule="evenodd"></path></svg></button>
+<button class="w95-btn w95-btn--cap" type="button" aria-label="Close" data-on-click="closeContact"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2l6 6M8 2l-6 6" stroke="#000" stroke-width="1.6"></path></svg></button>
+</span></div>
+<p class="w95-menu" aria-hidden="true"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>H</u>elp</span></p>
+<div class="mail mail--w95" data-mail data-busy="{{mailBusy}}">
+<p class="mail__row"><span>To:</span><span class="mail__fixed">Dylan Fitzsimmons</span></p>
+<label class="mail__row"><span>From:</span><input type="email" placeholder="your email address" autocomplete="off" spellcheck="false"></label>
+<label class="mail__body"><span class="visually-hidden">Message</span><textarea placeholder="Type a message" autocomplete="off"></textarea></label>
+<p class="mail__foot"><span class="mail__note" role="status">{{mailNote}}</span><button class="w95-btn" type="button" data-on-click="sendMail">Send</button></p>
+</div>
+<p class="w95-status"><span>{{mailStatus}}</span><span>Offline</span></p>
+</section>
+
+<template data-if="mailSending"><div class="w95-win w95-dialog is-active" role="status">
+<div class="w95-win__bar"><p class="w95-win__title">Sending</p></div>
+<div class="w95-dialog__body"><p>Dialling the Internet...</p><span class="w95-progress" aria-hidden="true"><i></i></span></div>
+</div></template>
+<template data-if="mailFailed"><div class="w95-win w95-dialog is-active" role="alertdialog" aria-label="Message not sent">
+<div class="w95-win__bar"><p class="w95-win__title">Mail</p><span class="w95-win__buttons"><button class="w95-btn w95-btn--cap" type="button" aria-label="Close" data-on-click="closeMail"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2l6 6M8 2l-6 6" stroke="#000" stroke-width="1.6"></path></svg></button></span></div>
+<div class="w95-dialog__body w95-dialog__body--error"><svg class="w95-dialog__mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><circle cx="16" cy="16" r="14" fill="#ff0000" stroke="#000"></circle><path d="M10 10l12 12M22 10 10 22" stroke="#fff" stroke-width="4"></path></svg><div>
+<p><b>Your message could not be sent.</b></p>
+<p>This computer is only a drawing and isn't connected to anything, so nothing you typed has left this page. To get in touch, use the contact page.</p>
+</div></div>
+<p class="w95-dialog__buttons"><a class="w95-btn" href="{{contactUrl}}">Contact page</a><button class="w95-btn" type="button" data-on-click="closeMail">OK</button></p>
+</div></template>
+
+<div class="w95-taskbar">
+<button class="w95-btn w95-start" type="button" aria-expanded="{{startExpanded}}" data-on-click="toggleStart"><span class="w95-start__mark" aria-hidden="true">df</span>Start</button>
+<template data-if="filesInBar"><button class="w95-btn w95-task" type="button" data-task="explorer" aria-pressed="{{explorerShown}}" data-on-click="taskExplorer"><svg aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg>Projects</button></template>
+<template data-if="aboutInBar"><button class="w95-btn w95-task" type="button" data-task="about" aria-pressed="{{aboutShown}}" data-on-click="taskAbout"><svg aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg>{{cur.title}}</button></template>
+<template data-if="cvInBar"><button class="w95-btn w95-task" type="button" data-task="paper" aria-pressed="{{cvShown}}" data-on-click="taskCv"><svg aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg>cv.doc</button></template>
+<template data-if="contactInBar"><button class="w95-btn w95-task" type="button" data-task="letter" aria-pressed="{{contactShown}}" data-on-click="taskContact"><svg aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg>New Message</button></template>
+<span class="w95-tray"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 6h3l4-3v10l-4-3H2z" fill="#000"></path><path d="M11 5.5a3.5 3.5 0 0 1 0 5" fill="none" stroke="#000"></path></svg>{{clock}}</span>
+</div>
+
+<div class="w95-startmenu" data-open="{{startOpen}}">
+<p class="w95-startmenu__band" aria-hidden="true"><b>DF</b>95</p>
+<ul role="list">
+<li><a href="{{homeUrl}}"><svg aria-hidden="true" focusable="false"><use href="#ico-home"></use></svg>Home</a></li>
+<li><button type="button" data-on-click="openFiles"><svg aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg>Projects</button></li>
+<li><a href="{{cvUrl}}"><svg aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg>CV</a></li>
+<li><a href="{{contactUrl}}"><svg aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg>Contact</a></li>
+<li class="w95-startmenu__rule"><button type="button" data-on-click="startSaver"><svg aria-hidden="true" focusable="false"><use href="#ico-saver"></use></svg>Screen saver</button></li>
+<li><button type="button" data-on-click="shutDown"><svg aria-hidden="true" focusable="false"><use href="#ico-off"></use></svg>Shut Down...</button></li>
+</ul>
+</div>
+<p class="w95-tip" data-shown="{{balloonShown}}" role="status">{{balloon}}</p>
+<template data-if="stripOn"><p class="w95-strip" data-way="{{stripWay}}" data-style="{{stripStyle}}" aria-hidden="true">{{stripTitle}}</p></template>
+<template data-if="saverOn"><canvas class="w95-saver" data-ref="saverRef" aria-hidden="true"></canvas></template>
+<template data-if="safeOn"><p class="w95-safe" role="status">You can now switch off<br>your computer.</p></template>
+</div>
+</div>
+<div class="boot boot--w95" data-shown="{{bootShown}}" aria-hidden="true"><p class="boot95__name">df<b>95</b></p><span class="boot95__bar"><i></i></span><p class="boot95__note">Starting up...</p></div>
+</div>
+</div>
+<div class="osd-menu" data-open="{{menuOpen}}">
+<p class="osd-menu__title">{{menuTitle}}</p>
+<template data-each="menuRows" data-as="row"><div class="{{row.cls}}" data-hidden="row.hidden"><span>{{row.label}}</span><span class="osd-menu__track" data-on-pointerdown="row.grab"><i data-style="{{row.bar}}"></i></span><span class="osd-menu__value">{{row.value}}</span></div></template>
+<template data-if="menuFull"><button class="osd-menu__exit" type="button" data-on-click="closeMenu">Exit</button></template>
+</div>
+<span class="pm__glare" aria-hidden="true"><img src="{{images.crtGlare}}" alt="" draggable="false"></span>
+</div>
+<button class="pm__button pm__button--brightness" type="button" aria-label="Brightness" data-on-click="openBrightness"></button><button class="pm__button pm__button--contrast" type="button" aria-label="Contrast" data-on-click="openContrast"></button><button class="pm__button pm__button--menu" type="button" aria-label="Monitor menu" data-on-click="openMenu"></button><button class="pm__button pm__button--round pm__button--power" type="button" aria-label="{{powerLabel}}" data-on-click="togglePower"></button><span class="pm__led" aria-hidden="true"></span>
+</div>
+<svg class="pm__stand" viewBox="0 0 1000 250" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="stand-a" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1c4a4a"></stop><stop offset="1" stop-color="#0b1c26"></stop></linearGradient>
+<linearGradient id="stand-b" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0d2530"></stop><stop offset="0.5" stop-color="#2a6b63"></stop><stop offset="1" stop-color="#0d2530"></stop></linearGradient>
+<radialGradient id="stand-glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#8df2bd" stop-opacity="0.5"></stop><stop offset="1" stop-color="#8df2bd" stop-opacity="0"></stop></radialGradient>
+</defs>
+<ellipse class="pm__stand-glow" cx="500" cy="226" rx="470" ry="26" fill="url(#stand-glow)"></ellipse>
+<path d="M352 0h296l34 96H318z" fill="url(#stand-b)"></path>
+<path class="pm__stand-line" d="M410 22h180M400 44h200M390 66h220"></path>
+<path d="M300 96h400c20 0 30 8 44 22l96 62H160l96-62c14-14 24-22 44-22z" fill="url(#stand-a)"></path>
+<path class="pm__stand-line" d="M330 122h340M286 150h428"></path>
+<path d="M150 180h700a16 16 0 0 1 16 16v18a14 14 0 0 1-14 14H148a14 14 0 0 1-14-14v-18a16 16 0 0 1 16-16z" fill="url(#stand-b)"></path>
+<path class="pm__stand-accent" d="M190 204h620"></path>
+<circle class="pm__stand-dot" cx="500" cy="204" r="6"></circle>
+</svg>
+</div>
+</template>
+<template data-if="isGreen">
+<div class="pm pm--term pm--tube" data-power="{{power}}" data-signal="{{signal}}" data-style="{{levels}}">
+<div class="pm__body">
+<img class="pm__photo" src="{{images.term}}" alt="" width="1126" height="1066" draggable="false">
+<div class="pm__screen tube">
+<div class="pm__picture">
+<div class="pm__level">
+<div class="pm__jolt">
+<section class="commander commander--crt" aria-label="Project browser">
+<p class="commander__titlebar" aria-hidden="true"><span>Project Manager 1.0</span><span>{{clock}}</span></p>
+<div class="commander__panes">
+<div class="commander__pane">
+<p class="commander__pane-title">~/projects</p>
+<p class="commander__cols" aria-hidden="true"><span>Name</span><span>Stack</span><span>Year</span><span>State</span></p>
+<ol class="commander__list" role="list">
+<li class="commander__row"><a class="commander__link" href="{{homeUrl}}"><span class="commander__name">..</span><span class="commander__stack">&lt;up-dir&gt;</span><span class="commander__year"></span><span class="commander__status"></span></a></li>
+<template data-each="rows" data-as="row"><li class="{{row.cls}}"><a class="commander__link" href="{{row.href}}" data-on-click="row.pick"><span class="commander__name">{{row.slug}}</span><span class="commander__stack">{{row.lead}}</span><span class="commander__year">{{row.year}}</span><span class="commander__status">{{row.code}}</span></a></li></template>
+</ol>
+<dl class="commander__info">
+<div><dt>projects</dt><dd>{{count}}</dd></div>
+<div><dt>in progress</dt><dd>{{liveCount}}</dd></div>
+<div><dt>tools used</dt><dd>{{toolCount}}</dd></div>
+<div><dt>newest</dt><dd>{{newest}}</dd></div>
+</dl>
+</div>
+<div class="commander__pane commander__readme">
+<p class="commander__pane-title">{{cur.slug}}/readme.txt</p>
+<div class="commander__preview screen screen--{{cur.screen}} screen--live">
+<canvas class="screen__canvas live" data-ref="artRef" aria-hidden="true"></canvas>
+<template data-if="cur.isSite">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<g class="art-outline">
+<rect x="10" y="10" width="220" height="130" rx="6"></rect>
+<path d="M10 30H230"></path>
+<circle cx="24" cy="20" r="3"></circle>
+<circle cx="36" cy="20" r="3"></circle>
+<circle cx="48" cy="20" r="3"></circle>
+<rect x="28" y="86" width="56" height="38"></rect>
+<rect x="92" y="86" width="56" height="38"></rect>
+<rect x="156" y="86" width="56" height="38"></rect>
+</g>
+<g class="art-globe">
+<circle cx="186" cy="58" r="19"></circle>
+<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
+<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
+</g>
+<path class="art-bars" d="M28 52H140M28 64H110"></path>
+</svg>
+</template>
+<template data-if="cur.isForecast">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
+<stop class="art-shade-start" offset="0"></stop>
+<stop class="art-shade-end" offset="1"></stop>
+</linearGradient>
+</defs>
+<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
+<path class="art-axis" d="M10 135H230"></path>
+<path class="art-now" d="M150 14V135"></path>
+<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
+<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
+<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
+<polyline class="art-forecast" points="150,78 230,66"></polyline>
+<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
+</svg>
+</template>
+<template data-if="cur.isBacktest">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
+<path class="art-axis" d="M6 138H234"></path>
+<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
+<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
+<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
+<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
+<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
+</svg>
+</template>
+</div>
+<div class="commander__text" tabindex="0" role="group" aria-label="About this project">
+<p>{{cur.title}}</p>
+<p class="commander__dim">{{cur.summary}}</p>
+<p><span class="commander__dim">built with:</span> {{cur.stack}}</p>
+<p><span class="commander__dim">role:</span> {{cur.role}}</p>
+<p><span class="commander__dim">when:</span> {{cur.when}}</p>
+</div>
+</div>
+</div>
+<p class="commander__prompt" aria-hidden="true">C:\PROJECTS&gt; <span class="commander__cursor"></span></p>
+<div class="commander__keys">
+<a class="key-btn" href="{{cur.href}}"><span>F3</span><span class="key-btn__label">read</span></a>
+<a class="key-btn" href="#"><span>F4</span><span class="key-btn__label">code</span></a>
+<a class="key-btn" href="{{homeUrl}}"><span>F10</span><span class="key-btn__label">home</span></a>
+</div>
+</section>
+</div>
+<div class="boot boot--crt" data-shown="{{bootShown}}" aria-hidden="true"><template data-each="bootLines" data-as="line"><p class="{{line.cls}}">{{line.text}}</p></template><span class="boot__cursor"></span></div>
+</div>
+</div>
+<span class="pm__roll" aria-hidden="true"></span>
+<span class="pm__glare" aria-hidden="true"><img src="{{images.termGlare}}" alt="" draggable="false"></span>
+</div>
+<button class="pm__button pm__button--power" type="button" aria-label="{{powerLabel}}" data-on-click="togglePower"></button><button class="pm__dial pm__dial--brightness" type="button" aria-label="Brightness: hold and drag" data-held="{{brightHeld}}" data-on-pointerdown="dialBrightness"><i data-style="{{brightTurn}}"></i></button><button class="pm__dial pm__dial--contrast" type="button" aria-label="Contrast: hold and drag" data-held="{{contrastHeld}}" data-on-pointerdown="dialContrast"><i data-style="{{contrastTurn}}"></i></button><span class="pm__led" aria-hidden="true"></span>
+</div>
+
+</div>
+</template>
+<template data-if="isGlass">
+<div class="pm pm--lcd " data-power="{{power}}" data-signal="{{signal}}" data-style="{{levels}}">
+<div class="pm__body">
+<img class="pm__photo" src="{{images.lcd}}" alt="" width="1357" height="871" draggable="false">
+<div class="pm__screen ">
+<div class="pm__picture">
+<div class="pm__level">
+<div class="pm__jolt">
+<div class="aero aero--aurora">
+<svg class="visually-hidden" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="g-roof" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9d5c"></stop><stop offset="1" stop-color="#c9431d"></stop></linearGradient>
+<linearGradient id="g-wall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fffaf0"></stop><stop offset="1" stop-color="#e3d6bd"></stop></linearGradient>
+<linearGradient id="g-door" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5aa9ef"></stop><stop offset="1" stop-color="#1c5fa8"></stop></linearGradient>
+<linearGradient id="g-folder-back" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f5c74a"></stop><stop offset="1" stop-color="#d79a1c"></stop></linearGradient>
+<linearGradient id="g-folder-front" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe9a3"></stop><stop offset="0.5" stop-color="#ffd463"></stop><stop offset="1" stop-color="#f0b33a"></stop></linearGradient>
+<linearGradient id="g-doc" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#dfe7ef"></stop></linearGradient>
+<linearGradient id="g-band" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2f7fd8"></stop><stop offset="1" stop-color="#55b6f5"></stop></linearGradient>
+<linearGradient id="g-env" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#cfe2f5"></stop></linearGradient>
+<linearGradient id="g-bin" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9fd8ff" stop-opacity="0.55"></stop><stop offset="0.5" stop-color="#ffffff" stop-opacity="0.7"></stop><stop offset="1" stop-color="#6fb6ea" stop-opacity="0.55"></stop></linearGradient>
+<linearGradient id="g-screen" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7fd0ff"></stop><stop offset="1" stop-color="#1d6fc1"></stop></linearGradient>
+<symbol id="ico-home" viewBox="0 0 48 48"><path d="M5 25 24 8l19 17" fill="url(#g-roof)" stroke="#8a2f12" stroke-width="1.5" stroke-linejoin="round"></path><path d="M10 23h28v19H10z" fill="url(#g-wall)" stroke="#9a8768"></path><path d="M20 30h8v12h-8z" fill="url(#g-door)"></path><path d="M13 27h5v5h-5zM30 27h5v5h-5z" fill="#c9ecff" stroke="#4a6a8a" stroke-width="0.8"></path><path d="M10 23h28" stroke="#fff" stroke-opacity="0.7"></path></symbol>
+<symbol id="ico-projects" viewBox="0 0 48 48"><path d="M4 11h14l4 4h21a1 1 0 0 1 1 1v24a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="url(#g-folder-back)"></path><path d="M9 13h30v20H9z" fill="#fff" stroke="#c9d6e2"></path><path d="M12 17h16M12 21h20M12 25h12" stroke="#9fb6cc" stroke-width="1.2"></path><path d="M4 21h40l-2 19a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="url(#g-folder-front)" stroke="#c8901f" stroke-width="0.8"></path><path d="M5 22h38" stroke="#fff" stroke-opacity="0.8"></path></symbol>
+<symbol id="ico-cv" viewBox="0 0 48 48"><path d="M11 4h19l9 9v31H11z" fill="url(#g-doc)" stroke="#8ea3b8"></path><path d="M30 4v9h9" fill="#cfdbe6" stroke="#8ea3b8"></path><path d="M14 16h13v4H14z" fill="url(#g-band)"></path><path d="M14 25h21M14 29h21M14 33h17M14 37h19" stroke="#a7b8c8" stroke-width="1.4"></path></symbol>
+<symbol id="ico-contact" viewBox="0 0 48 48"><path d="M5 12h38v26H5z" fill="url(#g-env)" stroke="#6f8fb0"></path><path d="m5 12 19 15 19-15" fill="none" stroke="#6f8fb0" stroke-width="1.5"></path><path d="m5 38 14-12M43 38 29 26" stroke="#9fb6cc"></path><circle cx="38" cy="14" r="6" fill="#ffd34d" stroke="#c99a1a"></circle></symbol>
+<symbol id="ico-code" viewBox="0 0 48 48"><path d="M11 4h19l9 9v31H11z" fill="url(#g-doc)" stroke="#8ea3b8"></path><path d="M30 4v9h9" fill="#cfdbe6" stroke="#8ea3b8"></path><path d="m20 22-5 5 5 5M28 22l5 5-5 5M26 20l-4 14" fill="none" stroke="#2f7fd8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path></symbol>
+<symbol id="ico-bin" viewBox="0 0 48 48"><path d="M10 12h28l-3 30a2 2 0 0 1-2 2H15a2 2 0 0 1-2-2z" fill="url(#g-bin)" stroke="#4a86b8"></path><path d="M8 10h32v4H8z" fill="#cfe9ff" stroke="#4a86b8"></path><path d="M18 18l1 21M24 18v21M30 18l-1 21" stroke="#4a86b8" stroke-opacity="0.6"></path></symbol>
+<symbol id="ico-desktop" viewBox="0 0 48 48"><path d="M5 8h38v26H5z" fill="url(#g-screen)" stroke="#123a66"></path><path d="M18 40h12M24 34v6" stroke="#cfd8e0" stroke-width="3"></path></symbol>
+<symbol id="ico-music" viewBox="0 0 48 48"><circle cx="24" cy="24" r="19" fill="url(#g-screen)" stroke="#123a66"></circle><path d="M20 15v15a4 4 0 1 1-2-3.4V15l12-3v13a4 4 0 1 1-2-3.4V12" fill="#fff" stroke="none"></path></symbol>
+</defs>
+</svg>
+<div class="aero__wallpaper" aria-hidden="true"><svg class="aurora" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><linearGradient id="au-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#062b4d"></stop><stop offset="0.45" stop-color="#0a5873"></stop><stop offset="0.75" stop-color="#0e7f87"></stop><stop offset="1" stop-color="#1c9c86"></stop></linearGradient><radialGradient id="au-glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#e6ff7a" stop-opacity="0.75"></stop><stop offset="0.45" stop-color="#9df06a" stop-opacity="0.3"></stop><stop offset="1" stop-color="#9df06a" stop-opacity="0"></stop></radialGradient><radialGradient id="au-glow2" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#8ff6ff" stop-opacity="0.35"></stop><stop offset="1" stop-color="#8ff6ff" stop-opacity="0"></stop></radialGradient><linearGradient id="au-strand" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f4ff9a" stop-opacity="0"></stop><stop offset="0.2" stop-color="#f4ff9a"></stop><stop offset="0.55" stop-color="#b6ffcf"></stop><stop offset="0.85" stop-color="#7fe8ff"></stop><stop offset="1" stop-color="#7fe8ff" stop-opacity="0"></stop></linearGradient><linearGradient id="au-strand2" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff" stop-opacity="0"></stop><stop offset="0.4" stop-color="#ffffff"></stop><stop offset="1" stop-color="#a6f2ff" stop-opacity="0"></stop></linearGradient><filter id="au-soft" x="-20%" y="-50%" width="140%" height="200%"><feGaussianBlur stdDeviation="22"></feGaussianBlur></filter><filter id="au-glowf" x="-10%" y="-50%" width="120%" height="200%"><feGaussianBlur stdDeviation="2.2"></feGaussianBlur></filter></defs><rect width="1600" height="1000" fill="url(#au-bg)"></rect><ellipse cx="240" cy="930" rx="760" ry="420" fill="url(#au-glow)"></ellipse><ellipse cx="980" cy="560" rx="760" ry="300" fill="url(#au-glow2)"></ellipse><g class="aurora__drift"><path d="M-120 960C380 690 980 860 1720 360" stroke="#d9ff8a" stroke-opacity="0.35" stroke-width="150" fill="none" filter="url(#au-soft)"></path><path d="M-120 1010C420 760 960 900 1720 480" stroke="#7ff0d2" stroke-opacity="0.3" stroke-width="90" fill="none" filter="url(#au-soft)"></path><g fill="none" filter="url(#au-glowf)"><path d="M-120 1010C380 720 980 860 1720 430" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.18"></path><path d="M-120 1008C380 723 980 843 1720 423" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.18"></path><path d="M-120 1006C380 725 980 825 1720 417" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.19"></path><path d="M-120 1004C380 726 980 809 1720 410" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.20"></path><path d="M-120 1002C380 727 980 792 1720 403" stroke="url(#au-strand)" stroke-width="1.4" stroke-opacity="0.22"></path><path d="M-120 1000C380 726 980 777 1720 397" stroke="url(#au-strand)" stroke-width="1.5" stroke-opacity="0.24"></path><path d="M-120 998C380 723 980 763 1720 390" stroke="url(#au-strand)" stroke-width="1.6" stroke-opacity="0.26"></path><path d="M-120 996C380 719 980 749 1720 383" stroke="url(#au-strand)" stroke-width="1.7" stroke-opacity="0.29"></path><path d="M-120 994C380 714 980 737 1720 377" stroke="url(#au-strand)" stroke-width="1.8" stroke-opacity="0.32"></path><path d="M-120 992C380 706 980 725 1720 370" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.35"></path><path d="M-120 990C380 697 980 715 1720 363" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.39"></path><path d="M-120 988C380 686 980 705 1720 357" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.42"></path><path d="M-120 986C380 674 980 697 1720 350" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.46"></path><path d="M-120 984C380 661 980 688 1720 343" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.49"></path><path d="M-120 982C380 647 980 681 1720 337" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.52"></path><path d="M-120 980C380 633 980 673 1720 330" stroke="url(#au-strand)" stroke-width="1.8" stroke-opacity="0.55"></path><path d="M-120 978C380 619 980 666 1720 323" stroke="url(#au-strand)" stroke-width="1.7" stroke-opacity="0.58"></path><path d="M-120 976C380 606 980 658 1720 317" stroke="url(#au-strand)" stroke-width="1.5" stroke-opacity="0.61"></path><path d="M-120 974C380 592 980 650 1720 310" stroke="url(#au-strand)" stroke-width="1.4" stroke-opacity="0.63"></path><path d="M-120 972C380 580 980 641 1720 303" stroke="url(#au-strand)" stroke-width="1.3" stroke-opacity="0.65"></path><path d="M-120 970C380 570 980 632 1720 297" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.66"></path><path d="M-120 968C380 561 980 621 1720 290" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.67"></path><path d="M-120 966C380 553 980 610 1720 283" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.68"></path><path d="M-120 964C380 547 980 598 1720 277" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.68"></path><path d="M-120 962C380 543 980 584 1720 270" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.67"></path><path d="M-120 960C380 541 980 570 1720 263" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.66"></path><path d="M-120 958C380 540 980 554 1720 257" stroke="url(#au-strand)" stroke-width="1.3" stroke-opacity="0.65"></path><path d="M-120 956C380 540 980 538 1720 250" stroke="url(#au-strand)" stroke-width="1.4" stroke-opacity="0.63"></path><path d="M-120 954C380 542 980 521 1720 243" stroke="url(#au-strand)" stroke-width="1.5" stroke-opacity="0.61"></path><path d="M-120 952C380 544 980 504 1720 237" stroke="url(#au-strand)" stroke-width="1.7" stroke-opacity="0.58"></path><path d="M-120 950C380 547 980 487 1720 230" stroke="url(#au-strand)" stroke-width="1.8" stroke-opacity="0.56"></path><path d="M-120 948C380 549 980 469 1720 223" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.52"></path><path d="M-120 946C380 551 980 452 1720 217" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.49"></path><path d="M-120 944C380 553 980 435 1720 210" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.46"></path><path d="M-120 942C380 553 980 419 1720 203" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.42"></path><path d="M-120 940C380 552 980 404 1720 197" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.39"></path><path d="M-120 938C380 550 980 389 1720 190" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.35"></path><path d="M-120 936C380 546 980 376 1720 183" stroke="url(#au-strand)" stroke-width="1.8" stroke-opacity="0.32"></path><path d="M-120 934C380 540 980 363 1720 177" stroke="url(#au-strand)" stroke-width="1.7" stroke-opacity="0.29"></path><path d="M-120 932C380 533 980 352 1720 170" stroke="url(#au-strand)" stroke-width="1.6" stroke-opacity="0.26"></path><path d="M-120 930C380 524 980 341 1720 163" stroke="url(#au-strand)" stroke-width="1.5" stroke-opacity="0.24"></path><path d="M-120 928C380 513 980 332 1720 157" stroke="url(#au-strand)" stroke-width="1.4" stroke-opacity="0.22"></path><path d="M-120 926C380 501 980 323 1720 150" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.20"></path><path d="M-120 924C380 488 980 315 1720 143" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.19"></path><path d="M-120 922C380 474 980 307 1720 137" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.18"></path><path d="M-120 920C380 460 980 300 1720 130" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.18"></path><path d="M-100 880C520 980 1100 600 1720 650" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.12"></path><path d="M-100 876C520 967 1100 585 1720 628" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.18"></path><path d="M-100 873C520 954 1100 569 1720 605" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.23"></path><path d="M-100 869C520 941 1100 554 1720 583" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.28"></path><path d="M-100 866C520 928 1100 539 1720 561" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.32"></path><path d="M-100 862C520 915 1100 524 1720 538" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.36"></path><path d="M-100 859C520 902 1100 508 1720 516" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.39"></path><path d="M-100 855C520 889 1100 493 1720 494" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.41"></path><path d="M-100 852C520 876 1100 478 1720 471" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.42"></path><path d="M-100 848C520 864 1100 462 1720 449" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.42"></path><path d="M-100 845C520 851 1100 447 1720 426" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.41"></path><path d="M-100 841C520 838 1100 432 1720 404" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.39"></path><path d="M-100 838C520 825 1100 416 1720 382" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.36"></path><path d="M-100 834C520 812 1100 401 1720 359" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.32"></path><path d="M-100 831C520 799 1100 386 1720 337" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.28"></path><path d="M-100 827C520 786 1100 371 1720 315" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.23"></path><path d="M-100 824C520 773 1100 355 1720 292" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.18"></path><path d="M-100 820C520 760 1100 340 1720 270" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.12"></path></g><g fill="none"><path d="M-120 1010C380 720 980 860 1720 430" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.18"></path><path d="M-120 1004C380 726 980 809 1720 410" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.20"></path><path d="M-120 998C380 723 980 763 1720 390" stroke="url(#au-strand)" stroke-width="1.6" stroke-opacity="0.26"></path><path d="M-120 992C380 706 980 725 1720 370" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.35"></path><path d="M-120 986C380 674 980 697 1720 350" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.46"></path><path d="M-120 980C380 633 980 673 1720 330" stroke="url(#au-strand)" stroke-width="1.8" stroke-opacity="0.55"></path><path d="M-120 974C380 592 980 650 1720 310" stroke="url(#au-strand)" stroke-width="1.4" stroke-opacity="0.63"></path><path d="M-120 968C380 561 980 621 1720 290" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.67"></path><path d="M-120 962C380 543 980 584 1720 270" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.67"></path><path d="M-120 956C380 540 980 538 1720 250" stroke="url(#au-strand)" stroke-width="1.4" stroke-opacity="0.63"></path><path d="M-120 950C380 547 980 487 1720 230" stroke="url(#au-strand)" stroke-width="1.8" stroke-opacity="0.56"></path><path d="M-120 944C380 553 980 435 1720 210" stroke="url(#au-strand)" stroke-width="2.0" stroke-opacity="0.46"></path><path d="M-120 938C380 550 980 389 1720 190" stroke="url(#au-strand)" stroke-width="1.9" stroke-opacity="0.35"></path><path d="M-120 932C380 533 980 352 1720 170" stroke="url(#au-strand)" stroke-width="1.6" stroke-opacity="0.26"></path><path d="M-120 926C380 501 980 323 1720 150" stroke="url(#au-strand)" stroke-width="1.2" stroke-opacity="0.20"></path><path d="M-120 920C380 460 980 300 1720 130" stroke="url(#au-strand)" stroke-width="1.1" stroke-opacity="0.18"></path><path d="M-100 873C520 954 1100 569 1720 605" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.23"></path><path d="M-100 862C520 915 1100 524 1720 538" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.36"></path><path d="M-100 852C520 876 1100 478 1720 471" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.42"></path><path d="M-100 841C520 838 1100 432 1720 404" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.39"></path><path d="M-100 831C520 799 1100 386 1720 337" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.28"></path><path d="M-100 820C520 760 1100 340 1720 270" stroke="url(#au-strand2)" stroke-width="1" stroke-opacity="0.12"></path></g></g></svg><span class="bubble bubble--1"></span><span class="bubble bubble--2"></span><span class="bubble bubble--4"></span><span class="bubble bubble--5"></span><span class="bubble bubble--6"></span></div>
+<template data-each="icons" data-as="icon"><a class="{{icon.cls}}" href="{{icon.href}}" draggable="false" data-style="{{icon.place}}" data-on-pointerdown="icon.drag" data-on-click="icon.press"><template data-if="icon.isHome"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-home"></use></svg></template><template data-if="icon.isProjects"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg></template><template data-if="icon.isCv"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg></template><template data-if="icon.isContact"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg></template><template data-if="icon.isCode"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-code"></use></svg></template><template data-if="icon.isBin"><svg class="desk-icon__art" aria-hidden="true" focusable="false"><use href="#ico-bin"></use></svg></template><span class="desk-icon__label">{{icon.label}}</span></a></template>
+
+<section class="glass explorer" data-win="explorer" data-moving="{{explorerMoving}}" data-window="{{explorerState}}" data-style="{{explorerPlace}}" aria-label="Projects" data-on-pointerdown="explorerFront">
+<div class="glass__bar" data-on-pointerdown="explorerDrag">
+<span class="glass__icon" aria-hidden="true"></span>
+<p class="glass__title">Projects</p>
+<div class="glass__buttons">
+<button class="glass-btn" type="button" aria-label="Minimise" data-on-click="minimiseExplorer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 7.5h6"></path></svg></button>
+<button class="glass-btn" type="button" aria-label="Maximise" data-on-click="maximiseExplorer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2.5h6v5H2z"></path></svg></button>
+<button class="glass-btn glass-btn--close" type="button" aria-label="Close" data-on-click="closeExplorer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5"></path></svg></button>
+</div>
+</div>
+<div class="glass__nav">
+<button class="orb-btn" type="button" aria-label="Back" disabled><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"></path></svg></button>
+<button class="orb-btn" type="button" aria-label="Forward" disabled><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5"></path></svg></button>
+<p class="address"><span>Dylan</span><span class="address__sep">›</span><span>Projects</span></p>
+<label class="search"><span class="visually-hidden">Search projects</span><input type="search" placeholder="Search" data-on-input="onSearch"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="4.2"></circle><path d="M10.2 10.2l3.6 3.6"></path></svg></label>
+</div>
+<div class="glass__body">
+<div class="commands">
+<a class="commands__item" href="{{cur.href}}">Open</a>
+<a class="commands__item" href="#">View the code</a>
+</div>
+<div class="explorer__main">
+<nav class="places" aria-label="Favourite links">
+<p class="places__title">Favourite links</p>
+<a class="places__link" href="{{homeUrl}}"><i aria-hidden="true"></i>Home</a>
+<a class="places__link" href="#" aria-current="page"><i aria-hidden="true"></i>Projects</a>
+<a class="places__link" href="#"><i aria-hidden="true"></i>CV</a>
+<a class="places__link" href="#"><i aria-hidden="true"></i>Contact</a>
+</nav>
+<div class="files">
+<ul class="tiles" role="list">
+<template data-each="rows" data-as="row"><li class="{{row.cls}}" data-hidden="row.hidden"><a class="tile" href="{{row.href}}" data-on-click="row.pick"><span class="tile__thumb screen screen--{{row.screen}}"><template data-if="row.isSite">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<g class="art-outline">
+<rect x="10" y="10" width="220" height="130" rx="6"></rect>
+<path d="M10 30H230"></path>
+<circle cx="24" cy="20" r="3"></circle>
+<circle cx="36" cy="20" r="3"></circle>
+<circle cx="48" cy="20" r="3"></circle>
+<rect x="28" y="86" width="56" height="38"></rect>
+<rect x="92" y="86" width="56" height="38"></rect>
+<rect x="156" y="86" width="56" height="38"></rect>
+</g>
+<g class="art-globe">
+<circle cx="186" cy="58" r="19"></circle>
+<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
+<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
+</g>
+<path class="art-bars" d="M28 52H140M28 64H110"></path>
+</svg>
+</template>
+<template data-if="row.isForecast">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
+<stop class="art-shade-start" offset="0"></stop>
+<stop class="art-shade-end" offset="1"></stop>
+</linearGradient>
+</defs>
+<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
+<path class="art-axis" d="M10 135H230"></path>
+<path class="art-now" d="M150 14V135"></path>
+<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
+<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
+<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
+<polyline class="art-forecast" points="150,78 230,66"></polyline>
+<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
+</svg>
+</template>
+<template data-if="row.isBacktest">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
+<path class="art-axis" d="M6 138H234"></path>
+<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
+<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
+<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
+<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
+<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
+</svg>
+</template></span><span class="tile__name">{{row.title}}</span><span class="tile__meta">{{row.status}}</span></a></li></template>
+</ul>
+<template data-if="noMatches"><p class="files__empty">No projects match your search.</p></template>
+</div>
+</div>
+<div class="details">
+<div class="details__thumb screen screen--{{cur.screen}} screen--live">
+<canvas class="screen__canvas live" data-ref="thumbRef" aria-hidden="true"></canvas>
+<template data-if="cur.isSite">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<g class="art-outline">
+<rect x="10" y="10" width="220" height="130" rx="6"></rect>
+<path d="M10 30H230"></path>
+<circle cx="24" cy="20" r="3"></circle>
+<circle cx="36" cy="20" r="3"></circle>
+<circle cx="48" cy="20" r="3"></circle>
+<rect x="28" y="86" width="56" height="38"></rect>
+<rect x="92" y="86" width="56" height="38"></rect>
+<rect x="156" y="86" width="56" height="38"></rect>
+</g>
+<g class="art-globe">
+<circle cx="186" cy="58" r="19"></circle>
+<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
+<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
+</g>
+<path class="art-bars" d="M28 52H140M28 64H110"></path>
+</svg>
+</template>
+<template data-if="cur.isForecast">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
+<stop class="art-shade-start" offset="0"></stop>
+<stop class="art-shade-end" offset="1"></stop>
+</linearGradient>
+</defs>
+<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
+<path class="art-axis" d="M10 135H230"></path>
+<path class="art-now" d="M150 14V135"></path>
+<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
+<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
+<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
+<polyline class="art-forecast" points="150,78 230,66"></polyline>
+<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
+</svg>
+</template>
+<template data-if="cur.isBacktest">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
+<path class="art-axis" d="M6 138H234"></path>
+<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
+<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
+<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
+<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
+<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
+</svg>
+</template>
+</div>
+<div class="details__text">
+<p class="details__title">{{cur.title}}</p>
+<p class="details__summary">{{cur.summary}}</p>
+<p class="details__meta">{{cur.stack}} · {{cur.when}}</p>
+<a class="aero-button" href="{{cur.href}}">Read the case study</a>
+</div>
+</div>
+</div>
+</section>
+
+<section class="glass glass--dark viewer" data-win="viewer" data-moving="{{viewerMoving}}" data-window="{{viewerState}}" data-style="{{viewerPlace}}" aria-label="Preview" data-on-pointerdown="viewerFront">
+<div class="glass__bar" data-on-pointerdown="viewerDrag">
+<span class="glass__icon glass__icon--media" aria-hidden="true"></span>
+<p class="glass__title">{{cur.title}} – preview</p>
+<div class="glass__buttons">
+<button class="glass-btn" type="button" aria-label="Minimise" data-on-click="minimiseViewer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 7.5h6"></path></svg></button>
+<button class="glass-btn" type="button" aria-label="Maximise" data-on-click="maximiseViewer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2.5h6v5H2z"></path></svg></button>
+<button class="glass-btn glass-btn--close" type="button" aria-label="Close" data-on-click="closeViewer"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5"></path></svg></button>
+</div>
+</div>
+<div class="glass__body viewer__body">
+<div class="viewer__screen screen screen--{{cur.screen}} screen--live">
+<canvas class="screen__canvas live" data-ref="artRef" aria-hidden="true"></canvas>
+<template data-if="cur.isSite">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<g class="art-outline">
+<rect x="10" y="10" width="220" height="130" rx="6"></rect>
+<path d="M10 30H230"></path>
+<circle cx="24" cy="20" r="3"></circle>
+<circle cx="36" cy="20" r="3"></circle>
+<circle cx="48" cy="20" r="3"></circle>
+<rect x="28" y="86" width="56" height="38"></rect>
+<rect x="92" y="86" width="56" height="38"></rect>
+<rect x="156" y="86" width="56" height="38"></rect>
+</g>
+<g class="art-globe">
+<circle cx="186" cy="58" r="19"></circle>
+<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
+<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
+</g>
+<path class="art-bars" d="M28 52H140M28 64H110"></path>
+</svg>
+</template>
+<template data-if="cur.isForecast">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
+<stop class="art-shade-start" offset="0"></stop>
+<stop class="art-shade-end" offset="1"></stop>
+</linearGradient>
+</defs>
+<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
+<path class="art-axis" d="M10 135H230"></path>
+<path class="art-now" d="M150 14V135"></path>
+<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
+<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
+<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
+<polyline class="art-forecast" points="150,78 230,66"></polyline>
+<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
+</svg>
+</template>
+<template data-if="cur.isBacktest">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
+<path class="art-axis" d="M6 138H234"></path>
+<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
+<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
+<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
+<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
+<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
+</svg>
+</template>
+</div>
+<div class="viewer__controls">
+<div class="viewer__buttons">
+<button class="orb-btn" type="button" aria-label="Previous project" data-on-click="prev"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M10 3 5 8l5 5"></path></svg></button>
+<a class="orb-btn viewer__play" href="{{cur.href}}" aria-label="Read the case study"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3.5v9l7-4.5z"></path></svg></a>
+<button class="orb-btn" type="button" aria-label="Next project" data-on-click="next"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M6 3l5 5-5 5"></path></svg></button>
+</div>
+</div>
+</div>
+</section>
+
+<section class="glass docwin" data-win="paper" data-moving="{{cvMoving}}" data-window="{{cvState}}" data-style="{{cvPlace}}" aria-label="CV" data-on-pointerdown="cvFront">
+<div class="glass__bar" data-on-pointerdown="cvDrag">
+<span class="glass__icon glass__icon--doc" aria-hidden="true"></span>
+<p class="glass__title">CV – Document</p>
+<div class="glass__buttons">
+<button class="glass-btn" type="button" aria-label="Minimise" data-on-click="minimiseCv"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 7.5h6"></path></svg></button>
+<button class="glass-btn" type="button" aria-label="Maximise" data-on-click="maximiseCv"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2.5h6v5H2z"></path></svg></button>
+<button class="glass-btn glass-btn--close" type="button" aria-label="Close" data-on-click="closeCv"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5"></path></svg></button>
+</div>
+</div>
+<div class="glass__body docwin__body">
+<p class="commands"><a class="commands__item" href="{{cvUrl}}">Open the full CV</a><span class="commands__item" aria-hidden="true">Page 1 of 1</span></p>
+<div class="docwin__desk">
+<article class="paper">
+<h2 class="paper__name">{{cv.name}}</h2>
+<p class="paper__line">{{cv.role}} · dylanfitzsimmons.dev</p>
+<h3>Profile</h3>
+<p>{{cv.profile}}</p>
+<h3>Education</h3>
+<template data-each="cv.education" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p></template>
+<h3>Experience</h3>
+<template data-each="cv.experience" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p><p>{{item.summary}}</p></template>
+<h3>Projects</h3>
+<ul><template data-each="cv.projects" data-as="item"><li><b>{{item.title}}</b>: {{item.stack}}</li></template></ul>
+<h3>Languages</h3>
+<p>{{cv.skills}}</p>
+</article>
+</div>
+</div>
+</section>
+
+<section class="glass mailwin" data-win="letter" data-moving="{{contactMoving}}" data-window="{{contactState}}" data-style="{{contactPlace}}" aria-label="New message" data-on-pointerdown="contactFront">
+<div class="glass__bar" data-on-pointerdown="contactDrag">
+<span class="glass__icon glass__icon--mail" aria-hidden="true"></span>
+<p class="glass__title">New message</p>
+<div class="glass__buttons">
+<button class="glass-btn" type="button" aria-label="Minimise" data-on-click="minimiseContact"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 7.5h6"></path></svg></button>
+<button class="glass-btn" type="button" aria-label="Maximise" data-on-click="maximiseContact"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2 2.5h6v5H2z"></path></svg></button>
+<button class="glass-btn glass-btn--close" type="button" aria-label="Close" data-on-click="closeContact"><svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M2.5 2.5l5 5M7.5 2.5l-5 5"></path></svg></button>
+</div>
+</div>
+<div class="glass__body">
+<div class="mail mail--aero" data-mail data-busy="{{mailBusy}}">
+<p class="mail__row"><span>To:</span><span class="mail__fixed">Dylan Fitzsimmons</span></p>
+<label class="mail__row"><span>From:</span><input type="email" placeholder="your email address" autocomplete="off" spellcheck="false"></label>
+<label class="mail__body"><span class="visually-hidden">Message</span><textarea placeholder="Type a message" autocomplete="off"></textarea></label>
+<p class="mail__foot"><span class="mail__note" role="status">{{mailNote}}</span><span class="mail__offline">Working offline</span><button class="aero-btn" type="button" data-on-click="sendMail">Send</button></p>
+</div>
+</div>
+</section>
+
+<template data-if="mailSending"><div class="glass aero-dialog" role="status">
+<div class="glass__bar"><p class="glass__title">Sending</p></div>
+<div class="glass__body aero-dialog__body"><p>Connecting...</p><span class="aero-progress" aria-hidden="true"><i></i></span></div>
+</div></template>
+<template data-if="mailFailed"><div class="glass aero-dialog" role="alertdialog" aria-label="Message not sent">
+<div class="glass__bar"><p class="glass__title">Mail</p></div>
+<div class="glass__body aero-dialog__body">
+<div class="aero-dialog__text"><span class="aero-dialog__mark" aria-hidden="true">!</span><div>
+<p><b>Your message could not be sent.</b></p>
+<p>This computer is only a drawing and isn't connected to anything, so nothing you typed has left this page. To get in touch, use the contact page.</p>
+</div></div>
+<p class="aero-dialog__buttons"><a class="aero-btn" href="{{contactUrl}}">Contact page</a><button class="aero-btn" type="button" data-on-click="closeMail">OK</button></p>
+</div>
+</div></template>
+
+<section class="media" data-style="{{mediaPlace}}" aria-label="Music player" data-on-pointerdown="mediaDrag">
+<div class="media__inner">
+<button class="orb-btn media__play" type="button" aria-label="{{playLabel}}" aria-pressed="{{playing}}" data-on-click="togglePlay"><template data-if="isPlaying"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 4v8M10.5 4v8"></path></svg></template><template data-if="isPaused"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5.5 3.5v9l7-4.5z"></path></svg></template></button>
+<p class="media__title">aero-afternoon.mp3</p>
+<span class="media__track" aria-hidden="true"><span data-style="{{playedPercent}}"></span></span>
+<p class="media__time"><span>{{playedText}}</span><span>320 kbps</span></p>
+<svg class="media__speaker" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 6h2.5l3.5-3v10l-3.5-3H2.5z"></path><path d="M11 5.5a3.5 3.5 0 0 1 0 5M12.8 3.6a6 6 0 0 1 0 8.8"></path></svg>
+</div>
+</section>
+
+<aside class="sidebar" aria-label="Gadgets">
+<div class="gadget">
+<svg class="clock-face" viewBox="0 0 100 100" aria-hidden="true" focusable="false">
+<defs>
+<radialGradient id="clock-rim" cx="50%" cy="30%" r="70%"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#7f97ae"></stop></radialGradient>
+<radialGradient id="clock-dial" cx="50%" cy="28%" r="72%"><stop offset="0" stop-color="#ffffff"></stop><stop offset="1" stop-color="#d9e6f1"></stop></radialGradient>
+</defs>
+<circle class="clock-face__rim" cx="50" cy="50" r="48"></circle>
+<circle class="clock-face__dial" cx="50" cy="50" r="42"></circle>
+<path class="clock-face__ticks" d="M50 11v7M50 82v7M11 50h7M82 50h7"></path>
+<line class="clock-face__hand clock-face__hour" x1="50" y1="50" x2="50" y2="29" data-style="--angle: {{hourDeg}}deg"></line>
+<line class="clock-face__hand clock-face__minute" x1="50" y1="50" x2="50" y2="18" data-style="--angle: {{minuteDeg}}deg"></line>
+<line class="clock-face__hand clock-face__second" x1="50" y1="57" x2="50" y2="15" data-style="--angle: {{secondDeg}}deg"></line>
+<circle cx="50" cy="50" r="3" fill="#16263a"></circle>
+</svg>
+</div>
+<div class="gadget calendar-gadget"><p class="calendar-gadget__month">{{monthName}}</p><p class="calendar-gadget__day">{{dayNumber}}</p><p class="calendar-gadget__weekday">{{dayName}}</p></div>
+<div class="gadget">
+<div class="slideshow" aria-hidden="true"><template data-each="slides" data-as="slide"><div class="{{slide.cls}}"><span class="screen screen--{{slide.screen}}"><template data-if="slide.isSite">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<g class="art-outline">
+<rect x="10" y="10" width="220" height="130" rx="6"></rect>
+<path d="M10 30H230"></path>
+<circle cx="24" cy="20" r="3"></circle>
+<circle cx="36" cy="20" r="3"></circle>
+<circle cx="48" cy="20" r="3"></circle>
+<rect x="28" y="86" width="56" height="38"></rect>
+<rect x="92" y="86" width="56" height="38"></rect>
+<rect x="156" y="86" width="56" height="38"></rect>
+</g>
+<g class="art-globe">
+<circle cx="186" cy="58" r="19"></circle>
+<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
+<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
+</g>
+<path class="art-bars" d="M28 52H140M28 64H110"></path>
+</svg>
+</template>
+<template data-if="slide.isForecast">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
+<stop class="art-shade-start" offset="0"></stop>
+<stop class="art-shade-end" offset="1"></stop>
+</linearGradient>
+</defs>
+<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
+<path class="art-axis" d="M10 135H230"></path>
+<path class="art-now" d="M150 14V135"></path>
+<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
+<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
+<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
+<polyline class="art-forecast" points="150,78 230,66"></polyline>
+<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
+</svg>
+</template>
+<template data-if="slide.isBacktest">
+<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
+<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
+<path class="art-axis" d="M6 138H234"></path>
+<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
+<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
+<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
+<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
+<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
+</svg>
+</template></span></div></template></div>
+</div>
+<div class="gadget note-gadget">
+<p class="note-gadget__label">Now building</p>
+<p>This site</p>
+<div class="meter" aria-hidden="true"><span></span></div>
+</div>
+</aside>
+
+<div class="taskbar">
+<button class="start-orb" type="button" aria-label="Start" aria-expanded="{{startExpanded}}" data-on-click="toggleStart">df</button>
+<div class="quick-launch">
+<button type="button" aria-label="Show the desktop" data-on-click="showDesktop"><svg aria-hidden="true" focusable="false"><use href="#ico-desktop"></use></svg></button>
+<button type="button" aria-label="Open Projects" data-on-click="taskExplorer"><svg aria-hidden="true" focusable="false"><use href="#ico-projects"></use></svg></button>
+</div>
+<template data-if="explorerInBar"><button class="task" type="button" data-task="explorer" aria-pressed="{{explorerShown}}" data-on-click="taskExplorer"><span class="glass__icon" aria-hidden="true"></span><span class="task__label">Projects</span></button></template>
+<template data-if="viewerInBar"><button class="task" type="button" data-task="viewer" aria-pressed="{{viewerShown}}" data-on-click="taskViewer"><span class="glass__icon glass__icon--media" aria-hidden="true"></span><span class="task__label">{{cur.title}} – preview</span></button></template>
+<template data-if="cvInBar"><button class="task" type="button" data-task="paper" aria-pressed="{{cvShown}}" data-on-click="taskCv"><span class="glass__icon glass__icon--doc" aria-hidden="true"></span><span class="task__label">CV – Document</span></button></template>
+<template data-if="contactInBar"><button class="task" type="button" data-task="letter" aria-pressed="{{contactShown}}" data-on-click="taskContact"><span class="glass__icon glass__icon--mail" aria-hidden="true"></span><span class="task__label">New message</span></button></template>
+<button class="task" type="button" aria-pressed="{{playing}}" data-on-click="togglePlay"><span class="glass__icon glass__icon--media" aria-hidden="true"></span><span class="task__label">aero-afternoon.mp3</span></button>
+<div class="tray">
+<span class="tray__button" aria-hidden="true"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 13h3v-3H2zM6.5 13h3V7h-3zM11 13h3V3h-3z"></path></svg></span>
+<button class="tray__button" type="button" aria-label="Sound on or off" data-on-click="trayVolume"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2.5 6h2.5l3.5-3v10l-3.5-3H2.5z"></path><path d="M11 5.5a3.5 3.5 0 0 1 0 5"></path></svg></button>
+<span class="tray__time"><span>{{clock}}</span><span class="tray__date">{{dateShort}}</span></span>
+</div>
+</div>
+<div class="start-menu" data-open="{{startOpen}}">
+<ul class="start-menu__list" role="list">
+<li><a class="start-menu__link" href="{{homeUrl}}">Home</a></li>
+<li><a class="start-menu__link" href="#">Projects</a></li>
+<li><a class="start-menu__link" href="{{cvUrl}}">CV</a></li>
+<li><a class="start-menu__link" href="{{contactUrl}}">Contact</a></li>
+<li><a class="start-menu__link" href="#">Source code</a></li>
+<li><button class="start-menu__link start-menu__link--button" type="button" data-on-click="startSaver">Screen saver</button></li>
+</ul>
+<div class="start-menu__side">
+<p class="start-menu__name">Dylan Fitzsimmons</p>
+<button class="start-menu__off" type="button" data-on-click="togglePower">Shut down</button>
+</div>
+</div>
+<p class="balloon" data-shown="{{balloonShown}}" role="status">{{balloon}}</p>
+<template data-if="saverOn"><div class="saver" aria-hidden="true"><span class="saver__bubble saver__bubble--1"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--2"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--3"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--4"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--5"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--6"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--7"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--8"><span class="saver__ball"></span></span><span class="saver__bubble saver__bubble--9"><span class="saver__ball"></span></span></div></template>
+</div>
+</div>
+<div class="boot boot--aero" data-shown="{{bootShown}}" aria-hidden="true"><span class="boot__orb">df</span><p class="boot__name">DF Systems</p><span class="boot__bar"><i></i><i></i><i></i></span></div>
+</div>
+</div>
+<div class="pm__osd" data-osd="{{osd}}" aria-hidden="true"><p>{{osdLabel}}</p><p class="pm__osd-bar"><template data-each="osdSegments" data-as="seg"><i class="{{seg.cls}}"></i></template></p></div>
+<span class="pm__glare" aria-hidden="true"><img src="{{images.lcdGlare}}" alt="" draggable="false"></span>
+</div>
+<button class="pm__button pm__button--round pm__button--brightness-down" type="button" aria-label="Brightness down" data-on-click="brightnessDown"></button><button class="pm__button pm__button--round pm__button--brightness-up" type="button" aria-label="Brightness up" data-on-click="brightnessUp"></button><button class="pm__button pm__button--round pm__button--volume-down" type="button" aria-label="Volume down" data-on-click="volumeDown"></button><button class="pm__button pm__button--round pm__button--volume-up" type="button" aria-label="Volume up" data-on-click="volumeUp"></button><button class="pm__button pm__button--round pm__button--power" type="button" aria-label="{{powerLabel}}" data-on-click="togglePower"></button><span class="pm__led pm__led--blue" aria-hidden="true"></span>
+</div>
+<svg class="pm__stand" viewBox="0 0 1000 300" aria-hidden="true" focusable="false">
+<defs>
+<linearGradient id="stand-c" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0a1c26"></stop><stop offset="0.45" stop-color="#2a6b63"></stop><stop offset="0.55" stop-color="#3f8f80"></stop><stop offset="1" stop-color="#0a1c26"></stop></linearGradient>
+<linearGradient id="stand-d" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1f5250"></stop><stop offset="1" stop-color="#0b1c26"></stop></linearGradient>
+<radialGradient id="stand-glow2" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#8df2bd" stop-opacity="0.5"></stop><stop offset="1" stop-color="#8df2bd" stop-opacity="0"></stop></radialGradient>
+</defs>
+<ellipse class="pm__stand-glow" cx="500" cy="274" rx="430" ry="26" fill="url(#stand-glow2)"></ellipse>
+<path d="M430 0h140c0 86 22 146 96 196H334c74-50 96-110 96-196z" fill="url(#stand-c)"></path>
+<path class="pm__stand-line" d="M462 0c0 80-6 140-40 196M538 0c0 80 6 140 40 196"></path>
+<path d="M436 60h128v26H436z" fill="#0b1c26"></path><path class="pm__stand-accent" d="M448 73h104"></path>
+<path d="M290 196h420c40 0 70 16 96 44H194c26-28 56-44 96-44z" fill="url(#stand-d)"></path>
+<path class="pm__stand-line" d="M330 216h340"></path>
+<path d="M180 240h640a14 14 0 0 1 14 14v10a12 12 0 0 1-12 12H178a12 12 0 0 1-12-12v-10a14 14 0 0 1 14-14z" fill="url(#stand-c)"></path>
+<path class="pm__stand-accent" d="M230 258h540"></path>
+</svg>
+</div>
+</template>
+</div>
+</div>
+</div>
+{% endverbatim %}

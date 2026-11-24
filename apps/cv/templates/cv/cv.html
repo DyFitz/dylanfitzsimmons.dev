@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/cv.css' %}">
+  <script type="module" src="{% static 'js/cv.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <section class="page-head" aria-labelledby="cv-title">
+    <div>
+      <p class="path">~/cv</p>
+      <h1 class="page-head__title tt-glitch" id="cv-title" data-text="cv">CV</h1>
+      <p class="page-head__lede">Education, experience, projects and skills, with more detail than fits on a printed page.</p>
+    </div>
+  </section>
+
+  {# The index on narrower screens, in place of the one in the ID card. #}
+  <nav class="jump" aria-label="Jump to a section">
+    <ol class="jump__list" role="list">
+      {% for section in sections %}
+        <li><a class="jump__link" href="#{{ section.id }}" data-section-link><span class="jump__number">{{ section.number }}</span>{{ section.label }}</a></li>
+      {% endfor %}
+    </ol>
+  </nav>
+
+  <div class="cv">
+    {# Stays in view down the left as the page scrolls. #}
+    <aside class="id-card" aria-label="Summary and download">
+      {% if profile %}
+        <div class="id-card__head">
+          <p class="id-card__label" aria-hidden="true">id // df-1995</p>
+          <p class="id-card__name">{{ profile.name }}</p>
+          <p class="id-card__role">{{ profile.role }}</p>
+        </div>
+        <p class="id-card__status">{{ profile.looking_for }}</p>
+      {% endif %}
+      <a class="button button--primary" href="{% static 'files/Dylan_Fitzsimmons_CV.pdf' %}" download>Download CV (PDF)</a>
+      <p class="id-card__file">cv.pdf · 1 page{% if profile %} · updated {{ profile.updated|date:"M Y" }}{% endif %}</p>
+      <ul class="id-card__links" role="list">
+        {% if profile.github_url %}<li><a href="{{ profile.github_url }}"><span>git</span>{{ profile.github_text }}</a></li>{% endif %}
+        {% if profile.linkedin_url %}<li><a href="{{ profile.linkedin_url }}"><span>in</span>{{ profile.linkedin_text }}</a></li>{% endif %}
+        <li><a href="{% url 'contact:page' %}"><span>mail</span>send a message</a></li>
+      </ul>
+      <nav class="contents" aria-labelledby="cv-contents">
+        <h2 class="contents__title" id="cv-contents">On this page</h2>
+        <ol class="contents__list" role="list">
+          {% for section in sections %}
+            <li><a class="contents__link" href="#{{ section.id }}" data-section-link><span class="contents__number">{{ section.number }}</span>{{ section.label }}</a></li>
+          {% endfor %}
+        </ol>
+      </nav>
+    </aside>
+
+    <div class="cv__body">
+      <section class="cv-section" id="profile" aria-labelledby="profile-title">
+        <h2 class="cv-section__title" id="profile-title"><span class="cv-section__number">01 //</span>profile</h2>
+        {% if profile %}<p class="cv-lede">{{ profile.summary }}</p>{% endif %}
+        {% if readouts %}
+          <ul class="readouts" role="list">
+            {% for readout in readouts %}
+              <li class="readout"><span class="readout__value">{{ readout.value }}</span><span class="readout__label">{{ readout.label }}</span></li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </section>
+
+      <section class="cv-section" id="education" aria-labelledby="education-title">
+        <h2 class="cv-section__title" id="education-title"><span class="cv-section__number">02 //</span>education</h2>
+        <ol class="timeline" role="list">
+          {% for entry in education %}{% include "cv/includes/entry.html" %}{% endfor %}
+        </ol>
+      </section>
+
+      <section class="cv-section" id="experience" aria-labelledby="experience-title">
+        <h2 class="cv-section__title" id="experience-title"><span class="cv-section__number">03 //</span>experience</h2>
+        <ol class="timeline" role="list">
+          {% for entry in experience %}{% include "cv/includes/entry.html" %}{% endfor %}
+        </ol>
+      </section>
+
+      <section class="cv-section" id="projects" aria-labelledby="projects-title">
+        <h2 class="cv-section__title" id="projects-title"><span class="cv-section__number">04 //</span>projects</h2>
+        <div class="projects-cv">
+          {% for project in cv_projects %}
+            {% if project.is_key %}{% include "cv/includes/project.html" %}{% endif %}
+          {% endfor %}
+          <div class="projects-cv__others">
+            {% for project in cv_projects %}
+              {% if not project.is_key %}{% include "cv/includes/project.html" %}{% endif %}
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <section class="cv-section" id="skills" aria-labelledby="skills-title">
+        <h2 class="cv-section__title" id="skills-title"><span class="cv-section__number">05 //</span>skills, and where they were used</h2>
+        <div class="skills">
+          {% for group in skill_groups %}
+            <div class="skills__group">
+              <h3 class="skills__group-title">{{ group.title }}</h3>
+              {% for skill in group.skills.all %}
+                <div class="skill">
+                  <p class="skill__name">{{ skill.name }}</p>
+                  <ul class="skill__evidence" role="list">
+                    {% for item in skill.evidence.all %}
+                      <li>{% if item.project and item.project.is_published %}<a href="{{ item.project.get_absolute_url }}">{{ item.label }}</a>{% else %}{{ item.label }}{% endif %}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+        </div>
+        {% if profile %}<p class="cv__updated">last updated {{ profile.updated|date:"j M Y" }} · the PDF has the same on one page</p>{% endif %}
+      </section>
+    </div>
+  </div>
+{% endblock %}

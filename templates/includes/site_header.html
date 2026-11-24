@@ -1,0 +1,9 @@
+{% load navigation %}
+<header class="site-header">
+  {# The readout types out project names on a loop, so screen readers get the name from the label. #}
+  <a class="brand" href="{% url 'core:home' %}" aria-label="{{ site.name }}" data-brand>
+    <span class="brand__prompt" aria-hidden="true">&gt;</span>
+    <span class="brand__readout" aria-hidden="true"><span class="brand__text" data-brand-text>{{ site.name }}</span><span class="brand__cursor"></span></span>
+  </a>
+  {% main_nav %}
+</header>

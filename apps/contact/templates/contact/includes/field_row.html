@@ -1,0 +1,7 @@
+<div class="header-row{% if top %} header-row--top{% endif %}">
+  <label class="header-row__key" for="{{ field.id_for_label }}">{{ key }}<span class="visually-hidden"> ({{ field.label|lower }})</span></label>
+  <div class="header-row__value">
+    {{ field }}
+    {% if field.errors %}<p class="row-error" id="{{ field.auto_id }}-error">{{ key }} · {{ field.errors.0 }}</p>{% endif %}
+  </div>
+</div>
