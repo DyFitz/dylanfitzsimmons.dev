@@ -41,7 +41,8 @@ ENV PATH="/app/.venv/bin:${PATH}" \
     DJANGO_SETTINGS_MODULE=config.settings.production \
     DJANGO_READ_DOT_ENV=false
 
-RUN groupadd --system app && useradd --system --gid app --no-create-home app
+# Gunicorn's control server writes to the user's home folder, so the user needs one.
+RUN groupadd --system app && useradd --system --gid app --create-home --home-dir /home/app app
 
 WORKDIR /app
 COPY --from=build --chown=app:app /app /app
