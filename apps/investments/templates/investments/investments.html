@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/investments.css' %}">
+{% endblock %}
+
+{% block content %}
+  <section class="page-head" aria-labelledby="investments-title">
+    <div>
+      <p class="path">~/investments</p>
+      <h1 class="page-head__title tt-glitch" id="investments-title" data-text="investments">Investments</h1>
+      <p class="page-head__lede">The portfolio and the strategy behind it.</p>
+    </div>
+  </section>
+
+  <section class="in-progress" aria-labelledby="in-progress-title">
+    <img class="in-progress__art" src="{% static 'img/investments-in-progress.svg' %}" alt="" width="960" height="480">
+    <div class="in-progress__text">
+      <p class="in-progress__badge">In progress</p>
+      <h2 id="in-progress-title">This page is under construction</h2>
+      <p>The holdings, performance and trading strategy will appear here once the page is built. In the meantime, the <a href="{% url 'projects:list' %}">projects</a> and <a href="{% url 'cv:page' %}">CV</a> are complete.</p>
+    </div>
+  </section>
+{% endblock %}

@@ -145,6 +145,14 @@ def test_unknown_pages_use_the_custom_404_template(client: Client) -> None:
     assertContains(response, "Page not found", status_code=404)
 
 
+def test_the_404_page_offers_a_way_to_each_section(client: Client) -> None:
+    response = client.get("/no-such-page/")
+
+    for name in ("core:home", "projects:list", "cv:page", "contact:page", "investments:page"):
+        assertContains(response, f'href="{reverse(name)}"', status_code=404)
+    assertContains(response, "/no-such-page/", status_code=404)
+
+
 def test_server_error_page_renders_without_request_context(rf: RequestFactory) -> None:
     # Django renders 500.html without context processors.
     response = server_error(rf.get("/"))

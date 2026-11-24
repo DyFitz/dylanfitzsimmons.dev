@@ -1150,7 +1150,12 @@ export class Desk {
       { key: "projects", label: "Projects", href: "#", live: false },
       { key: "cv", label: "CV", href: this.urls.cv, live: false },
       { key: "contact", label: "Contact", href: this.urls.contact, live: false },
-      { key: "code", label: "Source code", href: "#", live: false },
+      {
+        key: "code",
+        label: "Source code",
+        href: this.urls.source || "#",
+        live: Boolean(this.urls.source),
+      },
       { key: "bin", label: "Recycle Bin", href: "#", live: false },
     ];
   }
@@ -1377,6 +1382,7 @@ export class Desk {
       homeUrl: this.urls.home,
       cvUrl: this.urls.cv,
       contactUrl: this.urls.contact,
+      sourceUrl: this.urls.source || "#",
       images: this.images,
       cv: this.cv,
       monitorOptions: this.monitors().map((item) => ({

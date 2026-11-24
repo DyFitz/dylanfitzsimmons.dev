@@ -1,13 +1,43 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}Page not found – {{ site.name }}{% endblock %}
 {% block canonical %}{% endblock %}
-{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block head %}
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="{% static 'css/not-found.css' %}">
+{% endblock %}
 
 {% block content %}
-  <section class="error-page" aria-labelledby="error-title">
-    <h1 id="error-title">Page not found</h1>
-    <p>There's nothing at <code>{{ request_path }}</code>. The link may be out of date, or the address may be mistyped.</p>
-    <p><a href="{% url 'core:home' %}">Go to the home page</a></p>
+  <section class="not-found" aria-labelledby="error-title">
+    <div class="not-found__head">
+      <h1 id="error-title">Page not found</h1>
+      <p>There's nothing at <code>{{ request_path }}</code>. The link may be out of date, or the address may be mistyped.</p>
+    </div>
+
+    {# A television with no signal. The site's pages are the channels to tune to. #}
+    <div class="tube">
+      <div class="tube__bars" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="tube__static" aria-hidden="true"></div>
+      <div class="tube__roll" aria-hidden="true"></div>
+      <div class="tube__scan" aria-hidden="true"></div>
+
+      <div class="tube__screen">
+        <div class="tube__osd" aria-hidden="true"><span>CH 404</span><span>AV 1</span></div>
+        <div class="tube__message">
+          <p class="tube__signal" aria-hidden="true">NO SIGNAL</p>
+          <p class="tube__note">This page has gone off the air.</p>
+        </div>
+        <nav class="tube__channels" aria-label="Pages on this site">
+          <ul role="list">
+            <li><a href="{% url 'core:home' %}"><span aria-hidden="true">CH 1</span>Home</a></li>
+            <li><a href="{% url 'projects:list' %}"><span aria-hidden="true">CH 2</span>Projects</a></li>
+            <li><a href="{% url 'cv:page' %}"><span aria-hidden="true">CH 3</span>CV</a></li>
+            <li><a href="{% url 'contact:page' %}"><span aria-hidden="true">CH 4</span>Contact</a></li>
+            <li><a href="{% url 'investments:page' %}"><span aria-hidden="true">CH 5</span>Investments</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
   </section>
 {% endblock %}

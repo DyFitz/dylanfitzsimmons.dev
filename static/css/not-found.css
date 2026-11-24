@@ -1,0 +1,300 @@
+/* The 404 page: a television that has lost its signal, with the site's pages as channels to
+   tune to. With motion on the static jumps about, a bright band rolls down the screen and the
+   message pulses; with motion off it is the same screen, held still.
+   Loaded after main.css, whose layers and tokens it uses. */
+
+@layer components {
+  .not-found {
+    display: grid;
+    gap: 24px;
+    padding-block: 40px var(--section-gap);
+  }
+
+  .not-found__head {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px 32px;
+  }
+
+  .not-found__head h1 {
+    font-size: clamp(1.5rem, 1.2rem + 1vw, 1.75rem);
+    text-transform: lowercase;
+  }
+
+  .not-found__head p {
+    color: var(--muted);
+  }
+
+  .not-found__head code {
+    color: var(--text);
+    overflow-wrap: anywhere;
+  }
+
+  /* ---------------------------------------------------------------- the screen */
+
+  .tube {
+    /* The colour bars of a test card, faded behind the static. */
+    --bar-1: #c0c0c0;
+    --bar-2: #c0c000;
+    --bar-3: #00c0c0;
+    --bar-4: #00c000;
+    --bar-5: #c000c0;
+    --bar-6: #c00000;
+    --bar-7: #0000c0;
+
+    position: relative;
+    min-block-size: clamp(420px, 60vh, 560px);
+    overflow: hidden;
+    border-radius: 28px;
+    background: radial-gradient(
+      ellipse at center,
+      var(--screen-mid) 0%,
+      var(--screen-deep) 70%,
+      var(--tube) 100%
+    );
+    box-shadow:
+      inset 0 0 120px rgb(0 0 0 / 0.85),
+      0 0 0 10px var(--halo),
+      0 0 0 11px var(--rule);
+    color: var(--screen-text);
+  }
+
+  .tube__bars {
+    position: absolute;
+    inset: 0 0 54%;
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    opacity: 0.16;
+  }
+
+  .tube__bars span:nth-child(1) {
+    background: var(--bar-1);
+  }
+
+  .tube__bars span:nth-child(2) {
+    background: var(--bar-2);
+  }
+
+  .tube__bars span:nth-child(3) {
+    background: var(--bar-3);
+  }
+
+  .tube__bars span:nth-child(4) {
+    background: var(--bar-4);
+  }
+
+  .tube__bars span:nth-child(5) {
+    background: var(--bar-5);
+  }
+
+  .tube__bars span:nth-child(6) {
+    background: var(--bar-6);
+  }
+
+  .tube__bars span:nth-child(7) {
+    background: var(--bar-7);
+  }
+
+  .tube__static {
+    position: absolute;
+    inset: 0;
+    background: url("../img/noise.webp") 0 0 / 160px 160px;
+    mix-blend-mode: screen;
+    opacity: 0.22;
+  }
+
+  /* The bright band of a rolling picture. Only shown with motion on. */
+  .tube__roll {
+    display: none;
+    position: absolute;
+    inset: 0 0 auto;
+    block-size: 140px;
+    background: linear-gradient(transparent, rgb(var(--screen-text-rgb) / 0.1), transparent);
+  }
+
+  .tube__scan {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(to bottom, rgb(0 0 0 / 0.28) 0 1px, transparent 1px 3px);
+  }
+
+  .tube__screen {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+    min-block-size: inherit;
+    padding: clamp(24px, 4vw, 40px) clamp(20px, 4vw, 44px);
+  }
+
+  .tube__osd {
+    display: flex;
+    justify-content: space-between;
+    color: var(--accent);
+    font-family: "VT323", var(--font-mono);
+    font-size: 1.75rem;
+    text-shadow: 0 0 8px rgb(var(--accent-rgb) / 0.7);
+  }
+
+  .tube__message {
+    display: grid;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .tube__signal {
+    color: var(--name);
+    font-family: "VT323", var(--font-mono);
+    font-size: clamp(4.5rem, 2rem + 9vw, 9.5rem);
+    line-height: 1;
+    letter-spacing: 0.04em;
+    text-shadow:
+      -4px 0 rgb(var(--fringe-red-rgb) / 0.7),
+      4px 0 rgb(var(--fringe-blue-rgb) / 0.7),
+      0 0 30px rgb(var(--bloom-rgb) / 0.5);
+  }
+
+  .tube__note {
+    color: var(--screen-soft);
+    font-family: "VT323", var(--font-mono);
+    font-size: 1.75rem;
+    line-height: 1.2;
+  }
+
+  .tube__channels ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 16px;
+  }
+
+  .tube__channels a {
+    display: inline-flex;
+    gap: 10px;
+    min-block-size: 44px;
+    align-items: center;
+    padding: 6px 18px;
+    border: 1px solid rgb(var(--screen-dim-rgb) / 0.35);
+    border-radius: var(--radius-button);
+    background-color: var(--console-glass);
+    color: var(--screen-text);
+    font-family: "VT323", var(--font-mono);
+    font-size: 1.5rem;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .tube__channels a:hover,
+  .tube__channels a:focus-visible {
+    border-color: var(--accent);
+    box-shadow: 0 0 14px rgb(var(--accent-rgb) / 0.35);
+  }
+
+  .tube__channels span {
+    color: var(--accent);
+  }
+
+  /* Phones: the channels go two to a row. */
+  @media (max-width: 30em) {
+    .tube {
+      border-radius: 18px;
+    }
+
+    .tube__channels ul {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Five channels, two to a row: the last has a row to itself. */
+    .tube__channels li:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .tube__channels a {
+      display: flex;
+      justify-content: center;
+      padding-inline: 10px;
+      font-size: 1.25rem;
+    }
+  }
+}
+
+@layer motion {
+  [data-motion="on"] .tube {
+    animation: tube-flicker 4s infinite;
+  }
+
+  [data-motion="on"] .tube__static {
+    opacity: 0.3;
+    animation: tube-static 0.32s steps(1) infinite;
+  }
+
+  [data-motion="on"] .tube__roll {
+    display: block;
+    animation: tube-roll 3.6s linear infinite;
+  }
+
+  [data-motion="on"] .tube__signal {
+    animation: tube-signal 1.6s steps(1) infinite;
+  }
+
+  /* The static jumps between spots on the texture rather than sliding, as noise would. */
+  @keyframes tube-static {
+    0% {
+      background-position: 0 0;
+    }
+    25% {
+      background-position: -53px 31px;
+    }
+    50% {
+      background-position: 47px -71px;
+    }
+    75% {
+      background-position: -19px -43px;
+    }
+  }
+
+  @keyframes tube-roll {
+    from {
+      transform: translateY(-140px);
+    }
+    to {
+      transform: translateY(620px);
+    }
+  }
+
+  @keyframes tube-flicker {
+    0%, 48%, 54%, 100% {
+      filter: none;
+    }
+    50% {
+      filter: brightness(1.25);
+    }
+    52% {
+      filter: brightness(0.92);
+    }
+  }
+
+  @keyframes tube-signal {
+    0%, 100% {
+      opacity: 1;
+      transform: none;
+    }
+    70% {
+      opacity: 0.35;
+    }
+    72% {
+      opacity: 1;
+      transform: translateX(-4px);
+    }
+    74% {
+      transform: none;
+    }
+  }
+}

@@ -1,5 +1,6 @@
 from typing import Any
 
+from django.conf import settings
 from django.db.models import QuerySet
 from django.templatetags.static import static
 from django.urls import reverse
@@ -18,7 +19,13 @@ def desk_data(projects: list[Project]) -> dict[str, Any]:
     """What the projects page's script needs to put the projects on the monitors."""
     home = reverse("core:home")
     return {
-        "urls": {"home": home, "cv": reverse("cv:page"), "contact": reverse("contact:page")},
+        "urls": {
+            "home": home,
+            "cv": reverse("cv:page"),
+            "contact": reverse("contact:page"),
+            # The repository, for the desktops' Source code icon. Blank until it's set.
+            "source": settings.SITE_SOURCE_URL,
+        },
         "images": {
             **{name: static(f"img/projects/{name}.webp") for name in MONITOR_PHOTOS},
             # The reflections laid over each screen.

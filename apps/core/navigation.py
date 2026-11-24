@@ -23,6 +23,7 @@ PRIMARY_NAVIGATION: tuple[NavItem, ...] = (
     NavItem(label="Projects", url_name="projects:list"),
     NavItem(label="CV", url_name="cv:page"),
     NavItem(label="Contact", url_name="contact:page"),
+    NavItem(label="Investments", url_name="investments:page"),
 )
 
 

@@ -40,6 +40,7 @@ def test_list_gives_the_script_its_data(client: Client) -> None:
 def test_list_gives_the_script_its_links_and_photographs(
     client: Client, settings: Settings
 ) -> None:
+    settings.SITE_SOURCE_URL = "https://github.com/example/site"
     response = client.get(reverse("projects:list"))
 
     data = response.context["desk_data"]
@@ -48,6 +49,7 @@ def test_list_gives_the_script_its_links_and_photographs(
         "home": home,
         "cv": reverse("cv:page"),
         "contact": reverse("contact:page"),
+        "source": "https://github.com/example/site",
     }
     # The CV windows on the desktops show the CV from the CV page's records.
     assert data["cv"]["name"] == "Dylan Fitzsimmons"
