@@ -62,6 +62,7 @@ class ProjectListView(PageMetaMixin, ListView):
         "Software projects, each with a write-up of how it works and what was learned "
         "along the way."
     )
+    page_image = "img/og/projects.jpg"
 
     def get_queryset(self) -> QuerySet[Project]:
         return Project.objects.filter(is_published=True)
@@ -75,6 +76,7 @@ class ProjectListView(PageMetaMixin, ListView):
 class ProjectDetailView(PageMetaMixin, DetailView):
     template_name = "projects/project_detail.html"
     context_object_name = "project"
+    page_image = "img/og/projects.jpg"
 
     def get_queryset(self) -> QuerySet[Project]:
         return Project.objects.filter(is_published=True)

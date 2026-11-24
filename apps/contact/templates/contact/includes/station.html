@@ -13,6 +13,6 @@
     <dt>reply</dt><dd>by email, within {{ reply_within }}</dd>
     {% if profile.github_url %}<dt>git</dt><dd><a href="{{ profile.github_url }}">{{ profile.github_text }}</a></dd>{% endif %}
     {% if profile.linkedin_url %}<dt>in</dt><dd><a href="{{ profile.linkedin_url }}">{{ profile.linkedin_text }}</a></dd>{% endif %}
-    <dt>cv</dt><dd><a href="{% url 'cv:page' %}">read my CV</a></dd>
+    <dt>cv</dt><dd><a href="{% url 'cv:page' %}">read the CV</a></dd>
   </dl>
 </aside>

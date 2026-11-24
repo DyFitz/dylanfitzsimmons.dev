@@ -1,2 +1,4 @@
 User-agent: *
 Disallow:
+
+Sitemap: {{ site.base_url }}{% url 'core:sitemap' %}

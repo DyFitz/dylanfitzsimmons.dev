@@ -8,6 +8,5 @@ class InvestmentsView(PageMetaMixin, TemplateView):
 
     template_name = "investments/investments.html"
     page_title = "Investments"
-    page_description = (
-        "The investment portfolio of Dylan Fitzsimmons and the strategy behind it. In progress."
-    )
+    page_description = "The investment portfolio and the strategy behind it. In progress."
+    page_image = "img/og/investments.jpg"

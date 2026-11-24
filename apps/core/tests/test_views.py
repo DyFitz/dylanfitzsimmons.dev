@@ -1,3 +1,5 @@
+import pytest
+from django.contrib.staticfiles import finders
 from django.test import Client, RequestFactory
 from django.urls import reverse
 from django.views.defaults import server_error
@@ -30,6 +32,41 @@ def test_home_page_declares_its_canonical_url_and_description(
 
     assertContains(response, '<link rel="canonical" href="https://example.com/">', html=True)
     assertContains(response, '<meta name="description" content="A test description.">', html=True)
+
+
+def open_graph(html: str) -> dict[str, str | None]:
+    """The page's Open Graph and Twitter tags, by property or name."""
+    return {
+        attrs.get("property") or attrs.get("name") or "": attrs.get("content")
+        for attrs in start_tags(html, "meta")
+        if (attrs.get("property") or attrs.get("name") or "").startswith(("og:", "twitter:"))
+    }
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize(
+    ("url_name", "title", "image"),
+    [
+        ("core:home", "Dylan Fitzsimmons \N{EN DASH} Software developer", "img/og/home.jpg"),
+        ("projects:list", "Projects \N{EN DASH} Dylan Fitzsimmons", "img/og/projects.jpg"),
+        ("cv:page", "CV \N{EN DASH} Dylan Fitzsimmons", "img/og/cv.jpg"),
+        ("contact:page", "Contact \N{EN DASH} Dylan Fitzsimmons", "img/og/contact.jpg"),
+        ("investments:page", "Investments \N{EN DASH} Dylan Fitzsimmons", "img/og/investments.jpg"),
+    ],
+)
+def test_each_page_has_a_link_preview(
+    client: Client, settings: Settings, url_name: str, title: str, image: str
+) -> None:
+    settings.SITE_URL = "https://example.com"
+
+    tags = open_graph(client.get(reverse(url_name)).content.decode())
+
+    assert tags["og:title"] == title
+    assert tags["og:description"]
+    assert tags["og:image"] == f"https://example.com{settings.STATIC_URL}{image}"
+    assert tags["twitter:card"] == "summary_large_image"
+    # Shared links show nothing if the image is missing.
+    assert finders.find(image) is not None
 
 
 def test_home_page_shows_the_featured_projects(client: Client) -> None:
@@ -136,6 +173,32 @@ def test_robots_txt_is_served_as_plain_text(client: Client) -> None:
     assert response.status_code == 200
     assert response["Content-Type"] == "text/plain; charset=utf-8"
     assert response.content.decode().startswith("User-agent: *")
+
+
+def test_robots_txt_points_to_the_sitemap(client: Client, settings: Settings) -> None:
+    settings.SITE_URL = "https://example.com"
+
+    response = client.get(reverse("core:robots_txt"))
+
+    assertContains(response, "Sitemap: https://example.com/sitemap.xml")
+
+
+@pytest.mark.django_db
+def test_sitemap_lists_every_page_and_published_project_at_the_public_address(
+    client: Client, settings: Settings
+) -> None:
+    settings.SITE_URL = "https://example.com"
+
+    response = client.get(reverse("core:sitemap"))
+
+    assert response.status_code == 200
+    assert response["Content-Type"].startswith("application/xml")
+    for name in ("core:home", "projects:list", "cv:page", "contact:page", "investments:page"):
+        assertContains(response, f"<loc>https://example.com{reverse(name)}</loc>")
+    for slug in ("this-site", "opus-equi", "enular"):
+        assertContains(response, f"<loc>https://example.com/projects/{slug}/</loc>")
+    # The 404 page and the admin are never listed.
+    assertNotContains(response, settings.ADMIN_URL)
 
 
 def test_unknown_pages_use_the_custom_404_template(client: Client) -> None:

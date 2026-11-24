@@ -31,7 +31,10 @@ class ContactView(PageMetaMixin, FormView):
     template_name = "contact/contact.html"
     form_class = MessageForm
     page_title = "Contact"
-    page_description = "Got a role or a project in mind? Send me a message and I'll reply by email."
+    page_description = (
+        "Get in touch about a role or a project. I'll respond to every message by email."
+    )
+    page_image = "img/og/contact.jpg"
 
     def get_initial(self) -> dict[str, Any]:
         return {"served": spam.new_token(), "reason": Message.Reason.JOB}

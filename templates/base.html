@@ -6,12 +6,19 @@
     <title>{% block title %}{% if page_title %}{{ page_title }} – {{ site.name }}{% else %}{{ site.name }} – {{ site.tagline }}{% endif %}{% endblock %}</title>
     <meta name="description" content="{{ page_description|default:site.description }}">
     {% block canonical %}<link rel="canonical" href="{{ site.base_url }}{{ request.path }}">{% endblock %}
+    {# The preview shown when a link to the page is shared. Pages without their own use the home page's. #}
+    {% firstof page_image "img/og/home.jpg" as preview_image %}
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="{{ site.name }}">
-    <meta property="og:title" content="{{ page_title|default:site.name }}">
+    <meta property="og:title" content="{% if page_title %}{{ page_title }} – {{ site.name }}{% else %}{{ site.name }} – {{ site.tagline }}{% endif %}">
     <meta property="og:description" content="{{ page_description|default:site.description }}">
     <meta property="og:url" content="{{ site.base_url }}{{ request.path }}">
+    <meta property="og:image" content="{{ site.base_url }}{% static preview_image %}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="A screenshot of the {% if page_title %}{{ page_title|lower }}{% else %}home{% endif %} page of {{ site.domain }}">
     <meta property="og:locale" content="en_GB">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="color-scheme" content="dark">
     {# Night page colour. The theme toggle updates it to match the page. #}
     <meta name="theme-color" content="#0c1824">

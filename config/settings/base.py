@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "django.contrib.sitemaps",
     # Serves static files through WhiteNoise under runserver too, as in production.
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
