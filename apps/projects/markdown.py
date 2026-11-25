@@ -39,7 +39,10 @@ def render_markdown(text: str) -> SafeString:
     or anything else the page shouldn't carry.
     """
     html = markdown.markdown(text, extensions=["fenced_code", "tables"])
-    return mark_safe(open_away_links_in_new_tabs(nh3.clean(html)))  # noqa: S308
+    # nh3 would mark every link noopener; only links that leave the site need it, and those
+    # get it, with a new tab, from open_away_links_in_new_tabs.
+    cleaned = nh3.clean(html, link_rel=None)
+    return mark_safe(open_away_links_in_new_tabs(cleaned))  # noqa: S308
 
 
 def render_write_up(text: str) -> WriteUp:
