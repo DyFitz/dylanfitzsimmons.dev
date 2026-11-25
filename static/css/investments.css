@@ -1,7 +1,48 @@
-/* The investments page, for now: a notice that it is being built.
-   Loaded after main.css, whose layers and tokens it uses. */
+/* The investments page: the portfolio's dashboard, and the notice shown until there is any
+   history. Loaded after main.css, whose layers and tokens it uses.
+
+   The site allows no inline styles, so sizes and positions come from SVG attributes, and
+   colours from classes. Heat runs in eleven steps, iv-hn5 (worst) to iv-hp5 (best). */
+
+@layer tokens {
+  :root {
+    --iv-port: #8df2bd;
+    --iv-policy: #8fd3ff;
+    --iv-acwi: #d7a6ff;
+    --iv-chips: #ffb454;
+    --iv-up-rgb: 92 230 150;
+    --iv-down-rgb: 255 107 99;
+    --iv-up: rgb(var(--iv-up-rgb));
+    --iv-down: rgb(var(--iv-down-rgb));
+    --iv-warm: #ffb454;
+    --iv-cool: #8fd3ff;
+    --iv-growth: #5ad1a0;
+    --iv-income: #ffd166;
+    --iv-defensive: #6fb6ff;
+    --iv-defence: #c79bff;
+    --iv-cash: #5b6875;
+  }
+
+  :root[data-theme="light"] {
+    --iv-port: #1f8a56;
+    --iv-policy: #2a6fa8;
+    --iv-acwi: #7d4bb3;
+    --iv-chips: #b86a00;
+    --iv-up-rgb: 22 132 74;
+    --iv-down-rgb: 196 50 44;
+    --iv-warm: #c77700;
+    --iv-cool: #2a6fa8;
+    --iv-growth: #2f9e6e;
+    --iv-income: #c99a12;
+    --iv-defensive: #2f74b5;
+    --iv-defence: #8a5cc2;
+    --iv-cash: #8a99a6;
+  }
+}
 
 @layer components {
+  /* ---------------------------------------------------------------- the notice */
+
   .in-progress {
     display: grid;
     gap: 32px;
@@ -49,5 +90,991 @@
     color: var(--accent);
     font-weight: 700;
     text-underline-offset: 4px;
+  }
+
+  /* ---------------------------------------------------------------- shared pieces */
+
+  .iv-up { color: var(--iv-up); }
+  .iv-down { color: var(--iv-down); }
+  .iv-flat { color: var(--text); }
+  .iv-dim { color: var(--muted); }
+  .iv-num { font-variant-numeric: tabular-nums; text-align: end; white-space: nowrap; }
+
+  .iv-hn5 { --heat: -1; }
+  .iv-hn4 { --heat: -0.8; }
+  .iv-hn3 { --heat: -0.6; }
+  .iv-hn2 { --heat: -0.4; }
+  .iv-hn1 { --heat: -0.2; }
+  .iv-hp0 { --heat: 0; }
+  .iv-hp1 { --heat: 0.2; }
+  .iv-hp2 { --heat: 0.4; }
+  .iv-hp3 { --heat: 0.6; }
+  .iv-hp4 { --heat: 0.8; }
+  .iv-hp5 { --heat: 1; }
+
+  .iv-fill--up { fill: var(--iv-up); }
+  .iv-fill--down { fill: var(--iv-down); }
+  .iv-fill--port { fill: var(--iv-port); }
+  .iv-fill--weight { fill: var(--muted); }
+
+  .iv-status {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin: 28px 0 18px;
+    color: var(--muted);
+    font: 0.78rem var(--font-mono);
+  }
+
+  .iv-status__lamp {
+    flex: none;
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+    background: var(--iv-up);
+    box-shadow: 0 0 6px var(--iv-up);
+  }
+
+  .iv-status--late {
+    padding: 8px 12px;
+    border: 1px solid #c98a1a;
+    border-radius: var(--radius-button);
+    color: var(--text);
+  }
+
+  .iv-status--late .iv-status__lamp { background: #ffb000; box-shadow: 0 0 6px #ffb000; }
+
+  .iv-source {
+    margin: 20px 0 var(--section-gap);
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.6;
+  }
+
+  .iv-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .iv-panel {
+    min-inline-size: 0;
+    padding: 14px 16px 16px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  .iv-panel--wide { grid-column: 1 / -1; }
+
+  .iv-panel__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 12px;
+    margin-block-end: 12px;
+  }
+
+  .iv-panel__title {
+    margin: 0 auto 0 0;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* Wide tables scroll sideways on narrow screens rather than squash. */
+  .iv-scroll { overflow-x: auto; }
+
+  .iv-dot {
+    display: inline-block;
+    inline-size: 8px;
+    block-size: 8px;
+    border-radius: 50%;
+    vertical-align: middle;
+  }
+
+  .iv-dot--port { background: var(--iv-port); }
+  .iv-dot--policy { background: var(--iv-policy); }
+  .iv-dot--acwi { background: var(--iv-acwi); }
+  .iv-dot--vol { background: var(--iv-chips); }
+  .iv-dot--beta { background: var(--iv-policy); }
+  .iv-dot--weight { background: var(--muted); }
+  .iv-dot--growth { background: var(--iv-growth); }
+  .iv-dot--income { background: var(--iv-income); }
+  .iv-dot--defensive { background: var(--iv-defensive); }
+  .iv-dot--defence { background: var(--iv-defence); }
+  .iv-dot--cash { background: var(--iv-cash); }
+
+  .iv-tick {
+    display: inline-block;
+    inline-size: 2px;
+    block-size: 10px;
+    margin-inline-end: 6px;
+    background: var(--text);
+    vertical-align: middle;
+  }
+
+  .iv-note {
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    line-height: 1.6;
+  }
+
+  .iv-note .iv-dot { margin-inline: 8px 4px; }
+  .iv-note .iv-dot:first-child { margin-inline-start: 0; }
+  .iv-note--ends { display: flex; gap: 12px; justify-content: space-between; }
+
+  .iv-note--wait {
+    margin-block-start: 12px;
+    padding: 8px 12px;
+    border: 1px dashed var(--rule);
+    border-radius: 4px;
+  }
+
+  /* ---------------------------------------------------------------- the tiles */
+
+  .iv-tiles__label {
+    margin: 0 0 8px;
+    color: var(--muted);
+    font: 0.72rem var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .iv-tiles {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 14px;
+    margin-block-end: 14px;
+  }
+
+  .iv-bigtile {
+    display: grid;
+    gap: 4px;
+    align-content: start;
+    padding: 16px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  .iv-kpi__label {
+    color: var(--muted);
+    font: 0.7rem var(--font-mono);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .iv-bigtile__value { font: 700 1.9rem/1.1 var(--font-sans); font-variant-numeric: tabular-nums; }
+  .iv-bigtile .iv-note { margin: 0; }
+
+  /* ---------------------------------------------------------------- charts */
+
+  .iv-chart { position: relative; padding-inline-start: 36px; }
+
+  .iv-chart__svg {
+    display: block;
+    inline-size: 100%;
+    block-size: 300px;
+    overflow: visible;
+    background-image: linear-gradient(to bottom, var(--rule) 1px, transparent 1px);
+    background-size: 100% 25%;
+  }
+
+  .iv-chart__ticks {
+    position: absolute;
+    inset: 0 auto 22px 0;
+    inline-size: 30px;
+    color: var(--muted);
+    font: 0.68rem var(--font-mono);
+  }
+
+  /* Five ticks, from the bottom of the chart to the top. */
+  .iv-chart__ticks span { position: absolute; inset-inline-end: 0; transform: translateY(50%); }
+  .iv-chart__ticks span:nth-child(1) { inset-block-end: 0; }
+  .iv-chart__ticks span:nth-child(2) { inset-block-end: 25%; }
+  .iv-chart__ticks span:nth-child(3) { inset-block-end: 50%; }
+  .iv-chart__ticks span:nth-child(4) { inset-block-end: 75%; }
+  .iv-chart__ticks span:nth-child(5) { inset-block-end: 100%; }
+
+  .iv-chart__x {
+    display: flex;
+    justify-content: space-between;
+    margin-block-start: 6px;
+    color: var(--muted);
+    font: 0.68rem var(--font-mono);
+  }
+
+  .iv-line { fill: none; stroke-width: 1.4; vector-effect: non-scaling-stroke; opacity: 0.85; }
+  .iv-line--port { stroke: var(--iv-port); stroke-width: 2.2; opacity: 1; }
+  .iv-line--policy { stroke: var(--iv-policy); }
+  .iv-line--acwi { stroke: var(--iv-acwi); }
+  .iv-line--vol { stroke: var(--iv-chips); }
+  .iv-line--beta { stroke: var(--iv-policy); }
+  .iv-area { fill: color-mix(in srgb, var(--iv-port) 10%, transparent); stroke: none; }
+
+  .iv-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    margin: 10px 0 0;
+    padding: 0;
+    list-style: none;
+    font: 0.75rem var(--font-mono);
+  }
+
+  .iv-legend .iv-dot { margin-inline-end: 6px; }
+
+  .iv-mini { display: block; inline-size: 100%; block-size: 120px; overflow: visible; }
+
+  .iv-dd {
+    fill: rgb(var(--iv-down-rgb) / 0.25);
+    stroke: var(--iv-down);
+    stroke-width: 1.2;
+    vector-effect: non-scaling-stroke;
+  }
+
+  /* ---------------------------------------------------------------- tables */
+
+  .iv-table {
+    inline-size: 100%;
+    border-collapse: collapse;
+    font: 0.78rem/1.4 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .iv-table th,
+  .iv-table td {
+    padding: 5px 8px;
+    border-block-end: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+    text-align: end;
+    white-space: nowrap;
+  }
+
+  .iv-table th:first-child,
+  .iv-table td:first-child { text-align: start; }
+
+  .iv-table thead th { color: var(--muted); font-weight: 600; font-size: 0.7rem; text-transform: uppercase; }
+  .iv-table tbody th { font-weight: 400; }
+  .iv-row--port th { font-weight: 700; color: var(--iv-port); }
+  .iv-table--hold tbody th span,
+  .iv-table--trades tbody th span { color: var(--muted); }
+  .iv-table--hold td:nth-child(2) { text-align: start; color: var(--muted); }
+  .iv-table--hold thead th:nth-child(2) { text-align: start; }
+
+  .iv-wbar {
+    display: inline-block;
+    inline-size: 48px;
+    max-inline-size: none;
+    margin-inline-end: 8px;
+    vertical-align: middle;
+  }
+  .iv-wbar rect { fill: var(--iv-port); opacity: 0.6; }
+
+  .iv-table--trades th,
+  .iv-table--trades td { text-align: start; }
+
+  .iv-table--trades td:last-child,
+  .iv-table--trades th:last-child { text-align: end; }
+
+  .iv-trade { padding: 1px 7px; border-radius: 3px; font-size: 0.7rem; }
+  .iv-trade--buy { background: rgb(var(--iv-up-rgb) / 0.18); color: var(--iv-up); }
+  .iv-trade--sell { background: rgb(var(--iv-down-rgb) / 0.18); color: var(--iv-down); }
+
+  /* Monthly returns and correlation: cells shaded by --heat, from -1 to 1. */
+  .iv-heat,
+  .iv-corr {
+    inline-size: 100%;
+    border-collapse: separate;
+    border-spacing: 2px;
+    font: 0.68rem/1 var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    table-layout: fixed;
+  }
+
+  .iv-heat th,
+  .iv-heat td,
+  .iv-corr th,
+  .iv-corr td {
+    block-size: 26px;
+    padding: 0 2px;
+    border-radius: 2px;
+    text-align: center;
+  }
+
+  .iv-heat th,
+  .iv-corr th { color: var(--muted); font-weight: 400; }
+  .iv-heat tbody th,
+  .iv-corr tbody th { text-align: start; }
+  .iv-heat thead td,
+  .iv-heat tbody th { inline-size: 3em; }
+  .iv-heat thead th:last-child { inline-size: 4.5em; }
+  .iv-heat__total { font-weight: 700; }
+
+  .iv-heat__cell {
+    background: color-mix(in srgb, var(--iv-up) calc(max(var(--heat, 0), 0) * 70%), color-mix(in srgb, var(--iv-down) calc(max(var(--heat, 0) * -1, 0) * 70%), transparent));
+  }
+
+  .iv-heat__cell--empty { background: color-mix(in srgb, var(--rule) 25%, transparent); }
+
+  .iv-corr { min-inline-size: 720px; }
+  .iv-corr thead td,
+  .iv-corr tbody th { inline-size: 4em; }
+
+  .iv-corr__cell {
+    background: color-mix(in srgb, var(--iv-warm) calc(max(var(--heat, 0), 0) * 80%), color-mix(in srgb, var(--iv-cool) calc(max(var(--heat, 0) * -1, 0) * 80%), transparent));
+  }
+
+  /* ---------------------------------------------------------------- bars */
+
+  .iv-ct,
+  .iv-rc,
+  .iv-bars,
+  .iv-scenarios { margin: 0; padding: 0; list-style: none; font: 0.76rem var(--font-mono); }
+
+  .iv-ct li,
+  .iv-rc li,
+  .iv-bars li,
+  .iv-scenarios li { display: grid; gap: 10px; align-items: center; padding: 3px 0; }
+
+  .iv-ct li { grid-template-columns: 9em minmax(0, 1fr) 6.5em; }
+  .iv-rc li { grid-template-columns: 4.5em minmax(0, 1fr) 9em; }
+  .iv-bars li { grid-template-columns: 11.5em minmax(0, 1fr) 7.5em 4.5em; }
+  .iv-scenarios li { grid-template-columns: 13em minmax(0, 1fr) 5.5em; padding: 6px 0; }
+
+  .iv-ct__track line { stroke: var(--muted); }
+  .iv-bars__track { border-radius: 2px; background: color-mix(in srgb, var(--rule) 40%, transparent); }
+  .iv-target { stroke: var(--text); stroke-width: 2; }
+  .iv-scenarios__who { grid-column: 1 / -1; color: var(--muted); font-size: 0.7rem; }
+
+  /* ---------------------------------------------------------------- the sector map */
+
+  .iv-tree { display: block; overflow: hidden; }
+
+  .iv-tile {
+    fill: color-mix(in srgb, var(--iv-up) calc(max(var(--heat, 0), 0) * 75% + 8%), color-mix(in srgb, var(--iv-down) calc(max(var(--heat, 0) * -1, 0) * 75%), var(--rule)));
+    stroke: var(--surface);
+    stroke-width: 2;
+  }
+
+  /* The same boxes as a list: read out by screen readers, and shown on phones in place of the
+     map, which is too small to label there. */
+  .iv-tree-list {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .iv-tile__name { fill: var(--text); font: 700 0.8rem var(--font-mono); }
+  .iv-tile__meta { fill: var(--text); font: 0.72rem var(--font-mono); opacity: 0.85; }
+
+  /* ---------------------------------------------------------------- weights over time */
+
+  .iv-bands { display: block; inline-size: 100%; block-size: 200px; }
+  .iv-bands path { stroke: var(--surface); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .iv-band--growth { fill: var(--iv-growth); }
+  .iv-band--income { fill: var(--iv-income); }
+  .iv-band--defensive { fill: var(--iv-defensive); }
+  .iv-band--defence { fill: var(--iv-defence); }
+  .iv-band--cash { fill: var(--iv-cash); }
+
+  /* ---------------------------------------------------------------- the factsheet */
+
+  .iv-facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0 24px;
+    margin: 0;
+    font: 0.78rem var(--font-mono);
+  }
+
+  .iv-facts div {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 6px 0;
+    border-block-end: 1px solid color-mix(in srgb, var(--rule) 60%, transparent);
+  }
+
+  .iv-facts dt { color: var(--muted); }
+  .iv-facts dd { margin: 0; font-variant-numeric: tabular-nums; font-weight: 700; }
+
+  /* ---------------------------------------------------------------- daily returns */
+
+  .iv-hist__svg { display: block; inline-size: 100%; block-size: 120px; }
+  .iv-bin { fill: rgb(var(--iv-up-rgb) / 0.55); }
+  .iv-bin--down { fill: rgb(var(--iv-down-rgb) / 0.55); }
+
+  .iv-hist__curve {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 1.4;
+    stroke-dasharray: 4 3;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.7;
+  }
+
+  /* ---------------------------------------------------------------- Monte Carlo */
+
+  .iv-mc__outer { fill: color-mix(in srgb, var(--iv-port) 12%, transparent); }
+  .iv-mc__inner { fill: color-mix(in srgb, var(--iv-port) 24%, transparent); }
+  .iv-mc__median { fill: none; stroke: var(--iv-port); stroke-width: 2.2; vector-effect: non-scaling-stroke; }
+
+  .iv-mc__sample {
+    fill: none;
+    stroke: var(--text);
+    stroke-width: 0.8;
+    opacity: 0.35;
+    vector-effect: non-scaling-stroke;
+  }
+
+  .iv-outcomes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 14px 0 0;
+  }
+
+  .iv-outcomes div { padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; }
+  .iv-outcomes dt { color: var(--muted); font: 0.68rem var(--font-mono); text-transform: uppercase; }
+  .iv-outcomes dd { margin: 4px 0 0; font: 700 0.95rem var(--font-mono); }
+
+  /* ---------------------------------------------------------------- waiting for history */
+
+  .iv-wait {
+    display: grid;
+    gap: 8px;
+    align-content: center;
+    min-block-size: 150px;
+    padding: 16px;
+    border: 1px dashed var(--rule);
+    border-radius: 4px;
+    color: var(--muted);
+    font: 0.78rem/1.5 var(--font-mono);
+  }
+
+  .iv-wait b { color: var(--text); }
+  .iv-wait__bar { max-inline-size: 320px; }
+  .iv-wait__track { fill: color-mix(in srgb, var(--rule) 50%, transparent); }
+
+  /* ---------------------------------------------------------------- the writing */
+
+  .iv-think { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .iv-think h3 { margin: 0 0 6px; font-size: 0.95rem; }
+  .iv-think__text { font-size: 0.9rem; line-height: 1.55; }
+  .iv-think__text > * { margin-block: 0 0.7em; }
+  .iv-think__text ul { padding-inline-start: 1.1em; }
+  .iv-think__text li { margin-block-end: 0.4em; }
+
+  .iv-gloss { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px 28px; margin: 0; }
+  .iv-gloss dt { font: 700 0.78rem var(--font-mono); }
+  .iv-gloss dd { margin: 3px 0 0; color: var(--muted); font-size: 0.84rem; line-height: 1.45; }
+
+
+  /* ---------------------------------------------------------------- the interactive board */
+
+  .iv-head { display: flex; flex-wrap: wrap; gap: 24px 40px; align-items: end; justify-content: space-between; }
+  .iv-switch-slot:empty { display: none; }
+
+  .iv-viewswitch { display: grid; gap: 8px; justify-items: end; margin-block-end: 4px; }
+
+  /* Two equal halves, with a lit block under whichever is on. */
+  .iv-switch {
+    --iv-on: #06121c;
+
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 4px;
+    border: 1px solid var(--rule);
+    border-radius: calc(var(--radius-button) + 4px);
+    background: var(--surface);
+  }
+
+  :root[data-theme="light"] .iv-switch { --iv-on: #fff; }
+
+  .iv-switch::before {
+    content: "";
+    position: absolute;
+    inset: 4px 50% 4px 4px;
+    border-radius: var(--radius-button);
+    background: var(--iv-port);
+  }
+
+  /* Amber, as a taste of the terminal's screen. */
+  .iv-switch--term { --iv-on: #0d0a06; }
+  .iv-switch--term::before { transform: translateX(100%); background: #ffb000; }
+
+  .iv-switch__option {
+    position: relative;
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    min-block-size: 40px;
+    padding: 0 22px;
+    border: 0;
+    border-radius: var(--radius-button);
+    background: transparent;
+    color: var(--muted);
+    font: 700 0.85rem var(--font-mono);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+
+  .iv-switch__option:hover { color: var(--text); }
+  .iv-switch__option[aria-pressed="true"] { color: var(--iv-on); }
+  .iv-switch__option:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+  .iv-switch__hint { margin: 0; color: var(--muted); font: 0.72rem var(--font-mono); }
+
+  .iv-chips { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+
+  .iv-chip,
+  .iv-toggle {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 3px 9px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: transparent;
+    color: var(--muted);
+    font: 600 0.72rem/1.5 var(--font-mono);
+    cursor: pointer;
+  }
+
+  .iv-chip:hover,
+  .iv-toggle:hover { color: var(--text); border-color: var(--muted); }
+
+  .iv-chip--on,
+  .iv-toggle--on {
+    border-color: var(--iv-port);
+    background: color-mix(in srgb, var(--iv-port) 16%, transparent);
+    color: var(--text);
+  }
+
+  .iv-toggle:not(.iv-toggle--on) .iv-dot { opacity: 0.3; }
+  .iv-chip--off { opacity: 0.35; cursor: not-allowed; }
+  .iv-chip--off:hover { color: var(--muted); border-color: var(--rule); }
+
+  .iv-chip:focus-visible,
+  .iv-toggle:focus-visible,
+  .iv-fkey:focus-visible,
+  .iv-tbox:focus-visible,
+  .iv-chart--live:focus-visible { outline: 2px solid var(--iv-port); outline-offset: 2px; }
+
+  .iv-hint { color: var(--muted); font: 0.7rem var(--font-mono); }
+
+  /* The time machine */
+  .iv-scrub {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 4px 16px;
+    align-items: center;
+    margin-block: 0 14px;
+    padding: 10px 14px;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--surface);
+    font: 0.75rem var(--font-mono);
+  }
+
+  .iv-scrub__label { color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+  .iv-scrub__label b { color: var(--iv-port); }
+  .iv-scrub__range { inline-size: 100%; accent-color: var(--iv-port); }
+  .iv-scrub__ends { grid-column: 2; display: flex; justify-content: space-between; color: var(--muted); font-size: 0.68rem; }
+  .iv-scrub .iv-chip { grid-row: 1; grid-column: 3; }
+
+  /* Sliders */
+  .iv-controls { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: end; margin-block-start: 14px; }
+  .iv-range { display: grid; flex: 1 1 220px; gap: 4px; color: var(--muted); font: 0.75rem var(--font-mono); }
+  .iv-range b { color: var(--text); }
+  .iv-range input { inline-size: 100%; accent-color: var(--iv-port); }
+
+  .iv-stress,
+  .iv-stress li { margin: 0; padding: 0; list-style: none; }
+  .iv-stress { margin-block-start: 6px; font: 0.76rem var(--font-mono); }
+  .iv-stress li { display: grid; grid-template-columns: 4.5em minmax(0, 1fr) 5em 5em; gap: 10px; align-items: center; padding: 3px 0; }
+  .iv-stress__contrib { color: var(--muted); }
+  .iv-stress__total { margin: 14px 0 6px; font: 1rem var(--font-mono); }
+  .iv-stress__total b { font-size: 1.8rem; }
+
+  /* The growth chart's readout, which follows the pointer or the arrow keys. */
+  .iv-chart--live { cursor: crosshair; }
+  .iv-cross { position: absolute; inset-block-start: 0; inline-size: 0; pointer-events: none; }
+  .iv-cross[hidden] { display: none; }
+  .iv-cross__line { position: absolute; inset: 0 auto 0 0; border-inline-start: 1px dashed var(--muted); }
+
+  .iv-cross__dots span {
+    position: absolute;
+    inline-size: 9px;
+    block-size: 9px;
+    margin: -4.5px 0 0 -4.5px;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+  }
+
+  .iv-cross__tip {
+    position: absolute;
+    inset: 8px auto auto 12px;
+    display: grid;
+    gap: 3px;
+    padding: 8px 10px;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--surface);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.35);
+    font: 0.72rem var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    white-space: pre;
+  }
+
+  .iv-cross--flip .iv-cross__tip { inset-inline: auto 12px; }
+  .iv-cross__tip b { margin-block-end: 2px; }
+  .iv-cross__tip > span { display: grid; grid-template-columns: 8px 5.5em auto; gap: 8px; align-items: center; }
+  .iv-cross__tip i { inline-size: 8px; block-size: 8px; border-radius: 50%; }
+  .iv-cross__tip > span span:last-child { text-align: end; }
+
+  .iv-dot--port,
+  i.iv-dot--port { background: var(--iv-port); }
+
+  /* The sector map as buttons, to drill into. */
+  .iv-tree--live { position: relative; block-size: 340px; }
+
+  .iv-tbox {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 8px;
+    overflow: hidden;
+    border: 2px solid var(--surface);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--iv-up) calc(max(var(--heat, 0), 0) * 75% + 8%), color-mix(in srgb, var(--iv-down) calc(max(var(--heat, 0) * -1, 0) * 75%), var(--rule)));
+    color: var(--text);
+    font: 0.72rem var(--font-mono);
+    text-align: start;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .iv-tbox:hover { filter: brightness(1.15); z-index: 1; }
+  .iv-tbox__name { font-weight: 700; font-size: 0.8rem; }
+  .iv-tbox__meta { opacity: 0.85; }
+
+  .iv-table--live tbody tr { cursor: pointer; }
+  .iv-table--live tbody tr:hover { background: color-mix(in srgb, var(--iv-port) 8%, transparent); }
+  .iv-grid--one { grid-template-columns: minmax(0, 1fr); }
+
+
+  /* Weights over time: a readout, and a band lit up from the chart or its legend. */
+  .iv-bandchart { position: relative; cursor: crosshair; }
+  .iv-bandchart:focus-visible { outline: 2px solid var(--iv-port); outline-offset: 2px; }
+  .iv-band.is-dim { opacity: 0.28; }
+  .iv-band.is-on { filter: brightness(1.12) saturate(1.1); }
+  .iv-cross--bands .iv-cross__tip > span { grid-template-columns: 8px 11.5em auto; }
+  .iv-cross__tip i.iv-dot--growth { background: var(--iv-growth); }
+  .iv-cross__tip i.iv-dot--income { background: var(--iv-income); }
+  .iv-cross__tip i.iv-dot--defensive { background: var(--iv-defensive); }
+  .iv-cross__tip i.iv-dot--defence { background: var(--iv-defence); }
+  .iv-cross__tip i.iv-dot--cash { background: var(--iv-cash); }
+
+  .iv-legend--bands { gap: 4px 8px; }
+
+  .iv-legend__key {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 2px 6px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    background: none;
+    color: var(--text);
+    font: inherit;
+    cursor: pointer;
+  }
+
+  .iv-legend__key b { font-variant-numeric: tabular-nums; }
+  .iv-legend__key.is-on { border-color: var(--rule); background: color-mix(in srgb, var(--text) 6%, transparent); }
+  .iv-legend__key.is-dim { opacity: 0.45; }
+  .iv-legend__key:focus-visible { outline: 2px solid var(--iv-port); outline-offset: 1px; }
+
+  /* The stress test's scenarios, each with its own slider. */
+  .iv-scenarios--live li { grid-template-columns: 10.5em minmax(0, 1fr) 5.5em; }
+  .iv-scenarios__label b { margin-inline-start: 4px; font-variant-numeric: tabular-nums; }
+  .iv-scenarios__range { inline-size: 100%; accent-color: var(--iv-down); }
+  .iv-subhead { margin: 18px 0 8px; font: 700 0.74rem var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* ---------------------------------------------------------------- the terminal */
+
+  .iv-term {
+    --text: #ffe9c2;
+    --muted: #b08a52;
+    --rule: #3a2c18;
+    --surface: #0d0a06;
+    --iv-port: #ffb000;
+    --iv-policy: #4fc3f7;
+    --iv-acwi: #b388ff;
+    --iv-up-rgb: 74 222 128;
+    --iv-down-rgb: 255 82 82;
+    --iv-up: rgb(var(--iv-up-rgb));
+    --iv-down: rgb(var(--iv-down-rgb));
+
+    position: relative;
+    margin-block-end: 14px;
+    padding: 0 0 12px;
+    overflow: hidden;
+    border: 1px solid #5a4422;
+    border-radius: var(--radius-screen);
+    background: #060402;
+    color: var(--text);
+    font-family: var(--font-mono);
+    box-shadow: 0 0 0 1px #000, 0 20px 60px rgb(0 0 0 / 0.5);
+  }
+
+  .iv-term:focus { outline: none; }
+  .iv-term:focus-visible { outline: 2px solid var(--iv-port); outline-offset: 3px; }
+
+  /* A faint scanline, as on an old trading screen. */
+  .iv-term::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(to bottom, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 3px);
+  }
+
+  .iv-term .iv-panel { border-radius: 0; }
+  .iv-term .iv-panel__title { color: var(--iv-port); font-size: 0.74rem; }
+  .iv-term .iv-chip,
+  .iv-term .iv-toggle { border-radius: 0; }
+  .iv-term .iv-chip--on,
+  .iv-term .iv-toggle--on { border-color: var(--iv-port); background: var(--iv-port); color: #0d0a06; }
+  .iv-term .iv-tbox { border-radius: 0; border-color: #060402; }
+  .iv-term .iv-scrub { margin: 10px 12px 0; border-radius: 0; }
+  .iv-term .iv-grid { gap: 10px; }
+  .iv-term .iv-think h3 { color: var(--iv-port); font: 700 0.8rem var(--font-mono); text-transform: uppercase; }
+
+  .iv-term__top {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 24px;
+    align-items: center;
+    padding: 6px 12px;
+    background: var(--iv-port);
+    color: #0d0a06;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .iv-term__brand { padding: 1px 8px; background: #0d0a06; color: var(--iv-port); }
+  .iv-term__status { display: flex; gap: 8px; align-items: center; margin-inline-start: auto; }
+
+  .iv-term__exit {
+    padding: 2px 10px;
+    border: 0;
+    background: #0d0a06;
+    color: var(--iv-port);
+    font: 700 0.72rem var(--font-mono);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .iv-term__exit:hover { background: #33230d; }
+  .iv-term__exit:focus-visible { outline: 2px solid #0d0a06; outline-offset: 2px; }
+
+  .iv-lamp { inline-size: 8px; block-size: 8px; border-radius: 50%; background: #0f7a3a; box-shadow: 0 0 6px #0f7a3a; }
+  .iv-lamp--late { background: #b3261e; box-shadow: 0 0 6px #b3261e; }
+  .iv-lamp--past { background: #0d0a06; box-shadow: 0 0 0 1px #0d0a06 inset; }
+
+  /* The tape runs the list twice, so the loop is seamless. */
+  .iv-tape { overflow: hidden; border-block-end: 1px solid var(--rule); background: #0d0a06; white-space: nowrap; }
+  .iv-tape__track { display: inline-flex; }
+  .iv-tape__item { padding: 5px 18px; border-inline-end: 1px solid var(--rule); font-size: 0.74rem; }
+  .iv-tape__item b { color: var(--iv-port); }
+
+  .iv-kpis { display: grid; grid-template-columns: 1.4fr repeat(7, minmax(0, 1fr)); border-block-end: 1px solid var(--rule); }
+  .iv-kpi { display: grid; gap: 2px; align-content: start; padding: 10px 12px; border-inline-end: 1px solid var(--rule); }
+  .iv-kpi:last-child { border-inline-end: 0; }
+  .iv-kpi .iv-kpi__label { font-size: 0.64rem; }
+  .iv-kpi__value { font-size: 1.15rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .iv-kpi--lead .iv-kpi__value { font-size: 1.7rem; }
+
+  .iv-fkeys { display: flex; flex-wrap: wrap; gap: 2px; align-items: center; padding: 8px 12px; border-block-end: 1px solid var(--rule); }
+
+  .iv-fkey {
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    padding: 4px 12px 4px 4px;
+    border: 1px solid var(--rule);
+    background: #120d07;
+    color: var(--text);
+    font: 700 0.74rem var(--font-mono);
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .iv-fkey span { padding: 1px 5px; background: var(--rule); color: var(--iv-port); }
+  .iv-fkey:hover { background: #241a0d; }
+  .iv-fkey--on { border-color: var(--iv-port); background: var(--iv-port); color: #0d0a06; }
+  .iv-fkey--on span { background: #0d0a06; }
+
+  .iv-term__body { padding: 12px; }
+  .iv-grid--risk { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .iv-grid--risk > :last-child { grid-column: 1 / -1; }
+  .iv-grid--alloc { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+  .iv-grid--alloc .iv-panel--wide { grid-column: auto; }
+
+  .iv-cmd { margin: 10px 12px 0; border: 1px solid var(--rule); background: #0d0a06; }
+  /* Reversed, so the log stays scrolled to its newest line. */
+  .iv-log { display: flex; flex-direction: column-reverse; max-block-size: 230px; padding: 6px 10px 0; overflow-y: auto; font-size: 0.74rem; }
+  .iv-log p { margin: 0 0 2px; white-space: pre-wrap; }
+  .iv-log__line--cmd { color: var(--iv-port); }
+  .iv-log__line--dim { color: var(--muted); }
+  .iv-log__line--err { color: var(--iv-down); }
+
+  .iv-prompt { display: flex; gap: 8px; align-items: center; padding: 6px 10px 8px; color: var(--iv-port); font-weight: 700; }
+
+  .iv-prompt input {
+    flex: 1;
+    min-inline-size: 0;
+    border: 0;
+    outline: 0;
+    background: transparent;
+    color: var(--text);
+    font: 0.85rem var(--font-mono);
+    caret-color: var(--iv-port);
+  }
+
+  .iv-prompt input::placeholder { color: var(--muted); opacity: 0.7; }
+  .iv-prompt:focus-within { box-shadow: inset 0 0 0 1px var(--iv-port); }
+
+  /* ---------------------------------------------------------------- smaller screens */
+
+  @media (max-width: 64em) {
+    .iv-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .iv-think { grid-template-columns: minmax(0, 1fr); }
+  }
+
+  @media (max-width: 52em) {
+    .iv-grid,
+    .iv-grid--risk,
+    .iv-grid--alloc { grid-template-columns: minmax(0, 1fr); }
+    .iv-kpis { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+
+  @media (max-width: 40em) {
+    .iv-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .iv-bigtile { padding: 12px; }
+    .iv-bigtile__value { font-size: 1.5rem; }
+    .iv-panel { padding: 12px; }
+    .iv-chart { padding-inline-start: 30px; }
+    .iv-chart__svg { block-size: 220px; }
+    .iv-chart__x span:nth-child(2) { display: none; }
+    .iv-heat { min-inline-size: 560px; }
+    .iv-tree { display: none; }
+
+    /* Tickers alone, so the figures fit beside them. */
+    .iv-table--hold tbody th span,
+    .iv-table--trades tbody th span { display: none; }
+
+    .iv-tree-list {
+      position: static;
+      inline-size: auto;
+      block-size: auto;
+      margin: 0;
+      padding: 0;
+      overflow: visible;
+      clip-path: none;
+      font: 0.76rem/1.9 var(--font-mono);
+      white-space: normal;
+      list-style: none;
+    }
+    .iv-ct li { grid-template-columns: 6em minmax(0, 1fr) 6em; }
+    .iv-bars li { grid-template-columns: 7.5em minmax(0, 1fr) 7em; }
+    .iv-bars li > :last-child { display: none; }
+    .iv-scenarios li { grid-template-columns: 9em minmax(0, 1fr) 5em; }
+    .iv-scenarios--live li { grid-template-columns: minmax(0, 1fr) 5em; }
+    .iv-scenarios--live .iv-scenarios__range { grid-column: 1 / -1; grid-row: 2; }
+    .iv-note--ends span:nth-child(2) { text-align: center; }
+    .iv-head { align-items: start; }
+    .iv-viewswitch { justify-items: start; }
+    .iv-switch__hint { display: none; }
+    .iv-scrub { grid-template-columns: minmax(0, 1fr); }
+    .iv-scrub__ends { grid-column: 1; }
+    .iv-scrub .iv-chip { grid-row: auto; grid-column: 1; justify-self: start; }
+    .iv-tree--live { block-size: 300px; }
+    .iv-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .iv-kpi { border-block-end: 1px solid var(--rule); }
+    .iv-term__title { display: none; }
+    .iv-term__body { padding: 8px; }
+  }
+}
+
+@layer motion {
+  [data-motion="on"] .iv-bigtile { transition: transform 0.2s, border-color 0.2s; }
+
+  @media (hover: hover) {
+    [data-motion="on"] .iv-bigtile:hover { transform: translateY(-2px); border-color: var(--link); }
+  }
+
+  [data-motion="on"] .iv-switch::before { transition: transform 0.25s ease, background-color 0.25s ease; }
+  [data-motion="on"] .iv-switch__option { transition: color 0.2s; }
+
+  [data-motion="on"] :is(.iv-chip, .iv-toggle) { transition: color 0.15s, border-color 0.15s, background-color 0.15s; }
+  [data-motion="on"] .iv-tbox { transition: filter 0.15s; }
+  [data-motion="on"] .iv-fkey { transition: background-color 0.15s, transform 0.1s; }
+  [data-motion="on"] .iv-fkey:active { transform: translateY(1px); }
+
+  /* The dashboard rises in when it comes back, and each terminal view as it's picked. */
+  [data-motion="on"] :is(.iv-view--in, .iv-term .iv-view) { animation: iv-rise 0.35s ease-out both; }
+
+  /* The terminal comes on as an old screen does: a dot, a line, then the whole picture. */
+  [data-motion="on"] .iv-term { animation: iv-power 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+
+  [data-motion="on"] .iv-lamp:not(.iv-lamp--past) { animation: iv-blink 1.6s steps(2, jump-none) infinite; }
+  [data-motion="on"] .iv-tape__track { animation: iv-tape 60s linear infinite; }
+  [data-motion="on"] .iv-tape:hover .iv-tape__track { animation-play-state: paused; }
+
+  [data-motion="on"] .iv-band,
+  [data-motion="on"] .iv-legend__key { transition: opacity 0.2s, filter 0.2s, background-color 0.2s; }
+
+  /* The bands rise in from the bottom with a slight bounce when they first appear. */
+  [data-motion="on"] .iv-bands__group {
+    transform-box: view-box;
+    transform-origin: 50% 100%;
+    animation: iv-grow 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+  }
+
+  @keyframes iv-grow {
+    from { transform: scaleY(0); }
+  }
+
+  @keyframes iv-rise {
+    from { opacity: 0; transform: translateY(8px); }
+  }
+
+  @keyframes iv-power {
+    0% { clip-path: inset(49.7% 50% 49.7% 50%); filter: brightness(3); }
+    35% { clip-path: inset(49.7% 0 49.7% 0); filter: brightness(3); }
+    100% { clip-path: inset(0); filter: brightness(1); }
+  }
+
+  @keyframes iv-blink {
+    50% { opacity: 0.3; }
+  }
+
+  @keyframes iv-tape {
+    to { transform: translateX(-50%); }
   }
 }

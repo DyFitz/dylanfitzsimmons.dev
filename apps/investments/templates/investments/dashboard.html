@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/investments.css' %}">
+  <script type="module" src="{% static 'js/investments.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <section class="page-head iv-head" aria-labelledby="iv-title">
+    <div>
+      <p class="path">~/investments</p>
+      <h1 class="page-head__title tt-glitch" id="iv-title" data-text="investments">Investments</h1>
+      <p class="page-head__lede">A portfolio built around AI's demand for chips and memory, reported at the end of each day. Every figure is a percentage or a ratio; there are no amounts of money here.</p>
+    </div>
+    <div class="iv-switch-slot" data-iv-switch></div>
+  </section>
+
+  <div class="iv-board" data-iv-board>
+
+  <p class="iv-status{% if status.late %} iv-status--late{% endif %}" role="status"><span class="iv-status__lamp" aria-hidden="true"></span>{{ status.text }}</p>
+
+  <div class="iv-dash" data-iv-dash>
+    <p class="iv-tiles__label">Whole history · {{ inception }} to {{ as_of }}</p>
+    <div class="iv-tiles">
+      {% for tile in tiles %}
+        <div class="iv-bigtile">
+          <span class="iv-kpi__label">{{ tile.label }}</span>
+          <span class="iv-bigtile__value {{ tile.cls }}">{{ tile.value }}</span>
+          <span class="iv-note">{{ tile.note }}</span>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="iv-grid">
+      <section class="iv-panel iv-panel--wide" aria-labelledby="iv-growth">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-growth">Growth of 100 · {{ period_label }}</h2></header>
+        <div class="iv-chart">
+          <div class="iv-chart__ticks" aria-hidden="true">{% for tick in growth_ticks %}<span>{{ tick }}</span>{% endfor %}</div>
+          <svg class="iv-chart__svg" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Growth of 100 over the period{% if growth_lines|length > 1 %}, against the benchmarks{% endif %}">
+            <path class="iv-area" d="{{ growth_area }}"></path>
+            {% for line in growth_lines %}<path class="iv-line iv-line--{{ line.key }}" d="{{ line.d }}"></path>{% endfor %}
+          </svg>
+          <div class="iv-chart__x" aria-hidden="true">{% for label in growth_x %}<span>{{ label }}</span>{% endfor %}</div>
+        </div>
+        <ul class="iv-legend" role="list">
+          {% for line in growth_lines %}<li><span class="iv-dot iv-dot--{{ line.key }}"></span>{{ line.label }}</li>{% endfor %}
+        </ul>
+        {% if growth_lines|length == 1 %}<p class="iv-note">The benchmarks join the chart once their prices are loaded.</p>{% endif %}
+      </section>
+
+      <section class="iv-panel iv-panel--wide" aria-labelledby="iv-thinking">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-thinking">The thinking behind it</h2></header>
+        <div class="iv-think" data-iv-thinking>
+          {% for title, text in thinking %}
+            <div><h3>{{ title }}</h3><div class="iv-think__text">{{ text }}</div></div>
+          {% endfor %}
+        </div>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-returns">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-returns">Returns</h2></header>
+        <div class="iv-scroll">
+          <table class="iv-table">
+            <thead><tr><td></td>{% for head in returns.heads %}<th scope="col">{{ head }}</th>{% endfor %}</tr></thead>
+            <tbody>
+              {% for row in returns.rows %}
+                <tr class="iv-row iv-row--{{ row.key }}"><th scope="row">{{ row.label }}</th>{% for cell in row.cells %}<td class="iv-num {{ cell.cls }}">{{ cell.text }}</td>{% endfor %}</tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-drawdowns">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-drawdowns">Drawdowns · {{ period_label }}</h2></header>
+        <svg class="iv-mini" viewBox="0 0 1000 120" preserveAspectRatio="none" role="img" aria-label="Falls from the highest value so far, over the period"><path class="iv-dd" d="{{ dd_path }}"></path></svg>
+        <p class="iv-note">worst {{ dd_worst }} · now {{ dd_now }}</p>
+      </section>
+
+      <section class="iv-panel iv-panel--wide" aria-labelledby="iv-months">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-months">Monthly returns, %</h2></header>
+        <div class="iv-scroll">
+          <table class="iv-heat">
+            <thead><tr><td></td>{% for month in months %}<th scope="col">{{ month }}</th>{% endfor %}<th scope="col">Year</th></tr></thead>
+            <tbody>
+              {% for year in years %}
+                <tr>
+                  <th scope="row">{{ year.year }}</th>
+                  {% for cell in year.cells %}{% if cell %}<td class="iv-heat__cell {{ cell.cls }}">{{ cell.text }}</td>{% else %}<td class="iv-heat__cell iv-heat__cell--empty"></td>{% endif %}{% endfor %}
+                  <td class="iv-heat__total {{ year.cls }}">{{ year.total }}</td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="iv-note">{{ months_up }} months up · best {{ best_month }} · worst {{ worst_month }}</p>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-contrib">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-contrib">Where the return came from · {{ period_label }}</h2></header>
+        <ul class="iv-ct" role="list">
+          {% for row in contributions %}
+            <li>
+              <span class="iv-ct__name">{{ row.name }}</span>
+              <svg class="iv-ct__track" width="100%" height="8" aria-hidden="true"><line x1="50%" x2="50%" y1="0" y2="8"></line><rect class="{% if row.up %}iv-fill--up{% else %}iv-fill--down{% endif %}" x="{{ row.x }}" width="{{ row.w }}" height="8" rx="2"></rect></svg>
+              <span class="iv-num {{ row.cls }}">{{ row.text }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+        <p class="iv-note">Points of the portfolio's return each one supplied, dividends included. They add up to {{ contribution_total }}, the return over the period.</p>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-risk">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-risk">Where the risk comes from</h2></header>
+        <ul class="iv-rc" role="list">
+          {% for row in risk_bars %}
+            <li>
+              <span class="iv-rc__name">{{ row.ticker }}</span>
+              <svg class="iv-rc__bars" width="100%" height="12" aria-hidden="true"><rect class="iv-fill--weight" width="{{ row.w }}" height="5" rx="2"></rect><rect class="iv-fill--port" y="7" width="{{ row.r }}" height="5" rx="2"></rect></svg>
+              <span class="iv-num">{{ row.weight }} → {{ row.risk }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+        <p class="iv-note"><span class="iv-dot iv-dot--weight"></span>share of the money <span class="iv-dot iv-dot--port"></span>share of the risk</p>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-sectors">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-sectors">Sectors</h2></header>
+        <p class="visually-hidden">Each box is sized by the sector's weight and coloured by its return since the start.</p>
+        <svg class="iv-tree" width="100%" height="340" aria-hidden="true">
+          {% for tile in tiles_map %}
+            <svg x="{{ tile.x }}" y="{{ tile.y }}" width="{{ tile.w }}" height="{{ tile.h }}" aria-hidden="true">
+              <rect class="iv-tile {{ tile.cls }}" width="100%" height="100%" rx="4"></rect>
+              <text class="iv-tile__name" x="8" y="20">{{ tile.name }}</text>
+              {% if tile.big %}<text class="iv-tile__meta" x="8" y="100%" dy="-9">{{ tile.meta }}</text>{% endif %}
+            </svg>
+          {% endfor %}
+        </svg>
+        <ul class="iv-tree-list" role="list">{% for tile in tiles_map %}<li>{{ tile.full }}</li>{% endfor %}</ul>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-sleeves">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-sleeves">By sleeve, against its target</h2></header>
+        <ul class="iv-bars" role="list">
+          {% for row in sleeves %}
+            <li>
+              <span class="iv-bars__name">{{ row.name }}</span>
+              <svg class="iv-bars__track" width="100%" height="10" aria-hidden="true"><rect class="iv-fill--port" y="1" width="{{ row.bar }}" height="8" rx="2"></rect><line class="iv-target" x1="{{ row.mark }}" x2="{{ row.mark }}" y1="0" y2="10"></line></svg>
+              <span class="iv-num">{{ row.weight }} <span class="iv-dim">/ {{ row.target }}</span></span>
+              <span class="iv-num {{ row.cls }}">{{ row.ret }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+        <p class="iv-note"><span class="iv-tick"></span>target · {{ asset_mix }}<br>top 5 holdings {{ top5 }} · effective number of holdings {{ effective }}</p>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-bands">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-bands">Weights over time</h2></header>
+        <svg class="iv-bands" viewBox="0 0 1000 200" preserveAspectRatio="none" role="img" aria-label="Each sleeve's share of the portfolio over time">
+          {% for band in bands %}<path class="iv-band--{{ band.key }}" d="{{ band.d }}"></path>{% endfor %}
+        </svg>
+        <div class="iv-chart__x" aria-hidden="true"><span>{{ bands_from }}</span><span>{{ bands_to }}</span></div>
+        <ul class="iv-legend" role="list">{% for band in bands %}<li><span class="iv-dot iv-dot--{{ band.key }}"></span>{{ band.name }}</li>{% endfor %}</ul>
+        <p class="iv-note">Weights drift as prices move, and are reset to their targets at the end of each quarter.</p>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-trades">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-trades">Recent trades</h2></header>
+        <div class="iv-scroll">
+          <table class="iv-table iv-table--trades">
+            <thead><tr><th scope="col">Date</th><th scope="col">Trade</th><th scope="col">Holding</th><th scope="col">Weight</th></tr></thead>
+            <tbody>
+              {% for trade in trades %}
+                <tr><td>{{ trade.date }}</td><td><span class="iv-trade iv-trade--{% if trade.buy %}buy{% else %}sell{% endif %}">{{ trade.verb }}</span></td><th scope="row"><b>{{ trade.ticker }}</b> <span>{{ trade.name }}</span></th><td class="iv-num">{{ trade.change }}</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="iv-note">{{ trade_count }} · {{ turnover }}</p>
+      </section>
+
+      <section class="iv-panel iv-panel--wide" aria-labelledby="iv-holdings">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-holdings">Holdings · as of {{ as_of }}</h2></header>
+        <div class="iv-scroll">
+          <table class="iv-table iv-table--hold">
+            <thead><tr><th scope="col">Holding</th><th scope="col">Sector</th><th scope="col">Weight</th><th scope="col">1D</th><th scope="col">1M</th><th scope="col">YTD</th><th scope="col">{{ period_label }}</th><th scope="col">Beta</th><th scope="col">Vol</th><th scope="col">Risk share</th></tr></thead>
+            <tbody>
+              {% for row in holdings %}
+                <tr>
+                  <th scope="row"><b>{{ row.ticker }}</b> <span>{{ row.name }}</span></th>
+                  <td>{{ row.sector }}</td>
+                  <td class="iv-num"><svg class="iv-wbar" width="48" height="6" aria-hidden="true"><rect width="{{ row.bar }}" height="6" rx="2"></rect></svg>{{ row.weight }}</td>
+                  {% for cell in row.cells %}<td class="iv-num {{ cell.cls }}">{{ cell.text }}</td>{% endfor %}
+                  <td class="iv-num">{{ row.beta }}</td>
+                  <td class="iv-num">{{ row.vol }}</td>
+                  <td class="iv-num">{{ row.risk }}</td>
+                </tr>
+              {% endfor %}
+              <tr><th scope="row"><b>Cash</b></th><td>Cash</td><td class="iv-num">{{ cash }}</td><td colspan="7"></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="iv-panel iv-panel--wide" aria-labelledby="iv-facts">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-facts">Key figures · {{ period_label }}{% if bench_code %} vs {{ bench_code }}{% endif %}</h2></header>
+        <dl class="iv-facts">{% for fact in facts %}<div><dt>{{ fact.label }}</dt><dd>{{ fact.value }}</dd></div>{% endfor %}</dl>
+        {% if ratios_wait %}<p class="iv-note iv-note--wait">A month or two is too short to turn into yearly figures, so these ratios stay blank until there are three months of history. Day {{ days }} of 63.</p>{% endif %}
+        {% if not bench_code %}<p class="iv-note">Beta, alpha and the other comparisons need the benchmark's prices, which aren't in yet.</p>{% endif %}
+        <p class="iv-note">* the average day's return, compounded over a year, until there's a year of history.</p>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-rolling">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-rolling">Rolling 3 months</h2></header>
+        {% if rolling %}
+          <svg class="iv-mini" viewBox="0 0 1000 120" preserveAspectRatio="none" role="img" aria-label="Volatility and beta over a moving three-month window"><path class="iv-line iv-line--vol" d="{{ rolling.vol }}"></path><path class="iv-line iv-line--beta" d="{{ rolling.beta }}"></path></svg>
+          <p class="iv-note"><span class="iv-dot iv-dot--vol"></span>volatility {{ rolling.vol_now }} <span class="iv-dot iv-dot--beta"></span>beta to the {{ bench_code }} {{ rolling.beta_now }}</p>
+        {% else %}
+          {% include "investments/includes/wait.html" with wait=rolling_wait %}
+        {% endif %}
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-daily">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-daily">Daily returns</h2></header>
+        <div class="iv-hist">
+          <svg class="iv-hist__svg" viewBox="0 0 1000 120" preserveAspectRatio="none" role="img" aria-label="How often each size of daily return has come up, against a normal curve">
+            {% for bar in hist_bars %}<rect class="iv-bin{% if bar.down %} iv-bin--down{% endif %}" x="{{ bar.x }}" y="{{ bar.y }}" width="{{ bar.w }}" height="{{ bar.h }}"></rect>{% endfor %}
+            <path class="iv-hist__curve" d="{{ hist_curve }}"></path>
+          </svg>
+        </div>
+        <p class="iv-note iv-note--ends"><span>-6%</span><span>daily returns, against a normal curve · VaR 95% {{ var95 }}</span><span>+6%</span></p>
+      </section>
+
+      <section class="iv-panel iv-panel--wide" aria-labelledby="iv-corr">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-corr">Correlation of daily returns · {{ period_label }}</h2></header>
+        <div class="iv-scroll">
+          <table class="iv-corr">
+            <thead><tr><td></td>{% for ticker in correlation.tickers %}<th scope="col">{{ ticker }}</th>{% endfor %}</tr></thead>
+            <tbody>
+              {% for row in correlation.rows %}
+                <tr><th scope="row">{{ row.ticker }}</th>{% for cell in row.cells %}<td class="iv-corr__cell {{ cell.cls }}">{{ cell.text }}</td>{% endfor %}</tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <p class="iv-note">Grouped by sleeve. Warm means two holdings rose and fell together; cool means they moved apart.</p>
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-mc">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-mc">Monte Carlo · {% if mc %}{{ mc.years }}{% else %}5 years{% endif %} ahead</h2></header>
+        {% if mc %}
+          <div class="iv-mc">
+            <svg class="iv-chart__svg" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="The range of outcomes across the projected futures">
+              <path class="iv-mc__outer" d="{{ mc.outer }}"></path><path class="iv-mc__inner" d="{{ mc.inner }}"></path>
+              {% for sample in mc.samples %}<path class="iv-mc__sample" d="{{ sample }}"></path>{% endfor %}
+              <path class="iv-mc__median" d="{{ mc.median }}"></path>
+            </svg>
+          </div>
+          <dl class="iv-outcomes"><div><dt>Median</dt><dd>{{ mc.median_text }}</dd></div><div><dt>1 in 20 worse than</dt><dd>{{ mc.low_text }}</dd></div><div><dt>1 in 20 better than</dt><dd>{{ mc.high_text }}</dd></div><div><dt>Chance of a loss</dt><dd>{{ mc.loss_text }}</dd></div></dl>
+          <p class="iv-note">500 futures built from blocks of ten real days of this portfolio's history. It assumes the future looks like the past, which it won't.</p>
+        {% else %}
+          {% include "investments/includes/wait.html" with wait=mc_wait %}
+        {% endif %}
+      </section>
+
+      <section class="iv-panel" aria-labelledby="iv-stress">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-stress">Stress test</h2></header>
+        <ul class="iv-scenarios" role="list">
+          {% for case in scenarios %}
+            <li>
+              <span class="iv-scenarios__label">{{ case.label }}</span>
+              <svg class="iv-bars__track" width="100%" height="8" aria-hidden="true"><rect class="iv-fill--down" width="{{ case.bar }}" height="8" rx="2"></rect></svg>
+              <span class="iv-num {{ case.cls }}">{{ case.total }}</span>
+              <span class="iv-scenarios__who">{{ case.holdings }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+        <p class="iv-note">Each fall on its own, at today's weights, with everything else held still. Defensive equities still count as shares, and a stronger pound would lower the value of overseas holdings on top.</p>
+      </section>
+
+      <section class="iv-panel iv-panel--wide" aria-labelledby="iv-gloss">
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-gloss">What the figures mean</h2></header>
+        <dl class="iv-gloss">{% for term, text in glossary %}<div><dt>{{ term }}</dt><dd>{{ text }}</dd></div>{% endfor %}</dl>
+      </section>
+    </div>
+  </div>
+
+  </div>
+
+  <p class="iv-source">Data: Interactive Brokers (Flex reports), end of day · benchmark: a passive 75 / 25 mix of world shares (MSCI ACWI), short gilts, short sterling bonds, gold and cash (SONIA), reset each quarter · returns time-weighted, in pounds, dividends included · risk-free rate: {{ risk_free }} · since {{ inception }} · a paper portfolio, not advice.</p>
+
+  {{ data|json_script:"iv-data" }}
+  <template id="iv-switch-template">{% include "investments/board/switch.html" %}</template>
+  <template id="iv-board-template">{% include "investments/board.html" %}</template>
+{% endblock %}

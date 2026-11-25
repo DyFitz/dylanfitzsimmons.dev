@@ -1,0 +1,15 @@
+{% comment %}The CV as a document on the desk, opened from its icon. The desk's script fills it in.
+{% endcomment %}{% verbatim %}<article class="paper">
+<h2 class="paper__name">{{cv.name}}</h2>
+<p class="paper__line">{{cv.role}} · dylanfitzsimmons.dev</p>
+<h3>Profile</h3>
+<p>{{cv.profile}}</p>
+<h3>Education</h3>
+<template data-each="cv.education" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p></template>
+<h3>Experience</h3>
+<template data-each="cv.experience" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p><p>{{item.summary}}</p></template>
+<h3>Projects</h3>
+<ul><template data-each="cv.projects" data-as="item"><li><b>{{item.title}}</b>: {{item.stack}}</li></template></ul>
+<h3>Languages</h3>
+<p>{{cv.skills}}</p>
+</article>{% endverbatim %}

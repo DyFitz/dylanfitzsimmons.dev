@@ -1,54 +1,41 @@
-{% extends "base.html" %}
-{% load static %}
+{% extends "contact/layout.html" %}
 
-{% block head %}
-  <link rel="stylesheet" href="{% static 'css/contact.css' %}">
-  <script type="module" src="{% static 'js/contact.js' %}"></script>
-{% endblock %}
+{# With motion on, the form's rows fold away and the readout types itself out, timed to the globe. Otherwise it's shown finished. #}
+{% block phase %}sent{% endblock %}
 
-{% block content %}
-  {% include "contact/includes/page_head.html" %}
-  {% include "contact/includes/station_strip.html" %}
-
-  {# With motion on, the form's rows fold away and the readout types itself out, timed to the globe. Otherwise it's shown finished. #}
-  <div class="uplink" data-phase="sent">
-    <span class="uplink__frame" aria-hidden="true"></span>
-    <div class="uplink__main">
-      {% include "contact/includes/console_bar.html" with sent=True %}
-      <div class="uplink__body">
-        <div class="uplink__echo" aria-hidden="true">
-          <div class="header-row"><span class="header-row__key">TO</span><span class="header-row__fixed">{{ site.name }} · Glasgow, UK</span></div>
-          <div class="header-row"><span class="header-row__key">FROM</span><span class="header-row__fixed">{{ message.name }}</span></div>
-          <div class="header-row"><span class="header-row__key">REPLY-TO</span><span class="header-row__fixed">{{ message.email }}</span></div>
-          <div class="header-row"><span class="header-row__key">CHANNEL</span><span class="header-row__fixed">{{ message.channel }} · {{ message.get_reason_display }}</span></div>
-          <div class="header-row header-row--top"><span class="header-row__key">MESSAGE</span><span class="header-row__fixed">{{ message.body|truncatechars:160 }}</span></div>
-        </div>
-
-        <section class="tx" aria-labelledby="tx-title">
-          <h2 class="visually-hidden" id="tx-title">Message sent</h2>
-          <p class="tx__title">encoding packet {{ message.reference }} · {{ size }} bytes · {{ message.channel }}</p>
-          {# Phones get the narrow one: four rows of eight bytes. #}
-          <div class="hexdump hexdump--wide" aria-hidden="true">
-            {% for line in hex_dump %}<p>{{ line }}</p>{% endfor %}
-          </div>
-          <div class="hexdump hexdump--narrow" aria-hidden="true">
-            {% for line in hex_dump_narrow %}<p>{{ line }}</p>{% endfor %}
-          </div>
-          <p class="tx__line tx__line--1" aria-hidden="true">checksum {{ checksum }} · <span class="tx__ok">ok</span></p>
-          <p class="tx__line tx__line--2">via satellite to Glasgow · status: <span class="tx__ok">delivered ✓</span></p>
-          <p class="tx__line tx__line--3">Thanks, {{ message.first_name }}. I aim to respond to {{ message.email }} within {{ reply_within }}.</p>
-          <dl class="tx__summary">
-            <dt>ref</dt><dd>{{ message.reference }}</dd>
-            <dt>time</dt><dd>{{ message.sent_at|date:"j M Y, H:i:s" }}</dd>
-            <dt>from</dt><dd>{{ message.name }} &lt;{{ message.email }}&gt;</dd>
-            <dt>channel</dt><dd>{{ message.channel }} · {{ message.get_reason_display|lower }}</dd>
-          </dl>
-          <p class="tx__again"><a class="button button--secondary" href="{% url 'contact:page' %}">Send another message</a></p>
-        </section>
-      </div>
+{% block main %}
+  {% include "contact/includes/console_bar.html" with sent=True %}
+  <div class="uplink__body">
+    <div class="uplink__echo" aria-hidden="true">
+      <div class="header-row"><span class="header-row__key">TO</span><span class="header-row__fixed">{{ site.name }} · Glasgow, UK</span></div>
+      <div class="header-row"><span class="header-row__key">FROM</span><span class="header-row__fixed">{{ message.name }}</span></div>
+      <div class="header-row"><span class="header-row__key">REPLY-TO</span><span class="header-row__fixed">{{ message.email }}</span></div>
+      <div class="header-row"><span class="header-row__key">CHANNEL</span><span class="header-row__fixed">{{ message.channel }} · {{ message.get_reason_display }}</span></div>
+      <div class="header-row header-row--top"><span class="header-row__key">MESSAGE</span><span class="header-row__fixed">{{ message.body|truncatechars:160 }}</span></div>
     </div>
-    {% include "contact/includes/station.html" with sent=True %}
-  </div>
 
-  {% include "contact/includes/privacy.html" %}
+    <section class="tx" aria-labelledby="tx-title">
+      <h2 class="visually-hidden" id="tx-title">Message sent</h2>
+      <p class="tx__title">encoding packet {{ message.reference }} · {{ size }} bytes · {{ message.channel }}</p>
+      {# Phones get the narrow one: four rows of eight bytes. #}
+      <div class="hexdump hexdump--wide" aria-hidden="true">
+        {% for line in hex_dump %}<p>{{ line }}</p>{% endfor %}
+      </div>
+      <div class="hexdump hexdump--narrow" aria-hidden="true">
+        {% for line in hex_dump_narrow %}<p>{{ line }}</p>{% endfor %}
+      </div>
+      <p class="tx__line tx__line--1" aria-hidden="true">checksum {{ checksum }} · <span class="tx__ok">ok</span></p>
+      <p class="tx__line tx__line--2">via satellite to Glasgow · status: <span class="tx__ok">delivered ✓</span></p>
+      <p class="tx__line tx__line--3">Thanks, {{ message.first_name }}. I aim to respond to {{ message.email }} within {{ reply_within }}.</p>
+      <dl class="tx__summary">
+        <dt>ref</dt><dd>{{ message.reference }}</dd>
+        <dt>time</dt><dd>{{ message.sent_at|date:"j M Y, H:i:s" }}</dd>
+        <dt>from</dt><dd>{{ message.name }} &lt;{{ message.email }}&gt;</dd>
+        <dt>channel</dt><dd>{{ message.channel }} · {{ message.get_reason_display|lower }}</dd>
+      </dl>
+      <p class="tx__again"><a class="button button--secondary" href="{% url 'contact:page' %}">Send another message</a></p>
+    </section>
+  </div>
 {% endblock %}
+
+{% block station %}{% include "contact/includes/station.html" with sent=True %}{% endblock %}

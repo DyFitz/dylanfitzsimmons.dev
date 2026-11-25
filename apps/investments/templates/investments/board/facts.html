@@ -1,0 +1,5 @@
+{% verbatim %}<section class="iv-panel iv-panel--wide"><header class="iv-panel__head"><h2 class="iv-panel__title">Key figures · {{periodLabel}}{{vsBench}}</h2><div class="iv-chips" role="group" aria-label="Compare with"><template data-each="benchChoices" data-as="b"><button class="{{b.cls}}" type="button" aria-pressed="{{b.pressed}}" title="{{b.name}}" data-on-click="b.pick">{{b.code}}</button></template></div></header>
+<dl class="iv-facts"><template data-each="facts" data-as="f"><div><dt>{{f.label}}</dt><dd>{{f.value}}</dd></div></template></dl>
+<template data-if="ratiosWait"><p class="iv-note iv-note--wait">A month or two is too short to turn into yearly figures, so these ratios stay blank until there are three months of history. Day {{days}} of 63.</p></template>
+<template data-if="noBenchmarks"><p class="iv-note">Beta, alpha and the other comparisons need the benchmark's prices, which aren't in yet.</p></template>
+<p class="iv-note">* the average day's return, compounded over a year, until there's a year of history.</p></section>{% endverbatim %}

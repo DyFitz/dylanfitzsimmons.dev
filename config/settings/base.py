@@ -204,3 +204,18 @@ SITE_URL = env.str("SITE_URL", default="http://localhost:8000").rstrip("/")
 SITE_SOURCE_URL = env.str("SITE_SOURCE_URL", default="").rstrip("/")
 # Commit being served, set when the Docker image is built.
 GIT_SHA = env.str("GIT_SHA", default="")
+
+# ---------------------------------------------------------------------------
+# Investments
+# ---------------------------------------------------------------------------
+
+# The yearly risk-free rate for the Sharpe and Sortino ratios, used until the Bank of England's
+# SONIA figures have been loaded.
+INVESTMENTS_RISK_FREE = env.float("INVESTMENTS_RISK_FREE", default=0.04)
+
+# The daily update's access to IBKR's Flex Web Service. Only the update job needs these; the
+# token can't trade, but it can read the account's full report, so it's kept off the website.
+IBKR_FLEX_TOKEN = env.str("IBKR_FLEX_TOKEN", default="")
+IBKR_FLEX_QUERY_ID = env.str("IBKR_FLEX_QUERY_ID", default="")
+# When the token runs out (yyyy-mm-dd), so the update can warn a month before.
+IBKR_FLEX_TOKEN_EXPIRES = env.str("IBKR_FLEX_TOKEN_EXPIRES", default="")

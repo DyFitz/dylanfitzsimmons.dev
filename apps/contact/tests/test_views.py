@@ -286,12 +286,17 @@ def test_a_form_left_open_for_over_a_day_is_refreshed(
     assert not Message.objects.exists()
 
 
-def test_a_few_messages_an_hour_from_one_sender(client: Client) -> None:
+def reach_the_limit(**fields) -> None:
+    """Saves as many messages from the test client's address as the hourly limit allows."""
     sender = spam.sender_hash(RequestFactory().get("/"))
     for _ in range(spam.RATE_LIMIT):
         Message.objects.create(
-            name="Alex", email="alex@example.com", body="Hello", sender_hash=sender
+            name="Alex", email="alex@example.com", body="Hello", sender_hash=sender, **fields
         )
+
+
+def test_a_few_messages_an_hour_from_one_sender(client: Client) -> None:
+    reach_the_limit()
 
     response = send(client)
 
@@ -300,15 +305,7 @@ def test_a_few_messages_an_hour_from_one_sender(client: Client) -> None:
 
 
 def test_messages_from_over_an_hour_ago_do_not_count_towards_the_limit(client: Client) -> None:
-    sender = spam.sender_hash(RequestFactory().get("/"))
-    for _ in range(spam.RATE_LIMIT):
-        Message.objects.create(
-            name="Alex",
-            email="alex@example.com",
-            body="Hello",
-            sender_hash=sender,
-            sent_at=timezone.now() - timedelta(hours=2),
-        )
+    reach_the_limit(sent_at=timezone.now() - timedelta(hours=2))
 
     assertRedirects(send(client), reverse("contact:sent"))
 

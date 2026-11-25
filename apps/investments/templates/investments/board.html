@@ -1,0 +1,115 @@
+{# The interactive board, filled in by static/js/modules/invest-board.js in place of the page #}
+{# the server sends. The panels are shared by the dashboard and the terminal's views.      #}
+{% verbatim %}
+<p class="{{statusCls}}" role="status"><span class="iv-status__lamp" aria-hidden="true"></span>{{statusText}}</p>
+<template data-if="modeDash">
+  <div class="{{dashCls}}">
+{% endverbatim %}
+    {% include "investments/board/scrub.html" %}
+{% verbatim %}
+    <p class="iv-tiles__label">Whole history · {{inception}} to {{asOf}}</p>
+    <div class="iv-tiles">
+      <template data-each="tiles" data-as="t"><div class="iv-bigtile"><span class="iv-kpi__label">{{t.label}}</span><span class="iv-bigtile__value {{t.cls}}">{{t.value}}</span><span class="iv-note">{{t.note}}</span></div></template>
+    </div>
+    <div class="iv-grid">
+{% endverbatim %}
+      {% include "investments/board/growth.html" %}
+      {% include "investments/board/think.html" %}
+      {% include "investments/board/returns.html" %}
+      {% include "investments/board/drawdowns.html" %}
+      {% include "investments/board/months.html" %}
+      {% include "investments/board/contrib.html" %}
+      {% include "investments/board/risk.html" %}
+      {% include "investments/board/tree.html" %}
+      {% include "investments/board/alloc.html" %}
+      {% include "investments/board/bands.html" %}
+      {% include "investments/board/trades.html" %}
+      {% include "investments/board/holdings.html" %}
+      {% include "investments/board/facts.html" %}
+      {% include "investments/board/rolling.html" %}
+      {% include "investments/board/daily.html" %}
+      {% include "investments/board/corr.html" %}
+      {% include "investments/board/mc.html" %}
+      {% include "investments/board/stress.html" %}
+      {% include "investments/board/gloss.html" %}
+{% verbatim %}
+    </div>
+  </div>
+</template>
+<template data-if="modeTerm">
+  <div class="iv-term" tabindex="-1" aria-label="Portfolio terminal" data-ref="termRef" data-on-keydown="onPageKey">
+    <div class="iv-term__top"><span class="iv-term__brand">DFIT &lt;GO&gt;</span><span class="iv-term__title">PORTFOLIO MONITOR · GBP</span><span class="iv-term__status"><span class="{{lampCls}}"></span>{{lampText}}</span><button class="iv-term__exit" type="button" data-on-click="openDashboard">◂ Dashboard</button></div>
+    <div class="iv-tape" aria-hidden="true"><div class="iv-tape__track"><template data-each="tape" data-as="t"><span class="iv-tape__item"><b>{{t.ticker}}</b> {{t.weight}} <span class="{{t.cls}}">{{t.day}}</span></span></template><template data-each="tape" data-as="t"><span class="iv-tape__item"><b>{{t.ticker}}</b> {{t.weight}} <span class="{{t.cls}}">{{t.day}}</span></span></template></div></div>
+    <div class="iv-kpis">
+      <div class="iv-kpi iv-kpi--lead"><span class="iv-kpi__label">Since {{inception}}</span><span class="iv-kpi__value {{sinceCls}}">{{sinceInception}}</span></div>
+      <template data-each="metrics" data-as="m"><div class="iv-kpi"><span class="iv-kpi__label">{{m.label}} · {{periodLabel}}</span><span class="iv-kpi__value {{m.cls}}">{{m.value}}</span></div></template>
+      <div class="iv-kpi"><span class="iv-kpi__label">Cash</span><span class="iv-kpi__value">{{cashWeight}}</span></div>
+    </div>
+    <nav class="iv-fkeys" aria-label="Views"><template data-each="views" data-as="v"><button class="{{v.cls}}" type="button" aria-pressed="{{v.pressed}}" data-on-click="v.pick"><span>{{v.fn}}</span>{{v.label}}</button></template></nav>
+    <div class="iv-term__body">
+      <template data-if="viewPerf"><div class="iv-grid iv-grid--perf iv-view">
+{% endverbatim %}
+        {% include "investments/board/growth.html" %}
+        {% include "investments/board/returns.html" %}
+        {% include "investments/board/drawdowns.html" %}
+        {% include "investments/board/months.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewRisk"><div class="iv-grid iv-grid--risk iv-view">
+{% endverbatim %}
+        {% include "investments/board/rolling.html" %}
+        {% include "investments/board/daily.html" %}
+        {% include "investments/board/facts.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewAlloc"><div class="iv-grid iv-grid--alloc iv-view">
+{% endverbatim %}
+        {% include "investments/board/tree.html" %}
+        {% include "investments/board/alloc.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewHold"><div class="iv-grid iv-view">
+{% endverbatim %}
+        {% include "investments/board/holdings.html" %}
+        {% include "investments/board/risk.html" %}
+        {% include "investments/board/contrib.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewCorr"><div class="iv-grid iv-view">
+{% endverbatim %}
+        {% include "investments/board/corr.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewMc"><div class="iv-grid iv-grid--one iv-view">
+{% endverbatim %}
+        {% include "investments/board/mc.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewStress"><div class="iv-grid iv-grid--one iv-view">
+{% endverbatim %}
+        {% include "investments/board/stress.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewTrades"><div class="iv-grid iv-view">
+{% endverbatim %}
+        {% include "investments/board/bands.html" %}
+        {% include "investments/board/trades.html" %}
+{% verbatim %}
+      </div></template>
+      <template data-if="viewNotes"><div class="iv-grid iv-view">
+{% endverbatim %}
+        {% include "investments/board/think.html" %}
+        {% include "investments/board/gloss.html" %}
+{% verbatim %}
+      </div></template>
+    </div>
+{% endverbatim %}
+    {% include "investments/board/scrub.html" %}
+{% verbatim %}
+    <div class="iv-cmd">
+      <div class="iv-log" role="log" aria-live="polite"><div class="iv-log__lines"><template data-each="log" data-as="l"><p class="{{l.cls}}">{{l.text}}</p></template></div></div>
+      <label class="iv-prompt"><span aria-hidden="true">&gt;</span><span class="visually-hidden">Command</span><input type="text" autocomplete="off" spellcheck="false" placeholder="type HELP, or PERF YTD, HOLD SEMI, DEF SHARPE, DATE 2026-11-02…" data-ref="promptRef" data-on-keydown="onKey"></label>
+    </div>
+  </div>
+</template>
+{% endverbatim %}

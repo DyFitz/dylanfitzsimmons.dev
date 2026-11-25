@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+{# The frame both contact pages share: the form, and the confirmation once a message is sent. #}
+
+{% block head %}
+  <link rel="stylesheet" href="{% static 'css/contact.css' %}">
+  <script type="module" src="{% static 'js/contact.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  {% include "contact/includes/page_head.html" %}
+  {% include "contact/includes/station_strip.html" %}
+
+  <div class="uplink" data-phase="{% block phase %}form{% endblock %}">
+    <span class="uplink__frame" aria-hidden="true"></span>
+    <div class="uplink__main">
+      {% block main %}{% endblock %}
+    </div>
+    {% block station %}{% include "contact/includes/station.html" %}{% endblock %}
+  </div>
+
+  {% include "contact/includes/privacy.html" %}
+{% endblock %}

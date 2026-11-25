@@ -48,55 +48,7 @@
 <div class="w95-about">
 <div class="w95-about__screen screen screen--{{cur.screen}} screen--live">
 <canvas class="screen__canvas live" data-ref="artRef" aria-hidden="true"></canvas>
-<template data-if="cur.isSite">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<g class="art-outline">
-<rect x="10" y="10" width="220" height="130" rx="6"></rect>
-<path d="M10 30H230"></path>
-<circle cx="24" cy="20" r="3"></circle>
-<circle cx="36" cy="20" r="3"></circle>
-<circle cx="48" cy="20" r="3"></circle>
-<rect x="28" y="86" width="56" height="38"></rect>
-<rect x="92" y="86" width="56" height="38"></rect>
-<rect x="156" y="86" width="56" height="38"></rect>
-</g>
-<g class="art-globe">
-<circle cx="186" cy="58" r="19"></circle>
-<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
-<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
-</g>
-<path class="art-bars" d="M28 52H140M28 64H110"></path>
-</svg>
-</template>
-<template data-if="cur.isForecast">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
-<stop class="art-shade-start" offset="0"></stop>
-<stop class="art-shade-end" offset="1"></stop>
-</linearGradient>
-</defs>
-<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
-<path class="art-axis" d="M10 135H230"></path>
-<path class="art-now" d="M150 14V135"></path>
-<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
-<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
-<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
-<polyline class="art-forecast" points="150,78 230,66"></polyline>
-<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
-</svg>
-</template>
-<template data-if="cur.isBacktest">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
-<path class="art-axis" d="M6 138H234"></path>
-<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
-<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
-<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
-<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
-<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
-</svg>
-</template>
+{% endverbatim %}{% include "projects/includes/stills.html" with on="cur" %}{% verbatim %}
 </div>
 <p class="w95-about__title">{{cur.title}}</p>
 <p>{{cur.summary}}</p>
@@ -119,20 +71,7 @@
 <p class="w95-menu" aria-hidden="true"><span><u>F</u>ile</span><span><u>E</u>dit</span><span><u>V</u>iew</span><span><u>I</u>nsert</span><span>F<u>o</u>rmat</span><span><u>H</u>elp</span></p>
 <p class="w95-ruler" aria-hidden="true"></p>
 <div class="w95-doc">
-<article class="paper">
-<h2 class="paper__name">{{cv.name}}</h2>
-<p class="paper__line">{{cv.role}} · dylanfitzsimmons.dev</p>
-<h3>Profile</h3>
-<p>{{cv.profile}}</p>
-<h3>Education</h3>
-<template data-each="cv.education" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p></template>
-<h3>Experience</h3>
-<template data-each="cv.experience" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p><p>{{item.summary}}</p></template>
-<h3>Projects</h3>
-<ul><template data-each="cv.projects" data-as="item"><li><b>{{item.title}}</b>: {{item.stack}}</li></template></ul>
-<h3>Languages</h3>
-<p>{{cv.skills}}</p>
-</article>
+{% endverbatim %}{% include "projects/includes/paper.html" %}{% verbatim %}
 </div>
 <p class="w95-status"><span>Page 1 of 1</span><span><a href="{{cvUrl}}">Open the full CV</a></span></p>
 </section>
@@ -250,55 +189,7 @@
 <p class="commander__pane-title">{{cur.slug}}/readme.txt</p>
 <div class="commander__preview screen screen--{{cur.screen}} screen--live">
 <canvas class="screen__canvas live" data-ref="artRef" aria-hidden="true"></canvas>
-<template data-if="cur.isSite">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<g class="art-outline">
-<rect x="10" y="10" width="220" height="130" rx="6"></rect>
-<path d="M10 30H230"></path>
-<circle cx="24" cy="20" r="3"></circle>
-<circle cx="36" cy="20" r="3"></circle>
-<circle cx="48" cy="20" r="3"></circle>
-<rect x="28" y="86" width="56" height="38"></rect>
-<rect x="92" y="86" width="56" height="38"></rect>
-<rect x="156" y="86" width="56" height="38"></rect>
-</g>
-<g class="art-globe">
-<circle cx="186" cy="58" r="19"></circle>
-<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
-<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
-</g>
-<path class="art-bars" d="M28 52H140M28 64H110"></path>
-</svg>
-</template>
-<template data-if="cur.isForecast">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
-<stop class="art-shade-start" offset="0"></stop>
-<stop class="art-shade-end" offset="1"></stop>
-</linearGradient>
-</defs>
-<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
-<path class="art-axis" d="M10 135H230"></path>
-<path class="art-now" d="M150 14V135"></path>
-<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
-<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
-<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
-<polyline class="art-forecast" points="150,78 230,66"></polyline>
-<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
-</svg>
-</template>
-<template data-if="cur.isBacktest">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
-<path class="art-axis" d="M6 138H234"></path>
-<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
-<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
-<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
-<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
-<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
-</svg>
-</template>
+{% endverbatim %}{% include "projects/includes/stills.html" with on="cur" %}{% verbatim %}
 </div>
 <div class="commander__text" tabindex="0" role="group" aria-label="About this project">
 <p>{{cur.title}}</p>
@@ -393,55 +284,7 @@
 </nav>
 <div class="files">
 <ul class="tiles" role="list">
-<template data-each="rows" data-as="row"><li class="{{row.cls}}" data-hidden="row.hidden"><a class="tile" href="{{row.href}}" data-on-click="row.pick"><span class="tile__thumb screen screen--{{row.screen}}"><template data-if="row.isSite">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<g class="art-outline">
-<rect x="10" y="10" width="220" height="130" rx="6"></rect>
-<path d="M10 30H230"></path>
-<circle cx="24" cy="20" r="3"></circle>
-<circle cx="36" cy="20" r="3"></circle>
-<circle cx="48" cy="20" r="3"></circle>
-<rect x="28" y="86" width="56" height="38"></rect>
-<rect x="92" y="86" width="56" height="38"></rect>
-<rect x="156" y="86" width="56" height="38"></rect>
-</g>
-<g class="art-globe">
-<circle cx="186" cy="58" r="19"></circle>
-<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
-<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
-</g>
-<path class="art-bars" d="M28 52H140M28 64H110"></path>
-</svg>
-</template>
-<template data-if="row.isForecast">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
-<stop class="art-shade-start" offset="0"></stop>
-<stop class="art-shade-end" offset="1"></stop>
-</linearGradient>
-</defs>
-<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
-<path class="art-axis" d="M10 135H230"></path>
-<path class="art-now" d="M150 14V135"></path>
-<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
-<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
-<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
-<polyline class="art-forecast" points="150,78 230,66"></polyline>
-<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
-</svg>
-</template>
-<template data-if="row.isBacktest">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
-<path class="art-axis" d="M6 138H234"></path>
-<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
-<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
-<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
-<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
-<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
-</svg>
-</template></span><span class="tile__name">{{row.title}}</span><span class="tile__meta">{{row.status}}</span></a></li></template>
+<template data-each="rows" data-as="row"><li class="{{row.cls}}" data-hidden="row.hidden"><a class="tile" href="{{row.href}}" data-on-click="row.pick"><span class="tile__thumb screen screen--{{row.screen}}">{% endverbatim %}{% include "projects/includes/stills.html" with on="row" %}{% verbatim %}</span><span class="tile__name">{{row.title}}</span><span class="tile__meta">{{row.status}}</span></a></li></template>
 </ul>
 <template data-if="noMatches"><p class="files__empty">No projects match your search.</p></template>
 </div>
@@ -449,55 +292,7 @@
 <div class="details">
 <div class="details__thumb screen screen--{{cur.screen}} screen--live">
 <canvas class="screen__canvas live" data-ref="thumbRef" aria-hidden="true"></canvas>
-<template data-if="cur.isSite">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<g class="art-outline">
-<rect x="10" y="10" width="220" height="130" rx="6"></rect>
-<path d="M10 30H230"></path>
-<circle cx="24" cy="20" r="3"></circle>
-<circle cx="36" cy="20" r="3"></circle>
-<circle cx="48" cy="20" r="3"></circle>
-<rect x="28" y="86" width="56" height="38"></rect>
-<rect x="92" y="86" width="56" height="38"></rect>
-<rect x="156" y="86" width="56" height="38"></rect>
-</g>
-<g class="art-globe">
-<circle cx="186" cy="58" r="19"></circle>
-<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
-<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
-</g>
-<path class="art-bars" d="M28 52H140M28 64H110"></path>
-</svg>
-</template>
-<template data-if="cur.isForecast">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
-<stop class="art-shade-start" offset="0"></stop>
-<stop class="art-shade-end" offset="1"></stop>
-</linearGradient>
-</defs>
-<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
-<path class="art-axis" d="M10 135H230"></path>
-<path class="art-now" d="M150 14V135"></path>
-<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
-<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
-<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
-<polyline class="art-forecast" points="150,78 230,66"></polyline>
-<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
-</svg>
-</template>
-<template data-if="cur.isBacktest">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
-<path class="art-axis" d="M6 138H234"></path>
-<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
-<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
-<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
-<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
-<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
-</svg>
-</template>
+{% endverbatim %}{% include "projects/includes/stills.html" with on="cur" %}{% verbatim %}
 </div>
 <div class="details__text">
 <p class="details__title">{{cur.title}}</p>
@@ -522,55 +317,7 @@
 <div class="glass__body viewer__body">
 <div class="viewer__screen screen screen--{{cur.screen}} screen--live">
 <canvas class="screen__canvas live" data-ref="artRef" aria-hidden="true"></canvas>
-<template data-if="cur.isSite">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<g class="art-outline">
-<rect x="10" y="10" width="220" height="130" rx="6"></rect>
-<path d="M10 30H230"></path>
-<circle cx="24" cy="20" r="3"></circle>
-<circle cx="36" cy="20" r="3"></circle>
-<circle cx="48" cy="20" r="3"></circle>
-<rect x="28" y="86" width="56" height="38"></rect>
-<rect x="92" y="86" width="56" height="38"></rect>
-<rect x="156" y="86" width="56" height="38"></rect>
-</g>
-<g class="art-globe">
-<circle cx="186" cy="58" r="19"></circle>
-<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
-<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
-</g>
-<path class="art-bars" d="M28 52H140M28 64H110"></path>
-</svg>
-</template>
-<template data-if="cur.isForecast">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
-<stop class="art-shade-start" offset="0"></stop>
-<stop class="art-shade-end" offset="1"></stop>
-</linearGradient>
-</defs>
-<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
-<path class="art-axis" d="M10 135H230"></path>
-<path class="art-now" d="M150 14V135"></path>
-<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
-<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
-<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
-<polyline class="art-forecast" points="150,78 230,66"></polyline>
-<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
-</svg>
-</template>
-<template data-if="cur.isBacktest">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
-<path class="art-axis" d="M6 138H234"></path>
-<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
-<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
-<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
-<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
-<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
-</svg>
-</template>
+{% endverbatim %}{% include "projects/includes/stills.html" with on="cur" %}{% verbatim %}
 </div>
 <div class="viewer__controls">
 <div class="viewer__buttons">
@@ -595,20 +342,7 @@
 <div class="glass__body docwin__body">
 <p class="commands"><a class="commands__item" href="{{cvUrl}}">Open the full CV</a><span class="commands__item" aria-hidden="true">Page 1 of 1</span></p>
 <div class="docwin__desk">
-<article class="paper">
-<h2 class="paper__name">{{cv.name}}</h2>
-<p class="paper__line">{{cv.role}} · dylanfitzsimmons.dev</p>
-<h3>Profile</h3>
-<p>{{cv.profile}}</p>
-<h3>Education</h3>
-<template data-each="cv.education" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p></template>
-<h3>Experience</h3>
-<template data-each="cv.experience" data-as="item"><p class="paper__item">{{item.title}}</p><p class="paper__meta">{{item.where}} · {{item.when}}</p><p>{{item.summary}}</p></template>
-<h3>Projects</h3>
-<ul><template data-each="cv.projects" data-as="item"><li><b>{{item.title}}</b>: {{item.stack}}</li></template></ul>
-<h3>Languages</h3>
-<p>{{cv.skills}}</p>
-</article>
+{% endverbatim %}{% include "projects/includes/paper.html" %}{% verbatim %}
 </div>
 </div>
 </section>
@@ -676,55 +410,7 @@
 </div>
 <div class="gadget calendar-gadget"><p class="calendar-gadget__month">{{monthName}}</p><p class="calendar-gadget__day">{{dayNumber}}</p><p class="calendar-gadget__weekday">{{dayName}}</p></div>
 <div class="gadget">
-<div class="slideshow" aria-hidden="true"><template data-each="slides" data-as="slide"><div class="{{slide.cls}}"><span class="screen screen--{{slide.screen}}"><template data-if="slide.isSite">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<g class="art-outline">
-<rect x="10" y="10" width="220" height="130" rx="6"></rect>
-<path d="M10 30H230"></path>
-<circle cx="24" cy="20" r="3"></circle>
-<circle cx="36" cy="20" r="3"></circle>
-<circle cx="48" cy="20" r="3"></circle>
-<rect x="28" y="86" width="56" height="38"></rect>
-<rect x="92" y="86" width="56" height="38"></rect>
-<rect x="156" y="86" width="56" height="38"></rect>
-</g>
-<g class="art-globe">
-<circle cx="186" cy="58" r="19"></circle>
-<ellipse cx="186" cy="58" rx="13.4" ry="19"></ellipse>
-<path d="M186 39V77M169.5 48.5H202.5M167 58H205M169.5 67.5H202.5"></path>
-</g>
-<path class="art-bars" d="M28 52H140M28 64H110"></path>
-</svg>
-</template>
-<template data-if="slide.isForecast">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<defs>
-<linearGradient id="forecast-shade" x1="0" y1="30" x2="0" y2="135" gradientUnits="userSpaceOnUse">
-<stop class="art-shade-start" offset="0"></stop>
-<stop class="art-shade-end" offset="1"></stop>
-</linearGradient>
-</defs>
-<path class="art-grid" d="M10 30H230M10 65H230M10 100H230"></path>
-<path class="art-axis" d="M10 135H230"></path>
-<path class="art-now" d="M150 14V135"></path>
-<path class="art-shade" fill="url(#forecast-shade)" d="M10 135V116L22 110L34 114L46 102L58 106L70 96L82 100L94 90L106 94L118 84L130 88L142 76L150 78V135Z"></path>
-<path class="art-cone" d="M150 78L160 65.9L170 60L180 55.1L190 50.8L200 46.8L210 43L220 39.4L230 36L230 96L220 95.6L210 95L200 94.2L190 93.2L180 91.9L170 90L160 87.1L150 78Z"></path>
-<polyline class="art-series" points="10,116 22,110 34,114 46,102 58,106 70,96 82,100 94,90 106,94 118,84 130,88 142,76 150,78"></polyline>
-<polyline class="art-forecast" points="150,78 230,66"></polyline>
-<circle class="art-point" cx="150" cy="78" r="3.5"></circle>
-</svg>
-</template>
-<template data-if="slide.isBacktest">
-<svg class="screen__still still" viewBox="0 0 240 150" aria-hidden="true" focusable="false">
-<path class="art-grid" d="M6 28H234M6 64H234M6 100H234"></path>
-<path class="art-axis" d="M6 138H234"></path>
-<polyline class="art-price" points="6,96 18,90 30,100 42,86 54,88 66,70 78,78 90,94 102,86 114,72 126,76 138,58 150,66 162,82 174,74 186,56 198,62 210,46 222,52 234,40"></polyline>
-<path class="art-equity-area" d="M6 132L30 131L54 128L78 124L102 125L126 120L150 117L174 118L198 113L222 109L234 107V138H6Z"></path>
-<polyline class="art-series" points="6,132 30,131 54,128 78,124 102,125 126,120 150,117 174,118 198,113 222,109 234,107"></polyline>
-<path class="art-buy" d="M30 105L35 113H25ZM90 99L95 107H85ZM162 87L167 95H157Z"></path>
-<path class="art-sell" d="M66 65L71 57H61ZM138 53L143 45H133ZM210 41L215 33H205Z"></path>
-</svg>
-</template></span></div></template></div>
+<div class="slideshow" aria-hidden="true"><template data-each="slides" data-as="slide"><div class="{{slide.cls}}"><span class="screen screen--{{slide.screen}}">{% endverbatim %}{% include "projects/includes/stills.html" with on="slide" %}{% verbatim %}</span></div></template></div>
 </div>
 <div class="gadget note-gadget">
 <p class="note-gadget__label">Now building</p>

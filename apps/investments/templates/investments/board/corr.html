@@ -1,0 +1,5 @@
+{% verbatim %}<section class="iv-panel iv-panel--wide"><header class="iv-panel__head"><h2 class="iv-panel__title">Correlation of daily returns · {{periodLabel}}</h2></header><div class="iv-scroll"><table class="iv-corr">
+<thead><tr><td></td><template data-each="corrTickers" data-as="t"><th scope="col">{{t}}</th></template></tr></thead>
+<tbody><template data-each="corrRows" data-as="row"><tr><th scope="row">{{row.ticker}}</th><template data-each="row.cells" data-as="c"><td class="iv-corr__cell {{c.cls}}">{{c.text}}</td></template></tr></template></tbody>
+</table></div>
+<p class="iv-note">Grouped by sleeve. Warm means two holdings rose and fell together; cool means they moved apart.</p></section>{% endverbatim %}

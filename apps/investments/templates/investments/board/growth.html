@@ -1,0 +1,11 @@
+{% verbatim %}<section class="iv-panel iv-panel--wide"><header class="iv-panel__head"><h2 class="iv-panel__title">Growth of 100 · {{periodLabel}}</h2>
+<div class="iv-chips" role="group" aria-label="Period"><template data-each="periods" data-as="p"><button class="{{p.cls}}" type="button" aria-pressed="{{p.pressed}}" aria-disabled="{{p.disabled}}" data-on-click="p.pick">{{p.label}}</button></template></div>
+<div class="iv-chips" role="group" aria-label="Benchmarks shown"><template data-each="benches" data-as="b"><button class="{{b.cls}}" type="button" aria-pressed="{{b.pressed}}" title="{{b.name}}" data-on-click="b.pick"><span class="iv-dot iv-dot--{{b.key}}"></span>{{b.code}}</button></template><button class="iv-chip" type="button" aria-pressed="{{logPressed}}" data-on-click="toggleLog">{{logLabel}}</button></div></header>
+<div class="iv-chart iv-chart--live" tabindex="0" role="group" aria-label="Growth chart. Point at it, or use the left and right arrow keys, to read off a day." data-on-pointermove="onChartMove" data-on-pointerleave="onChartLeave" data-on-blur="onChartLeave" data-on-keydown="onChartKey">
+<div class="iv-chart__ticks" aria-hidden="true"><template data-each="ticks" data-as="t"><span>{{t}}</span></template></div>
+<svg class="iv-chart__svg" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Growth of 100 over the period"><path class="iv-area" data-set-d="{{portArea}}"></path><template data-each="growthLines" data-as="l"><path class="iv-line iv-line--{{l.key}}" data-set-d="{{l.d}}"></path></template></svg>
+<div class="iv-chart__x" aria-hidden="true"><template data-each="xLabels" data-as="x"><span>{{x}}</span></template></div>
+<div class="iv-cross" hidden data-ref="crossRef"><span class="iv-cross__line"></span><div class="iv-cross__dots"></div><div class="iv-cross__tip"></div></div>
+</div>
+<ul class="iv-legend" role="list"><template data-each="growthLines" data-as="l"><li><span class="iv-dot iv-dot--{{l.key}}"></span>{{l.label}}</li></template></ul>
+<template data-if="noBenchmarks"><p class="iv-note">The benchmarks join the chart once their prices are loaded.</p></template></section>{% endverbatim %}

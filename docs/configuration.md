@@ -19,5 +19,9 @@ Settings come from environment variables. Locally, `.env` supplies them; real en
 | `DJANGO_DEFAULT_FROM_EMAIL` | Recommended | The address the site's emails come from. It needs to be one the mail server can send from |
 | `SMTP_HOST`, `SMTP_USERNAME`, `SMTP_PASSWORD` | Production | The mail server that sends the contact form's emails. Without them, messages are still saved and the failures logged |
 | `SMTP_USE_TLS` | Optional | `true` by default, on port 587 |
+| `IBKR_FLEX_TOKEN` | For the daily update | The Flex Web Service token from IBKR's Client Portal. Secret: set it only on the host |
+| `IBKR_FLEX_QUERY_ID` | For the daily update | The ID of the Activity Flex Query the update downloads |
+| `IBKR_FLEX_TOKEN_EXPIRES` | Recommended | The token's end date, such as `2027-10-27`. The update emails a reminder 30, 14, 7, 3 and 1 days before, and daily once it has passed |
+| `INVESTMENTS_RISK_FREE` | Optional | The yearly risk-free rate used until SONIA has been downloaded. `0.04` by default |
 
 In development, email is printed in the terminal instead of being sent.

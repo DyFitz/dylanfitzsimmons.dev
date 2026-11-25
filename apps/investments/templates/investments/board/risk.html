@@ -1,0 +1,3 @@
+{% verbatim %}<section class="iv-panel"><header class="iv-panel__head"><h2 class="iv-panel__title">Where the risk comes from · {{periodLabel}}</h2></header>
+<ul class="iv-rc" role="list"><template data-each="riskBars" data-as="r"><li><span class="iv-rc__name">{{r.ticker}}</span><svg class="iv-rc__bars" width="100%" height="12" aria-hidden="true"><rect class="iv-fill--weight" data-set-width="{{r.w}}" height="5" rx="2"></rect><rect class="iv-fill--port" y="7" data-set-width="{{r.r}}" height="5" rx="2"></rect></svg><span class="iv-num">{{r.weight}} → {{r.risk}}</span></li></template></ul>
+<p class="iv-note"><span class="iv-dot iv-dot--weight"></span>share of the money <span class="iv-dot iv-dot--port"></span>share of the risk</p></section>{% endverbatim %}

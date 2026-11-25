@@ -85,6 +85,22 @@ Every animation has a still version, which is what the server sends. To see it, 
 
 The intro plays once per visit, and only when the visit starts on the home page. The replay intro button in the footer plays it again.
 
+## The investments data
+
+The investments page is built from IBKR Activity Flex reports (see [ADR 3](adr/0003-portfolio-data-from-ibkr-flex-reports.md)). The report needs these sections: Net Asset Value (NAV) in Base, Change in NAV, Open Positions, Prior Period Positions, Trades, Cash Transactions and Financial Instrument Information, in XML.
+
+To load a downloaded report:
+
+```
+uv run python manage.py import_flex path/to/report.xml
+```
+
+Only weights and returns are stored, never amounts of money. Days before the portfolio's inception date (set in the admin) are left out, and importing the same days again replaces them. Each import is logged under Import runs in the admin. Sleeve, sector, region and target weight are set in the admin and never changed by an import.
+
+In production the report is downloaded each day instead (see [Deployment](deployment.md#the-daily-investments-update)). Funds held only to track a benchmark, such as the world shares fund, are marked "Benchmark only" in the admin: their closes are kept as a price series and they stay off the page.
+
+Keep downloaded reports in a `reports/` folder, which git ignores: they hold the account's real figures.
+
 ## Quality checks
 
 CI runs on every push to `main` and on every pull request:

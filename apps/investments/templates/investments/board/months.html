@@ -1,0 +1,5 @@
+{% verbatim %}<section class="iv-panel iv-panel--wide"><header class="iv-panel__head"><h2 class="iv-panel__title">Monthly returns, %</h2></header><div class="iv-scroll"><table class="iv-heat">
+<thead><tr><td></td><template data-each="monthNames" data-as="m"><th scope="col">{{m}}</th></template><th scope="col">Year</th></tr></thead>
+<tbody><template data-each="years" data-as="y"><tr><th scope="row">{{y.year}}</th><template data-each="y.cells" data-as="c"><td class="iv-heat__cell {{c.cls}}">{{c.text}}</td></template><td class="iv-heat__total {{y.cls}}">{{y.total}}</td></tr></template></tbody>
+</table></div>
+<p class="iv-note">{{monthsUp}} months up · best {{bestMonth}} · worst {{worstMonth}}</p></section>{% endverbatim %}

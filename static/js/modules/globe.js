@@ -4,21 +4,9 @@
 
 import { animate } from "./animation.js";
 import { prepare } from "./canvas.js";
-import { cssColour, cssValue } from "./tokens.js";
+import { colours, DEGREE, drawSphere, projector } from "./sphere.js";
 
-const TILT = 0.38;
-const DEGREE = Math.PI / 180;
-
-let palette = null;
-
-function colours() {
-  palette ??= {
-    accent: cssColour("--accent-rgb"),
-    text: cssColour("--screen-text-rgb"),
-    mono: cssValue("--font-mono"),
-  };
-  return palette;
-}
+const GLOW = { back: 0.16, halo: 0.7, blur: 6, front: 0.85, outline: 0.5 };
 
 function draw(canvas, time) {
   const art = prepare(canvas);
@@ -30,60 +18,7 @@ function draw(canvas, time) {
   const centre = size / 2;
   const radius = size * 0.32;
   const rotation = time * 0.00012;
-  const cosTilt = Math.cos(TILT);
-  const sinTilt = Math.sin(TILT);
-
-  // A point on the sphere as [x, y, depth], where depth >= 0 faces the viewer.
-  const project = (lat, lon) => {
-    const ring = Math.cos(lat);
-    const x = ring * Math.sin(lon + rotation);
-    const y = Math.sin(lat);
-    const z = ring * Math.cos(lon + rotation);
-    return [centre + radius * x, centre - radius * (y * cosTilt - z * sinTilt), y * sinTilt + z * cosTilt];
-  };
-
-  // Lines on the far side are drawn faintly, so the sphere reads as solid.
-  const front = new Path2D();
-  const back = new Path2D();
-  const addLine = (points) => {
-    for (let i = 1; i < points.length; i += 1) {
-      const a = points[i - 1];
-      const b = points[i];
-      const path = (a[2] + b[2]) / 2 >= 0 ? front : back;
-      path.moveTo(a[0], a[1]);
-      path.lineTo(b[0], b[1]);
-    }
-  };
-  for (let lat = -75; lat <= 75; lat += 15) {
-    const points = [];
-    for (let lon = 0; lon <= 360; lon += 5) {
-      points.push(project(lat * DEGREE, lon * DEGREE));
-    }
-    addLine(points);
-  }
-  for (let lon = 0; lon < 360; lon += 15) {
-    const points = [];
-    for (let lat = -90; lat <= 90; lat += 5) {
-      points.push(project(lat * DEGREE, lon * DEGREE));
-    }
-    addLine(points);
-  }
-
-  context.lineWidth = 1;
-  context.strokeStyle = accent(0.16);
-  context.stroke(back);
-  context.save();
-  context.shadowColor = accent(0.7);
-  context.shadowBlur = 6;
-  context.strokeStyle = accent(0.85);
-  context.stroke(front);
-  context.restore();
-
-  context.lineWidth = 1.2;
-  context.strokeStyle = accent(0.5);
-  context.beginPath();
-  context.arc(centre, centre, radius, 0, Math.PI * 2);
-  context.stroke();
+  drawSphere(context, projector(centre, radius, rotation), centre, radius, accent, GLOW);
 
   // A dashed ring creeping round, and three arcs sweeping the other way.
   context.save();

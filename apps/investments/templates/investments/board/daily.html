@@ -1,0 +1,3 @@
+{% verbatim %}<section class="iv-panel"><header class="iv-panel__head"><h2 class="iv-panel__title">Daily returns · {{periodLabel}}</h2></header><div class="iv-hist"><svg class="iv-hist__svg" viewBox="0 0 1000 120" preserveAspectRatio="none" role="img" aria-label="How often each size of daily return has come up, against a normal curve">
+<template data-each="histBars" data-as="b"><rect class="iv-bin {{b.cls}}" data-set-x="{{b.x}}" data-set-y="{{b.y}}" data-set-width="{{b.w}}" data-set-height="{{b.h}}"></rect></template><path class="iv-hist__curve" data-set-d="{{histCurve}}"></path></svg></div>
+<p class="iv-note iv-note--ends"><span>-6%</span><span>daily returns, against a normal curve · VaR 95% {{var95}}</span><span>+6%</span></p></section>{% endverbatim %}

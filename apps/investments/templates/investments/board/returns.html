@@ -1,0 +1,4 @@
+{% verbatim %}<section class="iv-panel"><header class="iv-panel__head"><h2 class="iv-panel__title">Returns</h2></header><div class="iv-scroll"><table class="iv-table">
+<thead><tr><td></td><template data-each="periodHeads" data-as="h"><th scope="col">{{h}}</th></template></tr></thead>
+<tbody><template data-each="returnsTable" data-as="row"><tr class="iv-row iv-row--{{row.key}}"><th scope="row">{{row.label}}</th><template data-each="row.cells" data-as="c"><td class="iv-num {{c.cls}}">{{c.text}}</td></template></tr></template></tbody>
+</table></div></section>{% endverbatim %}

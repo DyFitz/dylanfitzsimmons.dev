@@ -1,0 +1,5 @@
+{% verbatim %}<section class="iv-panel"><header class="iv-panel__head"><h2 class="iv-panel__title">Recent trades</h2></header><div class="iv-scroll"><table class="iv-table iv-table--trades">
+<thead><tr><th scope="col">Date</th><th scope="col">Trade</th><th scope="col">Holding</th><th scope="col">Weight</th></tr></thead>
+<tbody><template data-each="tradeRows" data-as="t"><tr><td>{{t.date}}</td><td><span class="iv-trade {{t.cls}}">{{t.verb}}</span></td><th scope="row"><b>{{t.ticker}}</b> <span>{{t.name}}</span></th><td class="iv-num">{{t.change}}</td></tr></template></tbody>
+</table></div>
+<p class="iv-note">{{tradeCount}} · {{turnover}}</p></section>{% endverbatim %}

@@ -1,0 +1,7 @@
+{% verbatim %}<div class="iv-viewswitch">
+  <div class="{{switchCls}}" role="group" aria-label="View">
+    <button class="iv-switch__option" type="button" aria-pressed="{{dashPressed}}" data-on-click="openDashboard">Dashboard</button>
+    <button class="iv-switch__option" type="button" aria-pressed="{{termPressed}}" data-on-click="openTerminal"><span aria-hidden="true">&gt;_</span>Terminal</button>
+  </div>
+  <p class="iv-switch__hint">{{switchHint}}</p>
+</div>{% endverbatim %}

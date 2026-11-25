@@ -8,10 +8,12 @@
 //   data-style="left: {{x}}%"   sets styles through the CSSOM, which the site's
 //                               Content Security Policy allows where a style
 //                               attribute would be blocked
+//   data-set-d="{{path}}"       sets the d attribute (any name works), for attributes
+//                               such as SVG geometry that a placeholder would make invalid
 //   data-hidden="path"          hides the element while the value is truthy
 //   <template data-if="path">   present only while the value is truthy
 //   <template data-each="path" data-as="name">
-//                               once per item; the list's length is read once
+//                               once per item; built again if the list's length changes
 
 const HOLE = /\{\{\s*([\w.]+)\s*\}\}/g;
 
@@ -29,6 +31,16 @@ function resolve(path, vars, values) {
     value = value?.[key];
   }
   return value;
+}
+
+// Inside an <svg>, a <template> isn't a real one and has no content, just children.
+function contentOf(template) {
+  if (template.content) {
+    return template.content;
+  }
+  const fragment = document.createDocumentFragment();
+  fragment.append(...template.childNodes);
+  return fragment;
 }
 
 const fill = (text, vars, values) =>
@@ -81,6 +93,17 @@ function build(fragment, vars, shared) {
         updaters.push((values) => {
           applied = applyStyle(element, fill(value, vars, values), applied);
         });
+      } else if (name.startsWith("data-set-")) {
+        element.removeAttribute(name);
+        const target = name.slice(9);
+        let shown = null;
+        updaters.push((values) => {
+          const text = fill(value, vars, values);
+          if (text !== shown) {
+            shown = text;
+            element.setAttribute(target, text);
+          }
+        });
       } else if (name === "data-hidden") {
         element.removeAttribute(name);
         updaters.push((values) => {
@@ -93,6 +116,10 @@ function build(fragment, vars, shared) {
           if (text !== shown) {
             shown = text;
             element.setAttribute(name, text);
+            // A field the visitor has changed no longer follows its attribute.
+            if (name === "value" && "value" in element) {
+              element.value = text;
+            }
           }
         });
       }
@@ -100,32 +127,45 @@ function build(fragment, vars, shared) {
   };
 
   const bindEach = (template) => {
-    const list = resolve(template.dataset.each, vars, shared.values) ?? [];
-    for (let index = 0; index < list.length; index += 1) {
-      const item = build(
-        template.content.cloneNode(true),
-        { ...vars, [template.dataset.as]: { list: template.dataset.each, index } },
-        shared,
-      );
-      template.before(...item.nodes);
-      updaters.push(item.update);
-      cleanups.push(item.destroy);
-    }
-    template.remove();
+    const anchor = document.createComment("");
+    const path = template.dataset.each;
+    const as = template.dataset.as;
+    const content = contentOf(template);
+    template.replaceWith(anchor);
+    let items = [];
+    const make = (length) => {
+      items.forEach((item) => item.destroy());
+      items = [];
+      for (let index = 0; index < length; index += 1) {
+        const item = build(content.cloneNode(true), { ...vars, [as]: { list: path, index } }, shared);
+        anchor.before(...item.nodes);
+        items.push(item);
+      }
+    };
+    make((resolve(path, vars, shared.values) ?? []).length);
+    updaters.push((values) => {
+      const length = (resolve(path, vars, values) ?? []).length;
+      if (length !== items.length) {
+        make(length);
+      }
+      items.forEach((item) => item.update(values));
+    });
+    cleanups.push(() => items.forEach((item) => item.destroy()));
   };
 
   const bindIf = (template) => {
     const anchor = document.createComment("");
     const path = template.dataset.if;
-    const content = template.content;
+    const content = contentOf(template);
     template.replaceWith(anchor);
     let current = null;
     updaters.push((values) => {
       const wanted = Boolean(resolve(path, vars, values));
       if (wanted && !current) {
         current = build(content.cloneNode(true), vars, shared);
-        current.update(values);
+        // In place first, so any block inside it that fills itself in lands on the page.
         anchor.before(...current.nodes);
+        current.update(values);
       } else if (!wanted && current) {
         current.destroy();
         current = null;
@@ -183,8 +223,8 @@ function build(fragment, vars, shared) {
 export function mount(template, container, values) {
   const shared = { values };
   const view = build(template.content.cloneNode(true), {}, shared);
-  view.update(values);
   container.replaceChildren(...view.nodes);
+  view.update(values);
   return (next) => {
     shared.values = next;
     view.update(next);
