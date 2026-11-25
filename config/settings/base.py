@@ -209,7 +209,7 @@ LOGGING = {
 SITE_NAME = "Dylan Fitzsimmons"
 SITE_TAGLINE = "Software developer"
 SITE_DESCRIPTION = (
-    "The coding projects, CV and investment portfolio of Dylan Fitzsimmons, a software developer."
+    "Software developer with a background in finance. Projects, CV and a live investment portfolio."
 )
 SITE_URL = env.str("SITE_URL", default="http://localhost:8000").rstrip("/")
 SITE_SOURCE_URL = env.str("SITE_SOURCE_URL", default="").rstrip("/")
