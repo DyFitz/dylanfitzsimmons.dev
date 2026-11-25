@@ -1,12 +1,13 @@
+{% load links %}
 <footer class="site-footer">
   <p>© {% now "Y" %} {{ site.name }}</p>
   {% if site.source_url %}
-    <p><a href="{{ site.source_url }}">Source code</a></p>
+    <p><a href="{{ site.source_url }}"{% new_tab %}>Source code{% new_tab_note %}</a></p>
   {% endif %}
   {% if site.short_sha %}
     <p class="site-footer__build">
       Build
-      {% if site.commit_url %}<a href="{{ site.commit_url }}"><code>{{ site.short_sha }}</code></a>{% else %}<code>{{ site.short_sha }}</code>{% endif %}
+      {% if site.commit_url %}<a href="{{ site.commit_url }}"{% new_tab %}><code>{{ site.short_sha }}</code>{% new_tab_note %}</a>{% else %}<code>{{ site.short_sha }}</code>{% endif %}
     </p>
   {% endif %}
   {# Unhidden by site.js and home.js, so they never show without JavaScript. #}

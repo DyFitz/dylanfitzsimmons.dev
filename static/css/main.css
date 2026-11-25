@@ -92,6 +92,20 @@
     /* Page colours. Night is the default; day is below. */
     --page: #0c1824;
     --surface: #13263a;
+
+    /* The portfolio's colours, on its page and in the home page's banner. */
+    --iv-port: #8df2bd;
+    --iv-policy: #8fd3ff;
+    --iv-acwi: #d7a6ff;
+    --iv-up-rgb: 92 230 150;
+    --iv-down-rgb: 255 107 99;
+    --iv-up: rgb(var(--iv-up-rgb));
+    --iv-down: rgb(var(--iv-down-rgb));
+    --iv-growth: #5ad1a0;
+    --iv-income: #ffd166;
+    --iv-defensive: #6fb6ff;
+    --iv-defence: #c79bff;
+    --iv-cash: #5b6875;
     --rule: #2e4c66;
     --text: #dfe9f0;
     --muted: #8ea7ba;
@@ -155,6 +169,17 @@
 
     --page: #e2e9ee;
     --surface: #eef3f6;
+
+    --iv-port: #1f8a56;
+    --iv-policy: #2a6fa8;
+    --iv-acwi: #7d4bb3;
+    --iv-up-rgb: 22 132 74;
+    --iv-down-rgb: 196 50 44;
+    --iv-growth: #2f9e6e;
+    --iv-income: #c99a12;
+    --iv-defensive: #2f74b5;
+    --iv-defence: #8a5cc2;
+    --iv-cash: #8a99a6;
     --rule: #b4c3ce;
     --text: #0f1e2b;
     --muted: #4a6072;
@@ -311,6 +336,11 @@
   .primary-nav__link[aria-current] {
     border-block-end-color: var(--link);
     color: var(--text);
+  }
+
+  /* The drawings only show on the phone's tab bar. */
+  .primary-nav__icon {
+    display: none;
   }
 
   /* Buttons */
@@ -1102,6 +1132,289 @@
     padding-block-start: 8px;
   }
 
+  /* The investments banner on the home page: the portfolio's headline figures and growth,
+     with each holding's latest move along the bottom like a ticker tape. */
+
+  .iv-up { color: var(--iv-up); }
+  .iv-down { color: var(--iv-down); }
+  .iv-flat { color: var(--text); }
+
+  .invest-banner {
+    margin-block-start: var(--section-gap);
+    overflow: hidden;
+    background:
+      radial-gradient(60% 120% at 80% 0%, rgb(var(--accent-rgb) / 0.1), transparent 70%),
+      radial-gradient(50% 90% at 10% 100%, rgb(var(--screen-haze-rgb) / 0.35), transparent 70%),
+      var(--screen-base);
+  }
+
+  .invest-banner__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
+    gap: 28px 40px;
+    padding: 24px 28px 22px;
+  }
+
+  .invest-banner__text {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .invest-banner__figures {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, auto));
+    gap: 10px 22px;
+    justify-content: start;
+    margin: 4px 0 0;
+  }
+
+  .invest-banner__figures dt {
+    color: var(--screen-dim);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .invest-banner__figures dd {
+    margin: 2px 0 0;
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+  }
+
+  .invest-banner__views {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 14px;
+    min-inline-size: 0;
+  }
+
+  .invest-banner__switch {
+    display: flex;
+    gap: 18px;
+  }
+
+  .invest-banner__switch button {
+    position: relative;
+    padding: 0 0 6px;
+    border: 0;
+    background: none;
+    color: var(--screen-dim);
+    font: 0.72rem var(--font-mono);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+
+  .invest-banner__switch button[aria-pressed="true"] {
+    color: var(--text);
+  }
+
+  /* The pressed button's underline, which fills over each turn while the views take turns. */
+  .invest-banner__switch button::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0;
+    block-size: 2px;
+    background: var(--rule);
+  }
+
+  .invest-banner__switch button[aria-pressed="true"]::after {
+    background: var(--accent);
+  }
+
+  /* The two views share one place; the one not shown is hidden but keeps its room. */
+  .invest-banner__view {
+    display: flex;
+    grid-area: 2 / 1;
+    flex-direction: column;
+    gap: 12px;
+    min-inline-size: 0;
+    margin: 0;
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  .invest-banner__view.is-on {
+    visibility: visible;
+    opacity: 1;
+  }
+
+  .invest-banner__bar {
+    inline-size: 100%;
+    block-size: 44px;
+  }
+
+  .invest-banner__sleeve--0 { fill: var(--iv-growth); background: var(--iv-growth); }
+  .invest-banner__sleeve--1 { fill: var(--iv-income); background: var(--iv-income); }
+  .invest-banner__sleeve--2 { fill: var(--iv-defensive); background: var(--iv-defensive); }
+  .invest-banner__sleeve--3 { fill: var(--iv-defence); background: var(--iv-defence); }
+  .invest-banner__sleeve--4 { fill: var(--iv-cash); background: var(--iv-cash); }
+
+  .invest-banner__sleeves {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .invest-banner__sleeves li {
+    display: grid;
+    gap: 2px;
+    align-content: start;
+    padding-inline-start: 10px;
+    border-inline-start: 1px solid var(--rule);
+  }
+
+  .invest-banner__key {
+    display: block;
+    inline-size: 18px;
+    block-size: 4px;
+    margin-block-end: 6px;
+    border-radius: 2px;
+  }
+
+  .invest-banner__sleeves b {
+    overflow: hidden;
+    font-size: 0.85rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .invest-banner__sleeves span {
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .invest-banner__sleeves small {
+    color: var(--screen-dim);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+  }
+
+  .invest-banner__chart {
+    inline-size: 100%;
+    block-size: 170px;
+    border-block-end: 1px solid var(--rule);
+    overflow: visible;
+  }
+
+  .invest-banner__area {
+    fill: color-mix(in srgb, var(--iv-port) 12%, transparent);
+  }
+
+  .invest-banner__line {
+    fill: none;
+    stroke-width: 1.4;
+    stroke-linejoin: round;
+    vector-effect: non-scaling-stroke;
+    opacity: 0.85;
+  }
+
+  .invest-banner__line--port { stroke: var(--iv-port); stroke-width: 2.2; opacity: 1; }
+  .invest-banner__line--policy { stroke: var(--iv-policy); }
+  .invest-banner__line--acwi { stroke: var(--iv-acwi); }
+
+  .invest-banner__caption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+    justify-content: space-between;
+    color: var(--screen-soft);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+  }
+
+  .invest-banner__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+  }
+
+  .invest-banner__dot {
+    display: inline-block;
+    inline-size: 8px;
+    block-size: 8px;
+    margin-inline-end: 6px;
+    border-radius: 50%;
+    background: var(--iv-port);
+  }
+
+  .invest-banner__dot--policy { background: var(--iv-policy); }
+  .invest-banner__dot--acwi { background: var(--iv-acwi); }
+
+  .invest-banner__tape {
+    display: flex;
+    overflow: hidden;
+    border-block-start: 1px solid var(--rule);
+    background: rgb(0 0 0 / 0.22);
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    white-space: nowrap;
+  }
+
+  .invest-banner__track {
+    display: flex;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .invest-banner__track li {
+    padding: 7px 18px;
+    border-inline-end: 1px solid var(--rule);
+    color: var(--screen-soft);
+  }
+
+  .invest-banner__track b {
+    color: var(--text);
+  }
+
+  @media (max-width: 52em) {
+    .invest-banner__body {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .invest-banner__figures {
+      grid-template-columns: repeat(2, minmax(0, auto));
+    }
+
+    .invest-banner__chart {
+      block-size: 140px;
+    }
+
+    /* On a phone the sleeves become a list, name, weight and target on each line. */
+    .invest-banner__sleeves {
+      grid-template-columns: 18px minmax(0, 1fr) auto auto;
+      gap: 6px 12px;
+    }
+
+    /* Each row shares the list's columns, so the figures line up. */
+    .invest-banner__sleeves li {
+      grid-column: 1 / -1;
+      grid-template-columns: subgrid;
+      gap: 0 12px;
+      align-items: baseline;
+      padding: 0;
+      border: 0;
+    }
+
+    .invest-banner__key {
+      margin: 0;
+    }
+
+    .invest-banner__sleeves span {
+      font-size: 1rem;
+      text-align: end;
+    }
+  }
+
   /* Footer */
 
   .site-footer {
@@ -1342,6 +1655,21 @@
       letter-spacing: -0.01em;
     }
 
+    /* A drawing in place of each word, which stays for screen readers. */
+    .primary-nav__icon {
+      display: block;
+      flex: none;
+    }
+
+    .primary-nav__label {
+      position: absolute;
+      inline-size: 1px;
+      block-size: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+
     /* Each link has a lamp, lit for the page you're on. */
     .primary-nav__link::before {
       content: "";
@@ -1463,6 +1791,61 @@
 
   html[data-motion="on"] {
     scroll-behavior: smooth;
+  }
+
+  /* The banner's views cross-fade. The growth lines draw themselves in as theirs arrives,
+     the sleeves grow from the left as theirs does, and the pressed button's underline fills
+     over the time until the next turn. */
+  [data-motion="on"] .invest-banner__view {
+    transition:
+      opacity 0.6s ease,
+      visibility 0s linear 0.6s;
+  }
+
+  [data-motion="on"] .invest-banner__view.is-on {
+    transition: opacity 0.6s ease;
+  }
+
+  [data-motion="on"] .invest-banner__view.is-on .invest-banner__line {
+    animation: invest-draw 1.6s ease-out both;
+  }
+
+  [data-motion="on"] .invest-banner__view.is-on .invest-banner__sleeve {
+    transform-box: fill-box;
+    animation: invest-grow 0.9s ease-out both;
+  }
+
+  [data-motion="on"] .invest-banner__switch[data-running] button[aria-pressed="true"]::after {
+    transform-origin: left;
+    animation: invest-turn 9s linear both;
+  }
+
+  @keyframes invest-draw {
+    from { stroke-dasharray: 1; stroke-dashoffset: 1; }
+    to { stroke-dasharray: 1; stroke-dashoffset: 0; }
+  }
+
+  @keyframes invest-grow {
+    from { transform: scaleX(0); }
+  }
+
+  @keyframes invest-turn {
+    from { transform: scaleX(0); }
+  }
+
+  /* The tape runs on a loop, the second copy following the first, and stops under a pointer. */
+  [data-motion="on"] .invest-banner__track {
+    animation: invest-tape 70s linear infinite;
+  }
+
+  [data-motion="on"] .invest-banner__tape:hover .invest-banner__track {
+    animation-play-state: paused;
+  }
+
+  @keyframes invest-tape {
+    to {
+      transform: translateX(-100%);
+    }
   }
 
   [data-motion="on"] .hero__grid {
@@ -1816,6 +2199,15 @@
     overflow: hidden;
     clip-path: inset(50%);
     white-space: nowrap;
+  }
+
+  /* A link that opens a new tab ends in a small arrow, so the new tab is no surprise. The
+     arrow has empty alternative text, as the link already says so to screen readers. */
+  a[target="_blank"]:not(.button, .desk-icon, .p95-icon)::after {
+    content: "\2197" / "";
+    margin-inline-start: 0.15em;
+    font-size: 0.8em;
+    text-decoration: none;
   }
 
   /* A white ring with a dark halo, so it shows on both the page and the screens. */

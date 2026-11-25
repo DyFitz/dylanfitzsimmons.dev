@@ -1,42 +1,21 @@
 /* The investments page: the portfolio's dashboard, and the notice shown until there is any
-   history. Loaded after main.css, whose layers and tokens it uses.
+   history. Loaded after main.css, whose layers and tokens it uses, including the portfolio's chart
+   colours, which the home page's banner shares.
 
    The site allows no inline styles, so sizes and positions come from SVG attributes, and
    colours from classes. Heat runs in eleven steps, iv-hn5 (worst) to iv-hp5 (best). */
 
 @layer tokens {
   :root {
-    --iv-port: #8df2bd;
-    --iv-policy: #8fd3ff;
-    --iv-acwi: #d7a6ff;
     --iv-chips: #ffb454;
-    --iv-up-rgb: 92 230 150;
-    --iv-down-rgb: 255 107 99;
-    --iv-up: rgb(var(--iv-up-rgb));
-    --iv-down: rgb(var(--iv-down-rgb));
     --iv-warm: #ffb454;
     --iv-cool: #8fd3ff;
-    --iv-growth: #5ad1a0;
-    --iv-income: #ffd166;
-    --iv-defensive: #6fb6ff;
-    --iv-defence: #c79bff;
-    --iv-cash: #5b6875;
   }
 
   :root[data-theme="light"] {
-    --iv-port: #1f8a56;
-    --iv-policy: #2a6fa8;
-    --iv-acwi: #7d4bb3;
     --iv-chips: #b86a00;
-    --iv-up-rgb: 22 132 74;
-    --iv-down-rgb: 196 50 44;
     --iv-warm: #c77700;
     --iv-cool: #2a6fa8;
-    --iv-growth: #2f9e6e;
-    --iv-income: #c99a12;
-    --iv-defensive: #2f74b5;
-    --iv-defence: #8a5cc2;
-    --iv-cash: #8a99a6;
   }
 }
 
@@ -94,9 +73,6 @@
 
   /* ---------------------------------------------------------------- shared pieces */
 
-  .iv-up { color: var(--iv-up); }
-  .iv-down { color: var(--iv-down); }
-  .iv-flat { color: var(--text); }
   .iv-dim { color: var(--muted); }
   .iv-num { font-variant-numeric: tabular-nums; text-align: end; white-space: nowrap; }
 

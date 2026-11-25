@@ -6,6 +6,8 @@ import nh3
 from django.utils.safestring import SafeString, mark_safe
 from django.utils.text import slugify
 
+from apps.core.links import open_away_links_in_new_tabs
+
 # A second-level heading: "## Like this", with or without closing hashes.
 SECTION_HEADING = re.compile(r"^##\s+(?P<title>.+?)\s*#*\s*$")
 CODE_FENCES = ("```", "~~~")
@@ -37,7 +39,7 @@ def render_markdown(text: str) -> SafeString:
     or anything else the page shouldn't carry.
     """
     html = markdown.markdown(text, extensions=["fenced_code", "tables"])
-    return mark_safe(nh3.clean(html))  # noqa: S308
+    return mark_safe(open_away_links_in_new_tabs(nh3.clean(html)))  # noqa: S308
 
 
 def render_write_up(text: str) -> WriteUp:

@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load links %}
 {% load static %}
 
 {% block head %}
@@ -39,8 +40,8 @@
       <a class="button button--primary" href="{% static 'files/Dylan_Fitzsimmons_CV.pdf' %}" download>Download CV (PDF)</a>
       <p class="id-card__file">cv.pdf · 1 page{% if profile %} · updated {{ profile.updated|date:"M Y" }}{% endif %}</p>
       <ul class="id-card__links" role="list">
-        {% if profile.github_url %}<li><a href="{{ profile.github_url }}"><span>git</span>{{ profile.github_text }}</a></li>{% endif %}
-        {% if profile.linkedin_url %}<li><a href="{{ profile.linkedin_url }}"><span>in</span>{{ profile.linkedin_text }}</a></li>{% endif %}
+        {% if profile.github_url %}<li><a href="{{ profile.github_url }}"{% new_tab %}><span>git</span>{{ profile.github_text }}{% new_tab_note %}</a></li>{% endif %}
+        {% if profile.linkedin_url %}<li><a href="{{ profile.linkedin_url }}"{% new_tab %}><span>in</span>{{ profile.linkedin_text }}{% new_tab_note %}</a></li>{% endif %}
         <li><a href="{% url 'contact:page' %}"><span>mail</span>send a message</a></li>
       </ul>
       <nav class="contents" aria-labelledby="cv-contents">

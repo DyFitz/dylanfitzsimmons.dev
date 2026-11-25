@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 
 from apps.core.featured import FEATURED_PROJECTS
 from apps.core.mixins import PageMetaMixin
+from apps.investments.figures import banner
 
 
 class HomeView(PageMetaMixin, TemplateView):
@@ -12,6 +13,7 @@ class HomeView(PageMetaMixin, TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context["featured_projects"] = FEATURED_PROJECTS
+        context["investments"] = banner()
         return context
 
 

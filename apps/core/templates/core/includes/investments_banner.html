@@ -1,0 +1,67 @@
+{% comment %}The portfolio on the home page. The right-hand side takes turns: how the portfolio
+is split across its sleeves, then its growth against the benchmarks (static/js/modules/
+invest-banner.js). Without that script, or with motion off until a tab is chosen, it shows the
+split. Each holding's latest move runs along the bottom like a ticker tape. Until there's any
+history, just the panel and its link.{% endcomment %}
+<section class="invest-banner screen" id="investments" aria-labelledby="investments-title" data-invest-banner>
+  <div class="invest-banner__body">
+    <div class="invest-banner__text">
+      <p class="panel__label" aria-hidden="true">~/investments</p>
+      <h2 class="panel__title" id="investments-title">Investments</h2>
+      <p class="panel__text">A portfolio built around AI's demand for chips and memory, measured against three benchmarks and reported at the end of each trading day.</p>
+      {% if investments %}
+        <dl class="invest-banner__figures">
+          <div><dt>Since</dt><dd>{{ investments.inception }}</dd></div>
+          <div><dt>Holdings</dt><dd>{{ investments.holdings }}</dd></div>
+          <div><dt>Sleeves</dt><dd>{{ investments.sleeves_held }}</dd></div>
+          <div><dt>Days reported</dt><dd>{{ investments.days }}</dd></div>
+        </dl>
+      {% endif %}
+      <p class="panel__actions">
+        <a class="button button--secondary" href="{% url 'investments:page' %}">Open the portfolio</a>
+      </p>
+    </div>
+    {% if investments %}
+      <div class="invest-banner__views">
+        <div class="invest-banner__switch" role="group" aria-label="What the chart shows" data-banner-switch hidden>
+          <button type="button" aria-pressed="true" data-banner-show="split"><span>split</span></button>
+          <button type="button" aria-pressed="false" data-banner-show="growth"><span>growth</span></button>
+        </div>
+
+        <figure class="invest-banner__view is-on" data-banner-view="split">
+          <svg class="invest-banner__bar" viewBox="0 0 1000 56" preserveAspectRatio="none" aria-hidden="true">
+            {% for sleeve in investments.sleeves %}<rect class="invest-banner__sleeve invest-banner__sleeve--{{ sleeve.step }}" x="{{ sleeve.x }}" y="0" width="{{ sleeve.width }}" height="56" rx="6"></rect>{% endfor %}
+          </svg>
+          <ul class="invest-banner__sleeves" role="list">
+            {% for sleeve in investments.sleeves %}
+              <li><i class="invest-banner__key invest-banner__sleeve--{{ sleeve.step }}"></i><b>{{ sleeve.name }}</b><span>{{ sleeve.weight }}</span><small>target {{ sleeve.target }}</small></li>
+            {% endfor %}
+          </ul>
+          <figcaption class="invest-banner__caption">{{ investments.asset_mix }} · close of {{ investments.as_of }}</figcaption>
+        </figure>
+
+        <figure class="invest-banner__view" data-banner-view="growth" inert>
+          <svg class="invest-banner__chart" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Growth of 100 since {{ investments.inception }}{% if investments.lines|length > 1 %}, against the benchmarks{% endif %}">
+            <path class="invest-banner__area" d="{{ investments.area }}"></path>
+            {% for line in investments.lines %}<path class="invest-banner__line invest-banner__line--{{ line.key }}" d="{{ line.d }}" pathLength="1"></path>{% endfor %}
+          </svg>
+          <figcaption class="invest-banner__caption">
+            <span>growth of 100 · {{ investments.period_label|lower }} · close of {{ investments.as_of }}</span>
+            <span class="invest-banner__legend">{% for line in investments.lines %}<span><i class="invest-banner__dot invest-banner__dot--{{ line.key }}"></i>{{ line.label }}</span>{% endfor %}</span>
+          </figcaption>
+        </figure>
+      </div>
+    {% endif %}
+  </div>
+  {% if investments.tape %}
+    {# Twice over, so the loop has no seam. Read out once, from the first copy. #}
+    <div class="invest-banner__tape">
+      <ul class="invest-banner__track" role="list" aria-label="Holdings by weight, with their latest daily move">
+        {% for item in investments.tape %}<li><b>{{ item.ticker }}</b> {{ item.weight }} <span class="{{ item.cls }}">{{ item.day }}</span></li>{% endfor %}
+      </ul>
+      <ul class="invest-banner__track" role="list" aria-hidden="true">
+        {% for item in investments.tape %}<li><b>{{ item.ticker }}</b> {{ item.weight }} <span class="{{ item.cls }}">{{ item.day }}</span></li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+</section>

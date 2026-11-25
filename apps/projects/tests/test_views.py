@@ -47,6 +47,7 @@ def test_list_gives_the_script_its_links_and_photographs(
     home = reverse("core:home")
     assert data["urls"] == {
         "home": home,
+        "investments": reverse("investments:page"),
         "cv": reverse("cv:page"),
         "contact": reverse("contact:page"),
         "source": "https://github.com/example/site",

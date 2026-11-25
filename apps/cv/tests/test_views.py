@@ -6,7 +6,7 @@ from django.test import Client
 from django.urls import reverse
 from pytest_django.asserts import assertContains, assertNotContains
 
-from apps.cv.models import Entry, Evidence
+from apps.cv.models import CvProject, Entry, Evidence
 from apps.projects.models import Project
 
 pytestmark = pytest.mark.django_db
@@ -92,3 +92,23 @@ def test_jump_strip_links_to_every_section(client: Client) -> None:
     for section in ("profile", "education", "experience", "projects", "skills"):
         assertContains(response, f'class="jump__link" href="#{section}"')
         assertContains(response, f'id="{section}"')
+
+
+@pytest.mark.django_db
+def test_this_site_is_a_key_project_after_opus_equi(client: Client) -> None:
+    key = list(CvProject.objects.filter(is_key=True).values_list("title", flat=True))
+    assert key == [
+        "Opus Equi: financial time-series forecasting",
+        "dylanfitzsimmons.dev: this site",
+    ]
+    response = client.get(reverse("cv:page"))
+    assertContains(response, "project--key", count=2)
+
+
+@pytest.mark.django_db
+def test_the_finance_modules_and_new_skills_are_on_the_cv(client: Client) -> None:
+    response = client.get(reverse("cv:page"))
+    assertContains(response, "C++ in Finance and Applied Mathematical Finance")
+    for skill in ("Docker", "GitHub Actions", "REST APIs", "HTML and CSS", "pytest, MSTest"):
+        assertContains(response, skill)
+    assertContains(response, "MSc Financial Economics: C++ in Finance, options pricing")

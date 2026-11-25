@@ -1,11 +1,12 @@
-// The home page: the console, the globe and code rain, the project screens
-// and the intro.
+// The home page: the console, the globe and code rain, the project screens,
+// the investments banner and the intro.
 
 import { initCodeRain } from "./modules/code-rain.js";
 import { initConsole } from "./modules/console.js";
 import { initGlobe } from "./modules/globe.js";
 import { initHeroClock } from "./modules/hero-clock.js";
 import { initIntro } from "./modules/intro.js";
+import { initInvestBanner } from "./modules/invest-banner.js";
 import { initProjectScreens } from "./modules/project-screens.js";
 
 initConsole(document.querySelector("[data-console]"));
@@ -16,5 +17,6 @@ initHeroClock({
 initGlobe(document.querySelector("[data-globe]"));
 initCodeRain(document.querySelector("[data-code-rain]"));
 initProjectScreens(document.querySelectorAll("[data-screen]"));
+initInvestBanner(document.querySelector("[data-invest-banner]"));
 // Last, so everything else is already listening when it starts.
 initIntro(document.querySelector("[data-intro-screen]"));

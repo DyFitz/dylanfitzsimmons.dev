@@ -1,3 +1,4 @@
+{% load links %}
 {% load static %}
 <aside class="uplink__station" aria-label="Where your message goes">
   {# The globe turns with Glasgow marked; on the confirmation page it shows the message arriving. #}
@@ -11,8 +12,8 @@
     <dt>operator</dt><dd>{{ site.name }}</dd>
     {% if profile.looking_for %}<dt>open to</dt><dd>{{ profile.looking_for }}</dd>{% endif %}
     <dt>reply</dt><dd>by email, within {{ reply_within }}</dd>
-    {% if profile.github_url %}<dt>git</dt><dd><a href="{{ profile.github_url }}">{{ profile.github_text }}</a></dd>{% endif %}
-    {% if profile.linkedin_url %}<dt>in</dt><dd><a href="{{ profile.linkedin_url }}">{{ profile.linkedin_text }}</a></dd>{% endif %}
+    {% if profile.github_url %}<dt>git</dt><dd><a href="{{ profile.github_url }}"{% new_tab %}>{{ profile.github_text }}{% new_tab_note %}</a></dd>{% endif %}
+    {% if profile.linkedin_url %}<dt>in</dt><dd><a href="{{ profile.linkedin_url }}"{% new_tab %}>{{ profile.linkedin_text }}{% new_tab_note %}</a></dd>{% endif %}
     <dt>cv</dt><dd><a href="{% url 'cv:page' %}">read the CV</a></dd>
   </dl>
 </aside>

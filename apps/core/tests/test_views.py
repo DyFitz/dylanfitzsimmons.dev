@@ -151,8 +151,9 @@ def test_footer_links_to_the_deployed_commit(client: Client, settings: Settings)
 
     assertContains(
         response,
-        '<a href="https://github.com/example/site/commit/0123456789abcdef0123456789abcdef01234567">'
-        "<code>0123456</code></a>",
+        '<a href="https://github.com/example/site/commit/0123456789abcdef0123456789abcdef01234567"'
+        ' target="_blank" rel="noopener noreferrer"><code>0123456</code>'
+        '<span class="visually-hidden"> (opens in a new tab)</span></a>',
         html=True,
     )
 

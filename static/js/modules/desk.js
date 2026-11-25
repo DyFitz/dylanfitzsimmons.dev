@@ -81,11 +81,12 @@ export class Desk {
         viewer: [56.5, 9],
         media: [15, 79.5],
         home: [0.8, 2],
-        projects: [0.8, 14],
-        cv: [0.8, 26],
-        contact: [0.8, 38],
-        code: [0.8, 50],
-        bin: [0.8, 62],
+        projects: [0.8, 13],
+        investments: [0.8, 24],
+        cv: [0.8, 35],
+        contact: [0.8, 46],
+        code: [0.8, 57],
+        bin: [0.8, 70],
         about: [50, 7],
         paper: [28, 3],
         letter: [36, 13],
@@ -1141,14 +1142,15 @@ export class Desk {
     window.addEventListener("pointerup", up);
   }
 
-  // The desktop icons. Home is a link to the home page. Projects opens the projects window, as
-  // this is the projects page. CV and Contact open windows of their own on the desktop; they
+  // The desktop icons. Home and Investments are links to those pages. Projects opens the
+  // projects window, as this is the projects page. CV and Contact open windows of their own on the desktop; they
   // are still links underneath, for anyone opening them in a new tab. The code isn't public
   // yet, so that one says so.
   icons() {
     return [
       { key: "home", label: "Home", href: this.urls.home, live: true },
       { key: "projects", label: "Projects", href: "#", live: false },
+      { key: "investments", label: "Investments", href: this.urls.investments, live: true },
       { key: "cv", label: "CV", href: this.urls.cv, live: false },
       { key: "contact", label: "Contact", href: this.urls.contact, live: false },
       {
@@ -1567,6 +1569,7 @@ export class Desk {
         label: icon.label,
         isHome: icon.key === "home",
         isProjects: icon.key === "projects",
+        isInvestments: icon.key === "investments",
         isCv: icon.key === "cv",
         isContact: icon.key === "contact",
         isCode: icon.key === "code",
@@ -1575,6 +1578,8 @@ export class Desk {
         place: place(icon.key),
         drag: this.dragHandler(icon.key, "icon"),
         href: icon.href,
+        // The source code is on another site, so it opens in a new tab and the desk stays.
+        target: icon.key === "code" ? "_blank" : "_self",
         // A click follows the link, unless the icon has just been dragged somewhere.
         press: (event) => {
           const dragged = this.justDragged;

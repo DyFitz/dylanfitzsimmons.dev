@@ -1,3 +1,4 @@
+{% load links %}
 {# The projects page on a phone: the '95 desktop filling the screen, like an app. #}
 {# static/js/modules/phone-desk.js puts it on the page and works its windows. #}
 <div class="p95" data-phone-desk>
@@ -14,9 +15,10 @@
     <nav aria-label="Desktop">
       <ul class="p95__icons" role="list">
         <li><a class="p95-icon" href="{% url 'core:home' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-home"></use></svg><span>Home</span></a></li>
+        <li><a class="p95-icon" href="{% url 'investments:page' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-invest"></use></svg><span>Investments</span></a></li>
         <li><a class="p95-icon" href="{% url 'cv:page' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-cv"></use></svg><span>CV</span></a></li>
         <li><a class="p95-icon" href="{% url 'contact:page' %}"><svg aria-hidden="true" focusable="false"><use href="#ico-contact"></use></svg><span>Contact</span></a></li>
-        {% if site.source_url %}<li><a class="p95-icon" href="{{ site.source_url }}"><svg aria-hidden="true" focusable="false"><use href="#ico-code"></use></svg><span>Source code</span></a></li>{% endif %}
+        {% if site.source_url %}<li><a class="p95-icon" href="{{ site.source_url }}"{% new_tab %}><svg aria-hidden="true" focusable="false"><use href="#ico-code"></use></svg><span>Source code{% new_tab_note %}</span></a></li>{% endif %}
         <li><button class="p95-icon" type="button" data-phone-open="bin"><svg aria-hidden="true" focusable="false"><use href="#ico-bin"></use></svg><span>Recycle Bin</span></button></li>
       </ul>
     </nav>

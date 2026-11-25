@@ -21,6 +21,7 @@ def desk_data(projects: list[Project]) -> dict[str, Any]:
     return {
         "urls": {
             "home": home,
+            "investments": reverse("investments:page"),
             "cv": reverse("cv:page"),
             "contact": reverse("contact:page"),
             # The repository, for the desktops' Source code icon. Blank until it's set.

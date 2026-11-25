@@ -31,7 +31,7 @@ def test_investments_link_is_in_the_navigation_and_current_on_its_page() -> None
 
     assert investments.url == reverse("investments:page")
     assert investments.aria_current == "page"
-    assert [link.label for link in links] == ["Home", "Projects", "CV", "Contact", "Investments"]
+    assert [link.label for link in links] == ["Home", "Projects", "Investments", "CV", "Contact"]
 
 
 # ---------------------------------------------------------------- with a history
@@ -49,7 +49,7 @@ def imported(db, settings):
 
 
 def get(client: Client, today: date):
-    with patch("apps.investments.views.timezone.localdate", return_value=today):
+    with patch("apps.investments.figures.timezone.localdate", return_value=today):
         return client.get(reverse("investments:page"))
 
 
@@ -151,3 +151,29 @@ def test_how_it_is_measured_runs_under_the_other_three(client: Client, imported)
 
 def test_without_it_there_is_no_empty_row(client: Client, imported) -> None:
     assertNotContains(get(client, date(2026, 1, 9)), "iv-think__wide")
+
+
+def test_the_home_page_shows_the_portfolio_once_there_is_history(client: Client, imported) -> None:
+    response = client.get(reverse("core:home"))
+    assertContains(response, 'class="invest-banner screen"')
+    assertContains(response, "<dt>Holdings</dt>")
+    assertContains(response, 'class="invest-banner__line invest-banner__line--port"')
+    assertContains(response, "<b>AAA</b>")
+
+
+@pytest.mark.django_db
+def test_without_history_the_banner_only_links_to_the_page(client: Client) -> None:
+    response = client.get(reverse("core:home"))
+    assertContains(response, "Open the portfolio")
+    assertNotContains(response, "invest-banner__chart")
+    assertNotContains(response, "invest-banner__tape")
+
+
+def test_the_home_banner_shows_the_split_first_and_the_growth_on_its_turn(
+    client: Client, imported
+) -> None:
+    response = client.get(reverse("core:home"))
+    assertContains(response, 'class="invest-banner__view is-on" data-banner-view="split"')
+    assertContains(response, 'class="invest-banner__view" data-banner-view="growth" inert')
+    assertContains(response, "data-banner-switch hidden")
+    assertContains(response, "<small>target ")

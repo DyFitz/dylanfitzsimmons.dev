@@ -7,6 +7,7 @@ from django.urls import reverse
 class NavItem:
     label: str
     url_name: str
+    icon: str  # the drawing used on the phone's tab bar, from includes/nav_icon.html
 
 
 @dataclass(frozen=True, slots=True)
@@ -16,14 +17,15 @@ class NavLink:
     label: str
     url: str
     aria_current: str | None
+    icon: str
 
 
 PRIMARY_NAVIGATION: tuple[NavItem, ...] = (
-    NavItem(label="Home", url_name="core:home"),
-    NavItem(label="Projects", url_name="projects:list"),
-    NavItem(label="CV", url_name="cv:page"),
-    NavItem(label="Contact", url_name="contact:page"),
-    NavItem(label="Investments", url_name="investments:page"),
+    NavItem(label="Home", url_name="core:home", icon="home"),
+    NavItem(label="Projects", url_name="projects:list", icon="projects"),
+    NavItem(label="Investments", url_name="investments:page", icon="investments"),
+    NavItem(label="CV", url_name="cv:page", icon="cv"),
+    NavItem(label="Contact", url_name="contact:page", icon="contact"),
 )
 
 
@@ -46,6 +48,11 @@ def build_navigation(current_path: str) -> list[NavLink]:
     for item in PRIMARY_NAVIGATION:
         url = reverse(item.url_name)
         links.append(
-            NavLink(label=item.label, url=url, aria_current=aria_current(url, current_path))
+            NavLink(
+                label=item.label,
+                url=url,
+                aria_current=aria_current(url, current_path),
+                icon=item.icon,
+            )
         )
     return links
