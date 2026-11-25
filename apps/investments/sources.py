@@ -3,6 +3,7 @@ England for SONIA, and CSV files for any price history that has to be filled in 
 
 import csv
 import io
+import re
 import time
 
 # The responses come from IBKR and the Bank of England, and Python's own parser doesn't fetch
@@ -11,6 +12,7 @@ import xml.etree.ElementTree as ET
 from collections.abc import Callable
 from datetime import date, datetime
 from statistics import median
+from urllib.error import HTTPError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -19,8 +21,11 @@ SONIA_URL = "https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolu
 # The SONIA Compounded Index: SONIA's daily rate built up into an index, so a period's return
 # is one value over another.
 SONIA_SERIES = "IUDZOS2"
-# Both services refuse requests without one; the value doesn't matter to them.
-USER_AGENT = "dylanfitzsimmons.dev portfolio update"
+# Both services sit behind firewalls that turn away requests which don't look like a browser.
+USER_AGENT = (
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/130.0 Safari/537.36"
+)
 # IBKR's "the report is still being made" and "try again shortly".
 NOT_READY = {"1019", "1021"}
 
@@ -29,11 +34,23 @@ class SourceError(RuntimeError):
     """A source couldn't be reached, or sent something unusable."""
 
 
+def _gist(data: bytes) -> str:
+    """The start of a reply, as plain text, to show what came back instead of the data."""
+    text = re.sub(r"<[^>]+>", " ", data[:2000].decode("utf-8", errors="replace"))
+    return " ".join(text.split())[:200]
+
+
 def _get(url: str, opener=urlopen, timeout: float = 60) -> bytes:
-    request = Request(url, headers={"User-Agent": USER_AGENT})  # noqa: S310 - fixed https URLs
+    headers = {"User-Agent": USER_AGENT, "Accept": "*/*"}
+    request = Request(url, headers=headers)  # noqa: S310 - fixed https URLs
     try:
         with opener(request, timeout=timeout) as response:
             return response.read()
+    except HTTPError as error:
+        reply = _gist(error.read() or b"")
+        raise SourceError(
+            f"Couldn't reach {url.split('?')[0]}: {error}" + (f" ({reply})" if reply else "")
+        ) from error
     except OSError as error:
         raise SourceError(f"Couldn't reach {url.split('?')[0]}: {error}") from error
 
@@ -97,10 +114,10 @@ def fetch_sonia(since: date, *, opener=urlopen) -> list[tuple[date, float]]:
             "VFD": "N",
         }
     )
-    text = _get(f"{SONIA_URL}?{query}", opener).decode("utf-8-sig", errors="replace")
-    rows = read_prices(text)
+    data = _get(f"{SONIA_URL}?{query}", opener)
+    rows = read_prices(data.decode("utf-8-sig", errors="replace"))
     if not rows:
-        raise SourceError("The Bank of England sent no SONIA figures.")
+        raise SourceError(f"The Bank of England sent no SONIA figures: {_gist(data)!r}")
     return rows
 
 

@@ -95,6 +95,14 @@ def test_the_token_and_query_are_needed():
         sources.fetch_flex_report("", "42")
 
 
+def test_a_refused_request_shows_what_came_back():
+    from urllib.error import HTTPError
+
+    refused = HTTPError("https://x.test", 403, "Forbidden", {}, BytesIO(b"<h1>Access Denied</h1>"))
+    with pytest.raises(sources.SourceError, match=r"403.*\(Access Denied\)"):
+        sources.fetch_flex_report("t", "q", opener=server(refused))
+
+
 def test_a_network_failure_is_a_source_error():
     with pytest.raises(sources.SourceError, match="Couldn't reach"):
         sources.fetch_flex_report("t", "q", opener=server(OSError("down")))
@@ -118,8 +126,8 @@ def test_sonia_is_read_from_the_bank_of_england():
 
 
 def test_an_empty_sonia_reply_is_an_error():
-    with pytest.raises(sources.SourceError, match="no SONIA"):
-        sources.fetch_sonia(date(2026, 1, 2), opener=server("DATE,IUDZOS2\n"))
+    with pytest.raises(sources.SourceError, match=r"no SONIA.*Please try later"):
+        sources.fetch_sonia(date(2026, 1, 2), opener=server("<p>Please try later</p>"))
 
 
 @pytest.mark.parametrize(
