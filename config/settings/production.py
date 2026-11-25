@@ -3,8 +3,10 @@
 Required values have no defaults, so the site won't start without them.
 """
 
+from config.sentry import start as start_error_tracking
+
 from .base import *
-from .base import env
+from .base import GIT_SHA, env
 
 DEBUG = False
 
@@ -63,3 +65,11 @@ if not SECURE_HSTS_PRELOAD:
     # Preloading is hard to undo, so silence the check that recommends it until
     # it's switched on.
     SILENCED_SYSTEM_CHECKS = ["security.W021"]
+
+# ---------------------------------------------------------------------------
+# Error tracking
+# ---------------------------------------------------------------------------
+
+# Optional: until it's set, errors are only logged. See config/sentry.py for what's sent.
+SENTRY_DSN = env.str("SENTRY_DSN", default="")
+start_error_tracking(SENTRY_DSN, release=GIT_SHA)

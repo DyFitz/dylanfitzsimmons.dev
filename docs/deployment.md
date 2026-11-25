@@ -21,6 +21,14 @@ To move to a new phone, use **Move to a new phone** on the same page; the old ap
 
 If the phone and the backup codes are both lost, set `ADMIN_TWO_FACTOR=off` on Render. After the redeploy the password alone signs in again, so the app can be set up afresh before turning it back on. Anyone who can change the host's environment can do this, so the Render account should have two-factor login of its own.
 
+## Error tracking
+
+With `SENTRY_DSN` set, errors go to [Sentry](https://sentry.io), which emails when a new one turns up. It covers pages that fail, errors that are logged (a contact email that didn't send, a health check that couldn't reach the database) and the daily update, which checks in at the start and end of each run, so a run that fails or doesn't happen by 11:15 UTC raises an alert. One request in ten is traced, and warnings and errors that are logged are kept alongside. Each error is tagged with the commit (`GIT_SHA`), so it's clear which deploy brought it in.
+
+Personal details stay out: request bodies (contact messages), cookies, the signed-in user, visitors' IP addresses, query strings and the values of variables are never sent. Only the server reports, so there's no browser script and the content security policy is unchanged. Requests for other host names, which scanners send all the time, are left out too. The settings are in `config/sentry.py`.
+
+To set it up, create a free Sentry account and a Django project, and put its DSN in `SENTRY_DSN` on both Render services (an environment group linked to both does it once). To check it works, **Trigger Run** on the cron job: the run appears under Crons in Sentry as `update-investments`, which is also how the monitor is first created. To see an error arrive, `python manage.py shell -c "import logging; logging.getLogger('check').error('Sentry test')"` run anywhere with production settings and the DSN shows up under Issues within a minute.
+
 ## The daily investments update
 
 `python manage.py update_investments` downloads the account's Flex report from IBKR and the SONIA Compounded Index, and stores them. SONIA is the Bank of England's series, fetched from FRED (the St. Louis Fed's database), because the Bank's own database turns away requests from cloud servers. FRED often can't be reached from cloud servers either, so a SONIA download that fails isn't treated as a failure: the page carries SONIA on at its latest rate, and an email asks for a CSV (series IUDZOS2, from FRED or the Bank of England in a browser, uploaded under Price series, sonia) only once the figures are more than 30 days old. Each source is tried on its own, every attempt is logged under Import runs in the admin, and any failure is emailed to `CONTACT_EMAIL` with the command exiting non-zero. It also emails a reminder as the IBKR token's end date nears.
@@ -32,7 +40,7 @@ On Render, as a cron job:
 - **Runtime:** Docker, from the same repository and branch as the web service.
 - **Schedule:** `45 10 * * 2-6` (10:45 UTC, so 10:45 in winter and 11:45 in summer, UK time).
 - **Command:** `python manage.py update_investments`
-- **Environment:** the web service's variables (at least `DATABASE_URL`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, `SITE_URL` and the `SMTP_*` ones) plus the three `IBKR_FLEX_*` ones. Environment groups linked to both services keep them in one place.
+- **Environment:** the web service's variables (at least `DATABASE_URL`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS`, `SITE_URL` and the `SMTP_*` ones) plus the three `IBKR_FLEX_*` ones and `SENTRY_DSN`. Environment groups linked to both services keep them in one place.
 
 A day can be fetched by hand from the cron job's page with **Trigger Run**, or anywhere with the same command.
 

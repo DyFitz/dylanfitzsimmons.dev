@@ -263,6 +263,29 @@ def test_a_good_day_sends_nothing(portfolio, flex, monkeypatch):
     assert mail.outbox == []
 
 
+def _check_ins(sentry) -> list[tuple[str, str]]:
+    return [
+        (sent["monitor_slug"], sent["status"])
+        for sent in sentry.kept
+        if sent.get("type") == "check_in"
+    ]
+
+
+def test_each_run_checks_in_with_sentry(portfolio, flex, monkeypatch, sentry):
+    _command(monkeypatch, server(SENT, report(), SONIA))
+    assert _check_ins(sentry) == [
+        ("update-investments", "in_progress"),
+        ("update-investments", "ok"),
+    ]
+    assert sentry.kept[0]["monitor_config"]["schedule"]["value"] == "45 10 * * 2-6"
+
+
+def test_a_failed_run_checks_in_as_an_error(portfolio, flex, monkeypatch, sentry):
+    with pytest.raises(CommandError):
+        _command(monkeypatch, server(REFUSED, OSError("down")))
+    assert _check_ins(sentry)[-1] == ("update-investments", "error")
+
+
 def _command(monkeypatch, opener) -> str:
     """Runs the command with the network swapped for `opener`."""
     original = update.run

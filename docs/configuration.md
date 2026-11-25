@@ -14,6 +14,7 @@ Settings come from environment variables. Locally, `.env` supplies them; real en
 | `GIT_SHA` | Set by the build | The commit being served, linked from the footer |
 | `DJANGO_SECURE_HSTS_SECONDS` | Optional | HSTS duration, one hour by default. Raise it to `31536000` once HTTPS is confirmed working |
 | `DJANGO_READ_DOT_ENV` | Optional | Set to `false` to ignore `.env` |
+| `SENTRY_DSN` | Recommended | The Sentry project's DSN (the address errors are sent to), set on both the web service and the cron job. Without it, errors are only logged. See [Error tracking](deployment.md#error-tracking) |
 | `LOG_LEVEL` | Optional | `INFO` by default |
 | `DJANGO_CLIENT_IP_HEADER` | Behind a proxy | The header the proxy puts the visitor's IP address in, such as `HTTP_X_FORWARDED_FOR`, for the contact form's rate limit. Without it, every visitor shares the proxy's address |
 | `CONTACT_EMAIL` | Optional | Where contact form messages are emailed. `contact@dylanfitzsimmons.dev` by default |

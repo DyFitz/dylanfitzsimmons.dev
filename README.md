@@ -7,7 +7,7 @@ Source code for [dylanfitzsimmons.dev](https://dylanfitzsimmons.dev), the person
 | | |
 | --- | --- |
 | ![The home page](docs/screenshots/home.webp) | ![The projects page: a 1995 desktop on a CRT monitor](docs/screenshots/projects.webp) |
-| **Home:** a console and a wireframe globe, drawn on canvas | **Projects:** three monitors from 1984, 1995 and 2007, each with its own working interface |
+| **Home:** a console and a wireframe globe drawn on canvas, with the portfolio's latest figures below | **Projects:** three monitors from 1984, 1995 and 2007, each with its own working interface |
 | ![The CV page](docs/screenshots/cv.webp) | ![The contact page](docs/screenshots/contact.webp) |
 | **CV:** built from the database, with a one-page PDF to download | **Contact:** messages saved, emailed on and screened for spam |
 | ![The investments page](docs/screenshots/investments.webp) | ![The investments page as a trading terminal](docs/screenshots/investments-terminal.webp) |
@@ -22,12 +22,13 @@ Source code for [dylanfitzsimmons.dev](https://dylanfitzsimmons.dev), the person
 - **A portfolio reported without a single amount of money.** A Render cron job collects the account's Flex report from Interactive Brokers' web service each weekday, reduces it to weights and time-weighted returns, and stores nothing else. Failures and an expiring API token are emailed.
 - **The same analytics on both sides.** Sharpe ratios, drawdowns, risk contributions, a Monte Carlo projection and stress tests are computed in Python on the server and mirrored in JavaScript for the interactive views, agreeing to within floating-point rounding.
 - **A contact form without a CAPTCHA.** Spam is stopped by a honeypot field, a signed timing check and a rate limit, and old messages are deleted after 12 months.
+- **Errors tracked without personal data.** Sentry reports failing pages, logged errors and missed or failed daily updates, with request bodies, cookies, IP addresses, query strings and variable values kept out, and tests that check it.
 - **Configured entirely from the environment.** The production settings refuse to start if anything required is missing.
-- **284 tests at 97% coverage**, with Ruff, migration checks, Django's deployment checks, a PostgreSQL test run and a Docker build on every push.
+- **318 tests at 97% coverage**, with Ruff, migration checks, Django's deployment checks, a PostgreSQL test run and a Docker build on every push.
 
 ## Stack
 
-Python 3.14 · Django 6.1 · PostgreSQL · plain JavaScript and CSS · pytest · Ruff · uv · Docker · Gunicorn · WhiteNoise · GitHub Actions · Render (web service and cron job) · Interactive Brokers Flex Web Service
+Python 3.14 · Django 6.1 · PostgreSQL · plain JavaScript and CSS · pytest · Ruff · uv · Docker · Gunicorn · WhiteNoise · GitHub Actions · Render (web service and cron job) · Sentry · Interactive Brokers Flex Web Service
 
 ## Running locally
 
@@ -48,7 +49,3 @@ The site is then at <http://localhost:8000>. Local development uses SQLite, so n
 - [Configuration](docs/configuration.md): every environment variable the site reads
 - [Deployment](docs/deployment.md): running the production image and the daily investments update
 - [Architecture decision records](docs/adr): the reasoning behind the main design choices
-
-## Still to come
-
-- Error tracking
