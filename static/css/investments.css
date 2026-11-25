@@ -576,24 +576,29 @@
   /* How it's measured: a full-width row under the three columns, its benchmarks side by side. */
   .iv-think__wide {
     grid-column: 1 / -1;
-    padding-block-start: 20px;
+    margin-block-start: 8px;
+    padding-block-start: 28px;
     border-block-start: 1px solid var(--rule);
   }
 
-  .iv-think__wide .iv-think__text { max-inline-size: none; }
+  .iv-think__wide h3 { margin-block-end: 12px; }
+  .iv-think__wide .iv-think__text > * { margin-block: 0 1.1em; }
+  .iv-think__wide .iv-think__text > :last-child { margin-block-end: 0; }
 
-  .iv-think__wide ul {
+  .iv-think__wide .iv-think__text ul {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 24px;
-    margin-block: 4px 16px;
+    align-items: start;
+    gap: 20px 40px;
+    margin-block: 18px 22px;
     padding: 0;
     list-style: none;
   }
 
-  .iv-think__wide li {
+  .iv-think__wide .iv-think__text li {
     margin: 0;
-    padding-inline-start: 12px;
+    padding-block: 2px;
+    padding-inline-start: 18px;
     border-inline-start: 2px solid var(--rule);
   }
 
@@ -988,7 +993,7 @@
   @media (max-width: 64em) {
     .iv-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
     .iv-think,
-    .iv-think__wide ul { grid-template-columns: minmax(0, 1fr); }
+    .iv-think__wide .iv-think__text ul { grid-template-columns: minmax(0, 1fr); }
   }
 
   @media (max-width: 52em) {
