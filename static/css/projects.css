@@ -2143,9 +2143,47 @@
     inline-size: 1100px;
   }
 
+  /* The shadow under each monitor is a picture, blurred once in advance, rather than a
+     drop-shadow filter. A filter has to be blurred again whenever anything on the screen
+     changes, and in the opening shot, with the page scaled up several times over, that blur
+     was too big to finish in a frame and made the camera stutter. A picture only has to be
+     scaled. Each is the photo's outline, blurred and moved down to match what
+     drop-shadow(0 30px 40px rgb(0 0 0 / 0.6)) gave, and placed by the percentages below. */
   .pm__body {
     position: relative;
-    filter: drop-shadow(0 30px 40px rgb(0 0 0 / 0.6));
+    isolation: isolate;
+  }
+
+  .pm__body::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    background: 0 0 / 100% 100% no-repeat;
+    pointer-events: none;
+  }
+
+  .pm--crt .pm__body::before {
+    inset-inline-start: -6.847%;
+    inset-block-start: -8.008%;
+    inline-size: 113.694%;
+    block-size: 120.021%;
+    background-image: url("../img/projects/crt-shadow.webp");
+  }
+
+  .pm--term .pm__body::before {
+    inset-inline-start: -6.394%;
+    inset-block-start: -6.754%;
+    inline-size: 112.789%;
+    block-size: 116.886%;
+    background-image: url("../img/projects/term-shadow.webp");
+  }
+
+  .pm--lcd .pm__body::before {
+    inset-inline-start: -5.527%;
+    inset-block-start: -8.611%;
+    inline-size: 111.054%;
+    block-size: 121.47%;
+    background-image: url("../img/projects/lcd-shadow.webp");
   }
 
   .pm__photo {

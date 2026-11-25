@@ -285,6 +285,7 @@ export class Desk {
 
   // The camera pulls back from the screen to the whole page.
   pullBack() {
+    this.pullDrawn = false;
     this.setState({ zoom: "pull" });
     this.setShot({
       transformOrigin: this.shotOrigin,
@@ -1235,9 +1236,13 @@ export class Desk {
         this.frame = null;
         return;
       }
+      // While the camera pulls back, the previews are drawn once and then hold still. Each new
+      // frame would have the whole scaled-up page drawn again, which made the shot stutter.
+      const holding = state.zoom === "pull" && this.pullDrawn;
       // Thirty frames a second is plenty for these.
-      if (!document.hidden && state.power !== "off" && state.phase === "ready" && (!this.drawnAt || t - this.drawnAt >= 33)) {
+      if (!document.hidden && !holding && state.power !== "off" && state.phase === "ready" && (!this.drawnAt || t - this.drawnAt >= 33)) {
         this.drawnAt = t;
+        this.pullDrawn = state.zoom === "pull";
         try {
           if (state.saver && state.monitor === "w95") {
             this.drawStars(this.saverEl);
