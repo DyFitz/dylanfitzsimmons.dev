@@ -10,7 +10,7 @@ from pytest_django.asserts import assertContains, assertNotContains, assertTempl
 from apps.core.navigation import build_navigation
 from apps.investments.flex import parse
 from apps.investments.importer import save
-from apps.investments.models import Instrument, Portfolio
+from apps.investments.models import Instrument, Portfolio, Price, PriceSeries
 from apps.investments.tests.samples import report
 
 
@@ -123,3 +123,20 @@ def test_the_data_sent_with_the_page_has_no_amounts_of_money(client: Client, imp
     walk(data)
     assert numbers
     assert max(abs(x) for x in numbers) <= 1
+
+
+def test_a_change_in_the_admin_shows_without_waiting_for_the_next_import(
+    client: Client, imported, settings
+) -> None:
+    settings.CACHES = {"default": {"BACKEND": "django.core.cache.backends.locmem.LocMemCache"}}
+    assertNotContains(get(client, date(2026, 1, 9)), "Aaa Holdings")
+    Instrument.objects.filter(symbol="AAA").update(label="Aaa Holdings")
+    assertContains(get(client, date(2026, 1, 9)), "Aaa Holdings")
+
+    before = get(client, date(2026, 1, 9)).content
+    series = PriceSeries.objects.create(key="sonia", name="SONIA")
+    Price.objects.bulk_create(
+        Price(series=series, date=day, close=100 + i / 100)
+        for i, day in enumerate([date(2026, 1, 2), date(2026, 1, 6), date(2026, 1, 7)])
+    )
+    assert get(client, date(2026, 1, 9)).content != before

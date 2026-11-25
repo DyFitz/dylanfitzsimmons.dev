@@ -1,11 +1,12 @@
 from django.core.cache import cache
+from django.db.models import Count, Max
 from django.utils import timezone
 from django.views.generic import TemplateView
 
 from apps.core.mixins import PageMetaMixin
 from apps.investments import report
 from apps.investments.history import load
-from apps.investments.models import Day, ImportRun, Instrument, Portfolio
+from apps.investments.models import Day, ImportRun, Instrument, Portfolio, Price
 from apps.projects.markdown import render_markdown
 
 
@@ -35,12 +36,20 @@ class InvestmentsView(PageMetaMixin, TemplateView):
             return None
         today = timezone.localdate()
         run = ImportRun.objects.order_by("-pk").values_list("pk", flat=True).first()
-        # The figures change with an import, with the day (the status line), and with the
-        # sleeves, sectors and targets set in the admin.
+        # The figures change with an import, with the day (the status line), with what's set
+        # in the admin for each holding, and with prices added by hand.
         plan = hash(
-            tuple(Instrument.objects.values_list("pk", "sleeve", "sector", "target_weight"))
+            tuple(
+                Instrument.objects.values_list(
+                    "pk", "label", "sleeve", "sector", "region", "target_weight", "benchmark_only"
+                )
+            )
         )
-        key = f"investments:{latest}:{run}:{today}:{plan}:{self.portfolio.cash_target}"
+        prices = Price.objects.aggregate(count=Count("pk"), last=Max("pk"))
+        key = (
+            f"investments:{latest}:{run}:{today}:{plan}:{self.portfolio.cash_target}:"
+            f"{prices['count']}:{prices['last']}"
+        )
         figures = cache.get(key)
         if figures is None:
             history = load()
