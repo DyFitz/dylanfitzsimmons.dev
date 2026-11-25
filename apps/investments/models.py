@@ -19,6 +19,11 @@ class Portfolio(models.Model):
     idea = models.TextField(blank=True, help_text="The idea, in Markdown.")
     holdings = models.TextField(blank=True, help_text="Why these holdings, in Markdown.")
     rules = models.TextField(blank=True, help_text="The rules, in Markdown.")
+    measured = models.TextField(
+        blank=True,
+        help_text="How it is measured: the benchmarks and why they were chosen, in Markdown. "
+        "Shown across the full width, under the other three.",
+    )
     cash_target = models.DecimalField(
         max_digits=5, decimal_places=2, default=0, help_text="Target weight of cash, in %."
     )

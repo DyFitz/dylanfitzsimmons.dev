@@ -573,6 +573,30 @@
   .iv-think__text ul { padding-inline-start: 1.1em; }
   .iv-think__text li { margin-block-end: 0.4em; }
 
+  /* How it's measured: a full-width row under the three columns, its benchmarks side by side. */
+  .iv-think__wide {
+    grid-column: 1 / -1;
+    padding-block-start: 20px;
+    border-block-start: 1px solid var(--rule);
+  }
+
+  .iv-think__wide .iv-think__text { max-inline-size: none; }
+
+  .iv-think__wide ul {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    margin-block: 4px 16px;
+    padding: 0;
+    list-style: none;
+  }
+
+  .iv-think__wide li {
+    margin: 0;
+    padding-inline-start: 12px;
+    border-inline-start: 2px solid var(--rule);
+  }
+
   .iv-gloss { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px 28px; margin: 0; }
   .iv-gloss dt { font: 700 0.78rem var(--font-mono); }
   .iv-gloss dd { margin: 3px 0 0; color: var(--muted); font-size: 0.84rem; line-height: 1.45; }
@@ -963,7 +987,8 @@
 
   @media (max-width: 64em) {
     .iv-tiles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    .iv-think { grid-template-columns: minmax(0, 1fr); }
+    .iv-think,
+    .iv-think__wide ul { grid-template-columns: minmax(0, 1fr); }
   }
 
   @media (max-width: 52em) {

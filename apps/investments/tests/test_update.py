@@ -232,6 +232,31 @@ def test_a_failure_is_emailed_and_the_command_fails(portfolio, flex, monkeypatch
     assert message.to == [flex.CONTACT_EMAIL]
 
 
+def test_sonia_out_of_reach_is_carried_on_quietly_while_recent(portfolio, flex):
+    update.store_prices("sonia", [(date(2026, 1, 2), 1100.0)], source="x", scale=1)
+    outcome = update.run(
+        date(2026, 1, 9),
+        opener=server(SENT, report(), TimeoutError("timed out")),
+        sleep=lambda _: None,
+    )
+    assert outcome.failed == []
+    assert outcome.warnings == []
+    assert outcome.done[-1] == "SONIA: not reached, carried on from 02 Jan 2026."
+    assert ImportRun.objects.filter(source=update.SONIA_SOURCE, status="failed").exists()
+
+
+def test_stale_sonia_out_of_reach_asks_for_a_file_but_the_run_succeeds(
+    portfolio, flex, monkeypatch
+):
+    update.store_prices("sonia", [(date(2025, 11, 1), 1090.0)], source="x", scale=1)
+    out = _command(monkeypatch, server(SENT, report(), TimeoutError("timed out")))
+    assert "Account: 4 days" in out
+    message = mail.outbox[0]
+    assert message.subject.endswith("Portfolio update: a reminder")
+    assert "SONIA was last updated on 01 Nov 2025" in message.body
+    assert "Price series, sonia" in message.body
+
+
 def test_a_good_day_sends_nothing(portfolio, flex, monkeypatch):
     out = _command(monkeypatch, server(SENT, report(), SONIA))
     assert "Account: 4 days" in out

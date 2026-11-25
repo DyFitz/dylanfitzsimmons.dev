@@ -8,11 +8,13 @@ PROJECTS = [
         "title": "This site",
         "slug": "this-site",
         "summary": (
-            "The source of this site: a Django application for projects, a CV, a contact "
-            "form and an investment portfolio, with tests, CI and Docker from the first "
-            "commit."
+            (
+            "The source of this site: a Django application for projects, a CV, a contact form "
+            "and a daily-reported investment portfolio, with tests, CI, Docker and a scheduled "
+            "data pipeline."
+        )
         ),
-        "stack": "Django, PostgreSQL, Docker",
+        "stack": "Django, PostgreSQL, Docker, Render",
         "role": "Sole developer",
         "period": "2026 – present",
         "year": "2026",
@@ -21,59 +23,77 @@ PROJECTS = [
         "body": """\
 ## What it does
 
-This site brings together a portfolio of software projects, an interactive CV, a contact form
-and, in time, a live paper-trading portfolio. Each project has its own write-up, and the CV
-links every skill to the work where it was used.
+This site brings together a portfolio of software projects, an interactive CV, a contact form and an investment portfolio reported at the end of each trading day. Each project has its own write-up, and the CV links every skill to the work where it was used.
 
-The site is also a project in its own right, built to the standard expected of production
-software: tested, linted, configured from the environment, containerised, and checked
-automatically on every change.
+The investments page shows the portfolio's returns, risk and allocation against three benchmarks, with the reasoning behind each. Every figure is a percentage or a ratio; no amount of money is stored or shown anywhere. The data arrives automatically each weekday morning from the brokerage account.
+
+The site is also a project in its own right, built to the standard expected of production software: tested, linted, configured from the environment, containerised, and checked automatically on every change.
 
 ## How it works
 
-The site is a Django 6.1 application on Python 3.14, with pages rendered on the server.
-PostgreSQL stores the content in production, and SQLite is used for local development.
-Projects and the CV are edited through Django's admin, so the content changes without a code
-release.
+**The application.** The site is a Django 6.1 application on Python 3.14, with pages rendered on the server. PostgreSQL stores the content in production, and SQLite is used for local development. Projects, the CV and the portfolio's written thesis are all edited through Django's admin, so content changes need no code release.
 
-On the front end, plain JavaScript modules and hand-written CSS add the animations and
-interactive pieces, with no build step. Every page works without JavaScript, and every
-animation has a still version, which is what the server sends first. A strict Content Security
-Policy blocks inline scripts and styles throughout.
+**The front end.** Plain JavaScript modules and hand-written CSS add the animations and interactive pieces, with no build step. Every page works without JavaScript, and every animation has a still version, which is what the server sends first. A strict Content Security Policy blocks inline scripts and styles throughout. The projects page is a desk of three working monitors, each running its own small desktop environment. The investments page offers both a dashboard and a keyboard-driven terminal view, built on a small templating layer that redraws only what has changed.
 
-The contact form saves each message to the database and emails a notification. Spam is kept
-out without a CAPTCHA, by a hidden field, a signed timing token and a rate limit on each
-sender. Messages are deleted automatically after twelve months.
+**The data pipeline.** Account data comes from Interactive Brokers' Flex Web Service, a two-step HTTP API:
 
-The site runs in a multi-stage Docker image served by Gunicorn, with static files served by
-WhiteNoise. GitHub Actions runs the linting, the tests against PostgreSQL and the image build
-on every push, and Dependabot keeps the dependencies up to date.
+1. A request to `SendRequest` with an access token and a query ID asks IBKR to generate a report, and returns a reference code.
+2. A request to `GetStatement` with that code collects the report as XML. While the report is still being generated, the service returns a "not ready" code, so the fetcher waits and retries.
+
+The XML is parsed into positions, trades, cash movements and daily net asset values. It is then reduced to weights and returns before anything is saved, so no amount of money ever reaches the database.
+
+Each day's return is time-weighted: the closing value is measured against the previous close plus any money paid in that day, so deposits don't count as gains. The chained daily returns match IBKR's own reported performance for the same period. Units held are worked backwards from the closing positions, which keeps the record correct once the account outgrows the report's window. Importing the same days again replaces them rather than duplicating them, so every run can safely overlap the last.
+
+The risk-free rate is the Bank of England's SONIA Compounded Index (SONIA is the overnight interest rate for sterling). Between published figures, the rate is carried forward at its latest daily rate, which only moves when Bank Rate does, and the published figures replace these estimates as they arrive.
+
+The benchmarks are:
+
+- a fixed sterling policy mix of world shares, short gilts, ultrashort bonds, gold and cash, rebalanced to its targets each quarter;
+- world shares alone;
+- global semiconductors.
+
+Their prices come from the account itself: a small holding of a world-shares fund is kept purely so that its daily close arrives with the report, and it is hidden from the page. History from before a fund was bought is loaded from CSV files, through a management command or an upload form in the admin. London prices are quoted in pence by most price sites but in pounds by IBKR, so overlapping days are compared and a hundredfold difference is converted automatically.
+
+**Scheduling and alerts.** On Render, the update runs as a cron job built from the same Docker image as the website. It runs each weekday morning, after IBKR's overnight reports are ready. Each source is fetched independently, so one failing doesn't stop the other, and every attempt is logged in the admin. If the account update fails, the job exits with an error status and emails the reason. It also sends reminders as the IBKR access token's expiry date approaches, and when the SONIA figures fall more than a month behind.
+
+**The analytics.** The statistics are computed in Python on the server:
+
+- volatility, Sharpe and Sortino ratios, drawdowns, and rolling returns and volatility;
+- risk contributions and correlations;
+- a Monte Carlo projection;
+- scenario stress tests.
+
+The same maths is mirrored in JavaScript, so the interactive views (the time machine, the stress-test sliders) can recalculate in the browser. The two implementations agree to within floating-point rounding across every statistic. Both use the same seeded random number generator, so the Monte Carlo paths are identical whichever side draws them.
+
+**Delivery.** The site runs in a multi-stage Docker image served by Gunicorn, with static files served by WhiteNoise. GitHub Actions runs the linting, the tests against PostgreSQL and the image build on every push, and Dependabot keeps the dependencies up to date. Secrets such as the database URL and the API token live only in the host's environment.
 
 ## Challenges
 
-The main challenge was making an animated, interactive interface without leaving behind
-anyone whose device or browser cannot run it. The answer was to treat animation as an
-enhancement: the server always sends a complete still page, and scripts only add to it. The
-site switches to the still version by itself on devices that cannot keep the animations
-smooth, and when reduced motion is turned on.
+**Animation for everyone.** The first challenge was making an animated, interactive interface without leaving behind anyone whose device or browser cannot run it. The answer was to treat animation as an enhancement: the server always sends a complete still page, and scripts only add to it. The site switches to the still version by itself on devices that cannot keep the animations smooth, and when reduced motion is turned on.
 
-The second was keeping that front end compatible with a strict security policy. With no
-inline scripts or styles allowed, all behaviour lives in separate modules and all styling in
-stylesheets, and the test suite checks every page for anything inline.
+**Keeping the projects desk smooth.** Its opening shot, a slow pull back from one monitor to the whole desk, dropped to around one frame a second on large screens. Profiling showed two causes:
+
+- a CSS shadow filter that the browser was re-blurring on every frame while the page scaled;
+- preview canvases that kept redrawing behind the moving camera.
+
+Replacing the filter with pre-rendered shadow images, and pausing the previews during the move, made the shot roughly ten times smoother.
+
+**A strict security policy.** With no inline scripts or styles allowed, all behaviour lives in separate modules and all styling in stylesheets, and the test suite checks every page for anything inline.
+
+**Data sources that turn away servers.** Requests that worked from a laptop failed from the cloud. IBKR refused them until they identified themselves the way a browser does. The Bank of England's database sits behind a bot-detection script that only a real browser can pass, and FRED, the St. Louis Fed's mirror of the same series, never answered requests from cloud servers at all. Rather than depend on either, the pipeline treats SONIA as a figure that rarely needs fetching: it carries the latest rate forward and only asks for a fresh file once the figures are a month old.
+
+**Reporting a portfolio without its value.** Every figure had to be derivable from weights and returns alone, including income, trading costs and currency moves on US holdings. A US share's return therefore includes the dollar's movement against the pound, as it does for the account itself.
+
+**Two units for one price.** Price sources disagree on units, and a missed conversion would silently turn a 1% move into a hundredfold one. Rather than trusting each file's format, the importer checks new prices against those already held and only converts when the difference is unambiguous.
 
 ## Results
 
-- 146 automated tests, with coverage held above 90% by CI.
+- 284 automated tests, with coverage held above 90% by CI.
+- Daily returns that match the broker's own reported performance.
+- An update pipeline that runs unattended each weekday, logs every attempt, and emails the reason when anything fails.
+- Server and browser analytics that agree to within floating-point rounding.
 - Every page usable with scripts turned off, and on phones, tablets and desktops.
-- No inline scripts or styles anywhere, under a strict Content Security Policy.
-
-## What's next
-
-The next feature is an investments page: a paper-trading portfolio reported at the end of each
-day from Interactive Brokers, showing returns, risk and allocation against the S&P 500 and
-semiconductor benchmarks. After that come a sitemap, link previews for social media, two-step
-login for the admin and error tracking.
-""",
+- No inline scripts or styles anywhere, under a strict Content Security Policy.""",
         "repo_url": "https://github.com/DyFitz/dylanfitzsimmons.dev",
         "position": 1,
         "is_published": True,

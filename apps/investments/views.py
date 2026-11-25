@@ -66,4 +66,6 @@ class InvestmentsView(PageMetaMixin, TemplateView):
                 ("Why these holdings", render_markdown(self.portfolio.holdings)),
                 ("The rules", render_markdown(self.portfolio.rules)),
             ]
+            if self.portfolio.measured:
+                context["measured"] = render_markdown(self.portfolio.measured)
         return context

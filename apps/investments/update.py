@@ -19,6 +19,8 @@ SONIA_SOURCE = "SONIA (Bank of England, via FRED)"
 SONIA_NAME = "SONIA Compounded Index"
 # The days before the token runs out on which a reminder goes out, so it isn't sent daily.
 REMIND_AT = {30, 14, 7, 3, 1, 0}
+# How old SONIA's figures can get, in days, before a failed download is worth an email.
+STALE_SONIA = 30
 
 
 @dataclass
@@ -80,7 +82,11 @@ def update_account(outcome: Outcome, **fetch) -> None:
         outcome.done.append("Account: nothing new.")
 
 
-def update_sonia(outcome: Outcome, **fetch) -> None:
+def update_sonia(outcome: Outcome, today: date | None = None, **fetch) -> None:
+    """Fetches SONIA when FRED can be reached from the server; it often can't. Between
+    figures the page carries SONIA on at its latest rate, which only moves when Bank Rate
+    does, so a failure here only matters once the figures are a month old."""
+    today = today or date.today()  # noqa: DTZ011 - a date, not a time
     latest = Price.objects.filter(series__key="sonia").order_by("-date").first()
     portfolio = Portfolio.load()
     if latest:
@@ -92,7 +98,19 @@ def update_sonia(outcome: Outcome, **fetch) -> None:
     try:
         rows = sources.fetch_sonia(since, **fetch)
     except sources.SourceError as error:
-        _failed(SONIA_SOURCE, error, outcome)
+        ImportRun.objects.create(
+            source=SONIA_SOURCE, status=ImportRun.Status.FAILED, message=str(error)
+        )
+        age = (today - latest.date).days if latest else None
+        if age is None or age > STALE_SONIA:
+            when = f"was last updated on {latest.date:%d %b %Y}" if latest else "has no figures"
+            outcome.warnings.append(
+                f"SONIA {when}, and FRED couldn't be reached ({error}). Download IUDZOS2 as "
+                "CSV from FRED or the Bank of England and add it under Price series, sonia, "
+                "in the admin."
+            )
+        else:
+            outcome.done.append(f"SONIA: not reached, carried on from {latest.date:%d %b %Y}.")
         return
     count, _ = store_prices(
         "sonia", rows, source="Bank of England IUDZOS2, via FRED", name=SONIA_NAME, scale=1
@@ -143,6 +161,6 @@ def report(outcome: Outcome) -> None:
 def run(today: date, **fetch) -> Outcome:
     outcome = Outcome()
     update_account(outcome, **fetch)
-    update_sonia(outcome, **{k: v for k, v in fetch.items() if k == "opener"})
+    update_sonia(outcome, today, **{k: v for k, v in fetch.items() if k == "opener"})
     check_token(outcome, today)
     return outcome

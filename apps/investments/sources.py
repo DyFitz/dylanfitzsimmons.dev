@@ -105,7 +105,7 @@ def fetch_flex_report(
 def fetch_sonia(since: date, *, opener=urlopen) -> list[tuple[date, float]]:
     """The SONIA Compounded Index, from `since` to the latest, by way of FRED."""
     query = urlencode({"id": SONIA_SERIES, "cosd": since.isoformat()})
-    data = _get(f"{SONIA_URL}?{query}", opener)
+    data = _get(f"{SONIA_URL}?{query}", opener, timeout=20)
     rows = read_prices(data.decode("utf-8-sig", errors="replace"))
     if not rows:
         raise SourceError(f"FRED sent no SONIA figures: {_gist(data)!r}")

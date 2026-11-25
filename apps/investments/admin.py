@@ -10,7 +10,7 @@ from apps.investments.update import store_prices
 class PortfolioAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {"fields": ("inception", "cash_target")}),
-        ("The thinking behind it", {"fields": ("idea", "holdings", "rules")}),
+        ("The thinking behind it", {"fields": ("idea", "holdings", "rules", "measured")}),
     )
 
     def has_add_permission(self, request) -> bool:

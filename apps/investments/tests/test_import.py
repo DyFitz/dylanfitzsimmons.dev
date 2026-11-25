@@ -228,3 +228,11 @@ def test_the_plans_targets_add_up_to_the_whole():
     assert portfolio.inception == date(2026, 10, 15)
     assert targets + portfolio.cash_target == 100
     assert not Instrument.objects.filter(sleeve="").exists()
+
+
+@pytest.mark.django_db
+def test_the_benchmarks_are_explained_and_the_rule_moves_into_it():
+    portfolio = Portfolio.load()
+    assert portfolio.measured.startswith("The portfolio is judged against three benchmarks")
+    assert "policy benchmark" not in portfolio.rules
+    assert portfolio.rules.endswith("rival capacity grows faster.")

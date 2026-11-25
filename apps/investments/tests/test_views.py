@@ -140,3 +140,14 @@ def test_a_change_in_the_admin_shows_without_waiting_for_the_next_import(
         for i, day in enumerate([date(2026, 1, 2), date(2026, 1, 6), date(2026, 1, 7)])
     )
     assert get(client, date(2026, 1, 9)).content != before
+
+
+def test_how_it_is_measured_runs_under_the_other_three(client: Client, imported) -> None:
+    Portfolio.objects.update(measured="Judged against **three** benchmarks.")
+    response = get(client, date(2026, 1, 9))
+    assertContains(response, '<div class="iv-think__wide"><h3>How it is measured</h3>')
+    assertContains(response, "<strong>three</strong>", html=True)
+
+
+def test_without_it_there_is_no_empty_row(client: Client, imported) -> None:
+    assertNotContains(get(client, date(2026, 1, 9)), "iv-think__wide")

@@ -55,6 +55,9 @@
           {% for title, text in thinking %}
             <div><h3>{{ title }}</h3><div class="iv-think__text">{{ text }}</div></div>
           {% endfor %}
+          {% if measured %}
+            <div class="iv-think__wide"><h3>How it is measured</h3><div class="iv-think__text">{{ measured }}</div></div>
+          {% endif %}
         </div>
       </section>
 
