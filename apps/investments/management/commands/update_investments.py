@@ -9,7 +9,8 @@ from apps.investments import update
 class Command(BaseCommand):
     help = (
         "The daily update, run by the cron job: downloads the account's Flex report from IBKR "
-        "and SONIA from the Bank of England, then emails any failure or token reminder."
+        "and SONIA (the Bank of England's, by way of FRED), then emails any failure or token "
+        "reminder."
     )
 
     def handle(self, *args: Any, **options: Any) -> None:

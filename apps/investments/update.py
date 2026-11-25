@@ -1,4 +1,4 @@
-"""The daily update: the account from IBKR and SONIA from the Bank of England, plus prices
+"""The daily update: the account from IBKR and SONIA from FRED, plus prices
 loaded by hand from CSV files. Each source is tried on its own, so one failing doesn't stop
 the other, and every attempt is recorded as an ImportRun."""
 
@@ -15,7 +15,7 @@ from apps.investments.importer import SERIES_NAMES, ImportRefusedError, save
 from apps.investments.models import Holding, ImportRun, Portfolio, Price, PriceSeries
 
 FLEX_SOURCE = "IBKR Flex Web Service"
-SONIA_SOURCE = "Bank of England (SONIA)"
+SONIA_SOURCE = "SONIA (Bank of England, via FRED)"
 SONIA_NAME = "SONIA Compounded Index"
 # The days before the token runs out on which a reminder goes out, so it isn't sent daily.
 REMIND_AT = {30, 14, 7, 3, 1, 0}
@@ -95,7 +95,7 @@ def update_sonia(outcome: Outcome, **fetch) -> None:
         _failed(SONIA_SOURCE, error, outcome)
         return
     count, _ = store_prices(
-        "sonia", rows, source="Bank of England, IUDZOS2", name=SONIA_NAME, scale=1
+        "sonia", rows, source="Bank of England IUDZOS2, via FRED", name=SONIA_NAME, scale=1
     )
     ImportRun.objects.create(
         source=SONIA_SOURCE,

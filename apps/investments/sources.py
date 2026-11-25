@@ -6,7 +6,7 @@ import io
 import re
 import time
 
-# The responses come from IBKR and the Bank of England, and Python's own parser doesn't fetch
+# The responses come from IBKR and FRED, and Python's own parser doesn't fetch
 # external entities and refuses entity expansion attacks, so it is safe to use here.
 import xml.etree.ElementTree as ET
 from collections.abc import Callable
@@ -17,7 +17,9 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 FLEX_BASE = "https://ndcdyn.interactivebrokers.com/AccountManagement/FlexWebService"
-SONIA_URL = "https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp"
+# The Bank of England's own database turns away requests from cloud servers, so SONIA comes
+# from FRED, the St. Louis Fed's database, which republishes the Bank's series unchanged.
+SONIA_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv"
 # The SONIA Compounded Index: SONIA's daily rate built up into an index, so a period's return
 # is one value over another.
 SONIA_SERIES = "IUDZOS2"
@@ -101,23 +103,12 @@ def fetch_flex_report(
 
 
 def fetch_sonia(since: date, *, opener=urlopen) -> list[tuple[date, float]]:
-    """The SONIA Compounded Index from the Bank of England, from `since` to the latest."""
-    query = urlencode(
-        {
-            "csv.x": "yes",
-            "Datefrom": f"{since.day:02d}/{since:%b/%Y}",
-            "Dateto": "now",
-            "SeriesCodes": SONIA_SERIES,
-            "CSVF": "TN",
-            "UsingCodes": "Y",
-            "VPD": "Y",
-            "VFD": "N",
-        }
-    )
+    """The SONIA Compounded Index, from `since` to the latest, by way of FRED."""
+    query = urlencode({"id": SONIA_SERIES, "cosd": since.isoformat()})
     data = _get(f"{SONIA_URL}?{query}", opener)
     rows = read_prices(data.decode("utf-8-sig", errors="replace"))
     if not rows:
-        raise SourceError(f"The Bank of England sent no SONIA figures: {_gist(data)!r}")
+        raise SourceError(f"FRED sent no SONIA figures: {_gist(data)!r}")
     return rows
 
 
@@ -162,7 +153,7 @@ def read_prices(text: str) -> list[tuple[date, float]]:
     """(date, close) from a CSV of daily prices, in date order.
 
     Takes the usual layouts: a header row naming a date column and a close or price column, as
-    price sites and the Bank of England give them. Rows without a date or a number are skipped.
+    price sites and FRED give them. Rows without a date or a number are skipped.
     """
     text = text.strip()
     # A table copied from a web page and pasted into a text file is separated by tabs.

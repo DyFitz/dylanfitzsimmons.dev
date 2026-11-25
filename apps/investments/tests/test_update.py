@@ -20,10 +20,11 @@ WAIT = """<FlexStatementResponse><Status>Warn</Status><ErrorCode>1019</ErrorCode
 <ErrorMessage>Statement generation in progress.</ErrorMessage></FlexStatementResponse>"""
 REFUSED = """<FlexStatementResponse><Status>Fail</Status><ErrorCode>1012</ErrorCode>
 <ErrorMessage>Token has expired.</ErrorMessage></FlexStatementResponse>"""
-SONIA = """DATE,IUDZOS2
-05 Jan 2026,1100.0000
-06 Jan 2026,1100.1200
-07 Jan 2026,1100.2400
+SONIA = """observation_date,IUDZOS2
+2026-01-05,1100.0000
+2026-01-06,1100.1200
+2026-01-07,1100.2400
+2026-01-08,.
 """
 
 
@@ -116,13 +117,13 @@ def test_a_reply_that_isnt_xml_is_a_source_error():
 # ---------------------------------------------------------------- SONIA and price files
 
 
-def test_sonia_is_read_from_the_bank_of_england():
+def test_sonia_is_read_from_fred():
     opener = server(SONIA)
     rows = sources.fetch_sonia(date(2026, 1, 2), opener=opener)
     assert rows[0] == (date(2026, 1, 5), 1100.0)
     assert len(rows) == 3
-    assert "Datefrom=02%2FJan%2F2026" in opener.seen[0].full_url
-    assert "SeriesCodes=IUDZOS2" in opener.seen[0].full_url
+    assert "cosd=2026-01-02" in opener.seen[0].full_url
+    assert "fredgraph.csv?id=IUDZOS2" in opener.seen[0].full_url
 
 
 def test_an_empty_sonia_reply_is_an_error():
@@ -201,14 +202,14 @@ def test_the_update_imports_the_account_and_sonia(portfolio, flex):
         update.FLEX_SOURCE,
         update.SONIA_SOURCE,
     }
-    assert "Datefrom=29%2FDec%2F2025" in opener.seen[-1].full_url
+    assert "cosd=2025-12-29" in opener.seen[-1].full_url
 
 
 def test_sonia_is_collected_from_a_week_before_the_last_kept(portfolio, flex):
     update.store_prices("sonia", [(date(2026, 1, 20), 1101.0)], source="x", scale=1)
     opener = server(SONIA)
     update.update_sonia(update.Outcome(), opener=opener)
-    assert "Datefrom=13%2FJan%2F2026" in opener.seen[0].full_url
+    assert "cosd=2026-01-13" in opener.seen[0].full_url
 
 
 def test_one_source_failing_doesnt_stop_the_other(portfolio, flex):

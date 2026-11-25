@@ -12,9 +12,9 @@ In production, HTTP redirects to HTTPS, cookies are sent over HTTPS only, and pa
 
 ## The daily investments update
 
-`python manage.py update_investments` downloads the account's Flex report from IBKR and SONIA from the Bank of England, and stores them. Each source is tried on its own, every attempt is logged under Import runs in the admin, and any failure is emailed to `CONTACT_EMAIL` with the command exiting non-zero. It also emails a reminder as the IBKR token's end date nears.
+`python manage.py update_investments` downloads the account's Flex report from IBKR and the SONIA Compounded Index, and stores them. SONIA is the Bank of England's series, fetched from FRED (the St. Louis Fed's database), because the Bank's own database turns away requests from cloud servers. Each source is tried on its own, every attempt is logged under Import runs in the admin, and any failure is emailed to `CONTACT_EMAIL` with the command exiting non-zero. It also emails a reminder as the IBKR token's end date nears.
 
-IBKR's report for a day is ready overnight, and the Bank of England publishes SONIA at 10am the next working day, so the update runs mid-morning, Tuesday to Saturday, to pick up Monday to Friday.
+IBKR's report for a day is ready overnight, and SONIA is published the next working day, so the update runs mid-morning, Tuesday to Saturday, to pick up Monday to Friday.
 
 On Render, as a cron job:
 

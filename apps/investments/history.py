@@ -120,7 +120,7 @@ def load() -> History | None:
                 returns.append(None)
         lines[instrument.symbol] = Line(instrument, weights, returns, contributions)
 
-    sonia = _series("sonia", dates)
+    sonia = _series("sonia", dates, accrues=True)
     if sonia:
         risk_free, source = sonia, "SONIA"
     else:
@@ -146,11 +146,24 @@ def load() -> History | None:
     return history
 
 
-def _series(key: str, dates: list[date]) -> list[float] | None:
+def _accrue(prices: list[tuple[date, float]], dates: list[date]) -> list[tuple[date, float]]:
+    """Carries an interest index past its last published day at its latest rate, so days
+    still waiting for publication earn interest rather than none. The published figures
+    replace these once they arrive."""
+    if len(prices) < 2 or prices[-1][0] >= dates[-1]:
+        return prices
+    (before, low), (last, high) = prices[-2], prices[-1]
+    daily = (high / low) ** (1 / max((last - before).days, 1))
+    return prices + [(day, high * daily ** (day - last).days) for day in dates if day > last]
+
+
+def _series(key: str, dates: list[date], *, accrues: bool = False) -> list[float] | None:
     series = PriceSeries.objects.filter(key=key).first()
     if series is None:
         return None
     prices = list(Price.objects.filter(series=series).order_by("date").values_list("date", "close"))
+    if accrues:
+        prices = _accrue(prices, dates)
     levels = _levels(prices, dates)
     return _moves(levels) if levels else None
 

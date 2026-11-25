@@ -69,11 +69,20 @@ def _prices(key: str, closes: dict[date, float]) -> None:
 
 
 def test_sonia_is_the_risk_free_rate_once_loaded(history):
-    # Published for the day before, and not on 8 Jan: the last figure carries over.
+    # Not yet published for 8 Jan: that day earns the latest day's rate until it is.
     _prices("sonia", {date(2026, 1, 2): 100, date(2026, 1, 6): 100.02, date(2026, 1, 7): 100.03})
     loaded = load()
     assert loaded.risk_free_source == "SONIA"
-    assert loaded.risk_free == pytest.approx([0.0002, 0.03 / 100.02 - 0.02 / 100.02, 0])
+    latest = 100.03 / 100.02 - 1
+    assert loaded.risk_free == pytest.approx([0.0002, latest, latest])
+
+
+def test_sonia_accrues_over_a_weekend_at_its_daily_rate(history):
+    # Published up to 2 Jan, two days after the figure before: each later day earns half that.
+    _prices("sonia", {date(2025, 12, 31): 100, date(2026, 1, 2): 100.02})
+    loaded = load()
+    daily = (100.02 / 100) ** 0.5
+    assert loaded.risk_free == pytest.approx([daily - 1] * 3)
 
 
 def test_a_benchmark_with_a_missing_part_is_left_out(history):
