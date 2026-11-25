@@ -1,0 +1,26 @@
+/* The admin's two-factor page. The QR code sits on white, as phone cameras expect. */
+
+.two-factor__qr svg {
+  inline-size: 220px;
+  block-size: 220px;
+  padding: 10px;
+  background: #fff;
+}
+
+.two-factor__codes {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  gap: 6px 32px;
+  padding: 0;
+  list-style: none;
+}
+
+.two-factor__codes code {
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+}
+
+.two-factor form {
+  display: inline-block;
+  margin-inline-end: 8px;
+}

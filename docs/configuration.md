@@ -9,6 +9,7 @@ Settings come from environment variables. Locally, `.env` supplies them; real en
 | `DATABASE_URL` | Production | For example `postgres://user:password@host:5432/name`. Development falls back to SQLite |
 | `SITE_URL` | Production | Public base URL, used in canonical and Open Graph links |
 | `DJANGO_ADMIN_URL` | Recommended | Admin path, such as `manage-7f3a/`. The deployment check warns while it's `admin/` |
+| `ADMIN_TWO_FACTOR` | Recommended | `on` to make signing in to the admin take a code from an authenticator app or a backup code as well as the password. Set the app up on the admin's two-factor page first. `off` by default |
 | `SITE_SOURCE_URL` | Optional | Repository URL, linked from the footer |
 | `GIT_SHA` | Set by the build | The commit being served, linked from the footer |
 | `DJANGO_SECURE_HSTS_SECONDS` | Optional | HSTS duration, one hour by default. Raise it to `31536000` once HTTPS is confirmed working |

@@ -29,7 +29,8 @@ ROOT_URLCONF = "config.urls"
 WSGI_APPLICATION = "config.wsgi.application"
 
 INSTALLED_APPS = [
-    "django.contrib.admin",
+    # The admin, with two-factor login: see apps/core/admin_site.py.
+    "apps.core.apps.SiteAdminConfig",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -38,6 +39,9 @@ INSTALLED_APPS = [
     # Serves static files through WhiteNoise under runserver too, as in production.
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_static",
     # Local apps
     "apps.core",
     "apps.projects",
@@ -56,6 +60,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    # Marks whether the signed-in user has given a two-factor code this session.
+    "django_otp.middleware.OTPMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -149,6 +155,11 @@ SERVER_EMAIL = DEFAULT_FROM_EMAIL
 # ---------------------------------------------------------------------------
 
 ADMIN_URL = env.str("DJANGO_ADMIN_URL", default="admin/")
+# Whether signing in to the admin takes a code from an authenticator app as well as the
+# password. Set it up on the admin's two-factor page first, then turn this on. Turning it off
+# again is the way back in if the phone and the backup codes are both lost.
+ADMIN_TWO_FACTOR = env.bool("ADMIN_TWO_FACTOR", default=False)
+OTP_TOTP_ISSUER = "dylanfitzsimmons.dev"
 
 # The request header the hosting platform's proxy puts the visitor's IP address in, e.g.
 # HTTP_X_FORWARDED_FOR. Empty means REMOTE_ADDR, which is right with no proxy in front. Only

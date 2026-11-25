@@ -8,12 +8,14 @@ authors = [{ name = "Dylan Fitzsimmons" }]
 dependencies = [
     "django>=6.1,<6.2",
     "django-environ>=0.12",
+    "django-otp>=1.6",
     "gunicorn>=23.0",
     "markdown>=3.11.3",
     "nh3>=0.3.7",
     "pillow>=13.0.0",
     "psycopg[binary]>=3.2",
     "pygments>=2.21.0",
+    "qrcode>=8.0",
     "whitenoise>=6.9",
 ]
 

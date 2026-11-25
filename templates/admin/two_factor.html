@@ -1,0 +1,50 @@
+{% extends "admin/base_site.html" %}
+{% comment %}Sets up two-factor login: an authenticator app, proved with one code, then backup
+codes, shown once. apps/core/two_factor.py does the work.{% endcomment %}
+
+{% load static %}
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/admin.css' %}">{% endblock %}
+
+{% block breadcrumbs %}<div class="breadcrumbs"><a href="{% url 'admin:index' %}">Home</a> › Two-factor login</div>{% endblock %}
+
+{% block content %}
+<div id="content-main" class="two-factor">
+  <p>
+    Two-factor login is <strong>{% if enforced %}on{% else %}off{% endif %}</strong>.
+    {% if enforced %}
+      Signing in takes a code from your authenticator app, or a backup code, after the password.
+    {% else %}
+      Signing in takes the password alone. Set up an app below, then set ADMIN_TWO_FACTOR to on in the host's environment.
+    {% endif %}
+  </p>
+
+  {% if codes %}
+    <h2>Your backup codes</h2>
+    <p>Each works once, in place of a code from the app. Keep them somewhere safe away from your phone, such as a password manager. <strong>They won't be shown again.</strong></p>
+    <ul class="two-factor__codes">{% for code in codes %}<li><code>{{ code }}</code></li>{% endfor %}</ul>
+    <p><a href="{% url 'admin:two_factor' %}">I've saved them</a></p>
+  {% elif pending %}
+    <h2>Scan this with your authenticator app</h2>
+    <p>Microsoft Authenticator, Google Authenticator, 1Password and the like all work.</p>
+    <div class="two-factor__qr">{{ qr }}</div>
+    <p>Or type this key in by hand: <code>{{ secret }}</code></p>
+    <form method="post">{% csrf_token %}
+      <input type="hidden" name="action" value="confirm">
+      <p><label for="id_token">Then enter the six-digit code it shows:</label>
+      <input type="text" name="token" id="id_token" autocomplete="one-time-code" inputmode="numeric" required>
+      <input type="submit" value="Confirm"></p>
+    </form>
+    <form method="post">{% csrf_token %}<input type="hidden" name="action" value="cancel"><input type="submit" value="Cancel"></form>
+  {% else %}
+    {% if confirmed %}
+      <p>An authenticator app is set up{% if confirmed.last_used_at %}, last used {{ confirmed.last_used_at|date:"j M Y, H:i" }}{% endif %}. {{ backup_left }} backup code{{ backup_left|pluralize }} left.</p>
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="backup"><input type="submit" value="Make new backup codes"></form>
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="start"><input type="submit" value="Move to a new phone"></form>
+      <p class="help">A new phone replaces the old one only once it has given a right code.</p>
+    {% else %}
+      <p>No authenticator app is set up yet.</p>
+      <form method="post">{% csrf_token %}<input type="hidden" name="action" value="start"><input type="submit" value="Set up an authenticator app"></form>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

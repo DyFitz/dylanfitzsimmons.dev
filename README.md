@@ -18,7 +18,7 @@ Source code for [dylanfitzsimmons.dev](https://dylanfitzsimmons.dev), the person
 - **Server-rendered pages that work without JavaScript.** Scripts only add to them, as ES modules with no build step.
 - **A still version of every animation.** It is what the server sends, it is used when reduced motion is set, and the site switches to it by itself on devices that can't keep the animations smooth.
 - **A strict Content Security Policy.** There are no inline scripts or styles anywhere, and the tests check for them.
-- **Content edited in the Django admin.** Projects, the CV and the portfolio's thesis live in the database; data migrations supply the initial text and leave admin edits alone.
+- **Content edited in the Django admin.** Projects, the CV and the portfolio's thesis live in the database; data migrations supply the initial text and leave admin edits alone. The admin sits at an unlisted address behind two-factor login, with single-use backup codes.
 - **A portfolio reported without a single amount of money.** A Render cron job collects the account's Flex report from Interactive Brokers' web service each weekday, reduces it to weights and time-weighted returns, and stores nothing else. Failures and an expiring API token are emailed.
 - **The same analytics on both sides.** Sharpe ratios, drawdowns, risk contributions, a Monte Carlo projection and stress tests are computed in Python on the server and mirrored in JavaScript for the interactive views, agreeing to within floating-point rounding.
 - **A contact form without a CAPTCHA.** Spam is stopped by a honeypot field, a signed timing check and a rate limit, and old messages are deleted after 12 months.
@@ -51,5 +51,4 @@ The site is then at <http://localhost:8000>. Local development uses SQLite, so n
 
 ## Still to come
 
-- Two-factor login for the admin
 - Error tracking

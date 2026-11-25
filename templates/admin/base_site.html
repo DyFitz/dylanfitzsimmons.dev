@@ -1,0 +1,3 @@
+{% extends "admin/base_site.html" %}
+{# A link to the two-factor page beside the admin's own links at the top. #}
+{% block userlinks %}<a href="{% url 'admin:two_factor' %}">Two-factor login</a> / {{ block.super }}{% endblock %}
