@@ -186,6 +186,19 @@
     /* The accent at 42% brightness, dark enough for text on the light page. */
     --link: #3b664f;
     --brand-glow: none;
+    /* A deeper green for the light page, where the mint is too pale to read on white
+       (about 5:1 against the surface). Buttons filled with it take white text. */
+    --accent-rgb: 26 122 74;
+    --accent: rgb(var(--accent-rgb));
+    --accent-ink: #ffffff;
+  }
+
+  /* The screens stay dark in both themes, so they keep the mint. */
+  :root[data-theme="light"]
+    :is(.screen, .hero, .panel, .invest-banner, .intro, .uplink, .station-strip, .in-progress, .tube, .room) {
+    --accent-rgb: 141 242 189;
+    --accent: rgb(var(--accent-rgb));
+    --accent-ink: #06171c;
   }
 }
 

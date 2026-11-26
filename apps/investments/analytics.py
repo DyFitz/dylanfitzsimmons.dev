@@ -68,7 +68,7 @@ def quantile(ordered: Sequence[float], q: float) -> float:
 
 
 def growth(returns: Sequence[float], start: float = 100) -> list[float]:
-    """Growth of 100: the value at the start and after each day."""
+    """The value of 100 at the start and after each day, for the cumulative return chart."""
     values = [start]
     for r in returns:
         values.append(values[-1] * (1 + r))

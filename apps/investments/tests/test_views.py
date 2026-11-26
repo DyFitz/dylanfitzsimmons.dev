@@ -149,6 +149,24 @@ def test_how_it_is_measured_runs_under_the_other_three(client: Client, imported)
     assertContains(response, "<strong>three</strong>", html=True)
 
 
+def test_the_benchmark_date_is_corrected_unless_edited(imported) -> None:
+    from importlib import import_module
+
+    from django.apps import apps
+
+    fix = import_module("apps.investments.migrations.0003_benchmarks_chosen_at_planning")
+    Portfolio.objects.update(measured=f"Three benchmarks. {fix.OLD}")
+    fix.forwards(apps, None)
+    assert Portfolio.objects.get().measured == f"Three benchmarks. {fix.NEW}"
+
+    fix.backwards(apps, None)
+    assert Portfolio.objects.get().measured == f"Three benchmarks. {fix.OLD}"
+
+    Portfolio.objects.update(measured="Rewritten in the admin.")
+    fix.forwards(apps, None)
+    assert Portfolio.objects.get().measured == "Rewritten in the admin."
+
+
 def test_without_it_there_is_no_empty_row(client: Client, imported) -> None:
     assertNotContains(get(client, date(2026, 1, 9)), "iv-think__wide")
 

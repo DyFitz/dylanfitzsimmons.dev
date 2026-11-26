@@ -127,7 +127,7 @@ export class Board {
       chipsShock: -0.1,
       moves: Object.fromEntries(SCENARIOS.map((c) => [c.key, c.move])),
       log: [
-        { cls: "iv-log__line iv-log__line--dim", text: "DFIT <GO>  portfolio terminal · end-of-day data" },
+        { cls: "iv-log__line iv-log__line--dim", text: "DFIT <GO>  portfolio terminal · closing prices" },
         { cls: "iv-log__line", text: "type HELP for the commands, or press 1 to 9" },
       ],
     };
@@ -389,7 +389,7 @@ export class Board {
       statusCls += " iv-status--late";
     }
 
-    // ------------------------------------------------ growth of 100
+    // ------------------------------------------------ cumulative return
     const W = 1000;
     const lines = [{ key: "port", name: "Portfolio", values: m.growth(r) }];
     for (const bm of D.benchmarks) {
@@ -407,9 +407,12 @@ export class Board {
       label: `${l.name} ${pct(l.values[l.values.length - 1] / 100 - 1)}`,
     }));
     this.chart = { lines, lo, hi, start, log: state.logScale };
-    const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) =>
-      (state.logScale ? Math.exp(Math.log(lo) + (Math.log(hi) - Math.log(lo)) * f) : lo + (hi - lo) * f).toFixed(0),
-    );
+    // The lines start at 100, so each tick is labelled with its return since the start.
+    const ticks = [0, 0.25, 0.5, 0.75, 1].map((f) => {
+      const value = state.logScale ? Math.exp(Math.log(lo) + (Math.log(hi) - Math.log(lo)) * f) : lo + (hi - lo) * f;
+      const change = Math.round(value - 100);
+      return change ? `${change > 0 ? "+" : ""}${change}%` : "0%";
+    });
 
     // ------------------------------------------------ returns over each period
     const rows = [{ key: "port", label: "Portfolio", series: D.returns }];

@@ -34,10 +34,10 @@
 
     <div class="iv-grid">
       <section class="iv-panel iv-panel--wide" aria-labelledby="iv-growth">
-        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-growth">Growth of 100 · {{ period_label }}</h2></header>
+        <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-growth">Cumulative return · {{ period_label }}</h2></header>
         <div class="iv-chart">
           <div class="iv-chart__ticks" aria-hidden="true">{% for tick in growth_ticks %}<span>{{ tick }}</span>{% endfor %}</div>
-          <svg class="iv-chart__svg" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Growth of 100 over the period{% if growth_lines|length > 1 %}, against the benchmarks{% endif %}">
+          <svg class="iv-chart__svg" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Cumulative return over the period{% if growth_lines|length > 1 %}, against the benchmarks{% endif %}">
             <path class="iv-area" d="{{ growth_area }}"></path>
             {% for line in growth_lines %}<path class="iv-line iv-line--{{ line.key }}" d="{{ line.d }}"></path>{% endfor %}
           </svg>
@@ -209,7 +209,7 @@
       <section class="iv-panel iv-panel--wide" aria-labelledby="iv-facts">
         <header class="iv-panel__head"><h2 class="iv-panel__title" id="iv-facts">Key figures · {{ period_label }}{% if bench_code %} vs {{ bench_code }}{% endif %}</h2></header>
         <dl class="iv-facts">{% for fact in facts %}<div><dt>{{ fact.label }}</dt><dd>{{ fact.value }}</dd></div>{% endfor %}</dl>
-        {% if ratios_wait %}<p class="iv-note iv-note--wait">A month or two is too short to turn into yearly figures, so these ratios stay blank until there are three months of history. Day {{ days }} of 63.</p>{% endif %}
+        {% if ratios_wait %}<p class="iv-note iv-note--wait">Annualised ratios from less than three months of history are unreliable, so they are shown from day 63. Day {{ days }} of 63.</p>{% endif %}
         {% if not bench_code %}<p class="iv-note">Beta, alpha and the other comparisons need the benchmark's prices, which aren't in yet.</p>{% endif %}
         <p class="iv-note">* the average day's return, compounded over a year, until there's a year of history.</p>
       </section>
@@ -247,7 +247,7 @@
             </tbody>
           </table>
         </div>
-        <p class="iv-note">Grouped by sleeve. Warm means two holdings rose and fell together; cool means they moved apart.</p>
+        <p class="iv-note">Grouped by sleeve. Warm colours show positive correlation, cool colours negative.</p>
       </section>
 
       <section class="iv-panel" aria-labelledby="iv-mc">
@@ -261,7 +261,7 @@
             </svg>
           </div>
           <dl class="iv-outcomes"><div><dt>Median</dt><dd>{{ mc.median_text }}</dd></div><div><dt>1 in 20 worse than</dt><dd>{{ mc.low_text }}</dd></div><div><dt>1 in 20 better than</dt><dd>{{ mc.high_text }}</dd></div><div><dt>Chance of a loss</dt><dd>{{ mc.loss_text }}</dd></div></dl>
-          <p class="iv-note">500 futures built from blocks of ten real days of this portfolio's history. It assumes the future looks like the past, which it won't.</p>
+          <p class="iv-note">500 futures built from blocks of ten real days of this portfolio's history. It assumes future returns will resemble past ones, which they may not.</p>
         {% else %}
           {% include "investments/includes/wait.html" with wait=mc_wait %}
         {% endif %}

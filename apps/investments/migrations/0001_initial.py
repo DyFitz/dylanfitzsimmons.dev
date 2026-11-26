@@ -8,8 +8,8 @@ from django.db import migrations, models
 
 
 # ---------------------------------------------------------------- the portfolio itself
-# Its written side and the plan for each holding, from the investment rationale of
-# 25 November 2026. IBKR's details fill in on the first import, and all of it can be edited
+# Its written side and the plan for each holding, from the portfolio's plan, set before its
+# first trade. IBKR's details fill in on the first import, and all of it can be edited
 # in the admin.
 
 IDEA = """\

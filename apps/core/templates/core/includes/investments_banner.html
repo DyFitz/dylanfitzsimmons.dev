@@ -41,12 +41,12 @@ history, just the panel and its link.{% endcomment %}
         </figure>
 
         <figure class="invest-banner__view" data-banner-view="growth" inert>
-          <svg class="invest-banner__chart" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Growth of 100 since {{ investments.inception }}{% if investments.lines|length > 1 %}, against the benchmarks{% endif %}">
+          <svg class="invest-banner__chart" viewBox="0 0 1000 300" preserveAspectRatio="none" role="img" aria-label="Cumulative return since {{ investments.inception }}{% if investments.lines|length > 1 %}, against the benchmarks{% endif %}">
             <path class="invest-banner__area" d="{{ investments.area }}"></path>
             {% for line in investments.lines %}<path class="invest-banner__line invest-banner__line--{{ line.key }}" d="{{ line.d }}" pathLength="1"></path>{% endfor %}
           </svg>
           <figcaption class="invest-banner__caption">
-            <span>growth of 100 · {{ investments.period_label|lower }} · close of {{ investments.as_of }}</span>
+            <span>cumulative return · {{ investments.period_label|lower }} · close of {{ investments.as_of }}</span>
             <span class="invest-banner__legend">{% for line in investments.lines %}<span><i class="invest-banner__dot invest-banner__dot--{{ line.key }}"></i>{{ line.label }}</span>{% endfor %}</span>
           </figcaption>
         </figure>

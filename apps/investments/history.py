@@ -14,7 +14,7 @@ from django.conf import settings
 from apps.investments.analytics import TRADING_DAYS, policy_returns
 from apps.investments.models import Day, Holding, Income, Instrument, Price, PriceSeries, Trade
 
-# The policy benchmark from the investment rationale of 25 November 2026: a passive version of
+# The policy benchmark from the portfolio's plan, set before its first trade: a passive version of
 # the portfolio's 75 / 25 split, reset to these weights at each quarter's end. Each part is a
 # price series; for a fund the portfolio holds, IBKR's prices are used on the days it was held,
 # and the series fills in the rest (the funds were bought the day after the inception).

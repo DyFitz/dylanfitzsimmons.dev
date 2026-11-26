@@ -112,3 +112,15 @@ def test_the_finance_modules_and_new_skills_are_on_the_cv(client: Client) -> Non
     for skill in ("Docker", "GitHub Actions", "REST APIs", "HTML and CSS", "pytest, MSTest"):
         assertContains(response, skill)
     assertContains(response, "MSc Financial Economics: C++ in Finance, options pricing")
+
+
+def test_engineering_detail_and_tools_are_on_the_cv(client: Client) -> None:
+    response = client.get(reverse("cv:page"))
+    assertContains(response, "MSc \u00d72 · BEng")
+    assertContains(response, "financial economics and mechanical engineering")
+    assertContains(response, "modelling dynamic systems with Laplace")
+    assertContains(response, "modelled in SolidWorks, 3D-printed")
+    for label in ("GitLab · Opus Equi", "GitHub · this site", "Cloudflare", "Sentry"):
+        assertContains(response, label)
+    for gone in ("Connect Four", "EViews", "Every project", "University projects"):
+        assertNotContains(response, gone)

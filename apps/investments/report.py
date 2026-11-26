@@ -32,9 +32,9 @@ SHORT_RATIOS = {
 }
 GLOSSARY = [
     (
-        "Growth of 100",
-        "What 100 put in at the start of the period would be now. It lets the portfolio and the "
-        "benchmarks share one scale.",
+        "Cumulative return",
+        "The total return since the start of the period, with each day's return compounded on the "
+        "days before. The portfolio and the benchmarks all start from 0%, on one scale.",
     ),
     (
         "Benchmark",
@@ -44,69 +44,98 @@ GLOSSARY = [
     ),
     (
         "Volatility",
-        "How much the daily returns vary, scaled up to a year. Higher means a bumpier ride.",
+        "The standard deviation of daily returns, annualised by the square root of 252 trading "
+        "days.",
     ),
     (
         "Drawdown",
-        "A fall from the highest value reached so far. The worst one is the biggest loss anyone "
-        "holding throughout would have sat through.",
+        "The fall from the highest value reached so far. The maximum drawdown is the largest such "
+        "fall over the period.",
     ),
     (
         "Sharpe ratio",
-        "Return above what cash would have paid, divided by volatility. Above 1 is good.",
+        "The average daily return above SONIA, divided by the standard deviation of daily "
+        "returns, annualised.",
     ),
-    ("Sortino ratio", "Like Sharpe, but only the falls count as risk."),
-    ("Calmar ratio", "A year's return divided by the worst drawdown."),
+    (
+        "Sortino ratio",
+        "As the Sharpe ratio, but divided by downside deviation, so only returns below SONIA count "
+        "as risk.",
+    ),
+    ("Calmar ratio", "The annualised return divided by the maximum drawdown."),
     (
         "Beta",
-        "How far the portfolio tends to move when the benchmark moves 1%. A beta of 1.2 means "
-        "about 1.2%.",
+        "The sensitivity of the portfolio's daily returns to the benchmark's: the covariance of "
+        "the two divided by the benchmark's variance.",
     ),
     (
         "Alpha",
-        "The return left over once beta has been accounted for: what the choice of holdings added.",
+        "Jensen's alpha: the annualised return not explained by beta to the benchmark and the "
+        "risk-free rate.",
     ),
-    ("Tracking error", "How far the portfolio strays from the benchmark, as a volatility."),
-    ("Information ratio", "Return above the benchmark, per unit of tracking error."),
+    (
+        "Tracking error",
+        "The annualised standard deviation of the difference between the portfolio's and the "
+        "benchmark's daily returns.",
+    ),
+    ("Information ratio", "The annualised active return divided by the tracking error."),
     (
         "Up and down capture",
-        "The share of the benchmark's rising days, and of its falling days, that the portfolio "
-        "caught.",
+        "The portfolio's average return on days the benchmark rose, as a percentage of the "
+        "benchmark's average on those days, and the same for days it fell.",
     ),
-    ("VaR 95%", "Value at risk: a daily loss that is only beaten on about one day in twenty."),
-    ("Expected shortfall", "The average loss on those worst one-in-twenty days."),
+    (
+        "VaR 95%",
+        "Value at risk: the daily loss exceeded on 5% of days, taken from the portfolio's own "
+        "history.",
+    ),
+    (
+        "Expected shortfall",
+        "The average daily loss on the 5% of days beyond the value at risk.",
+    ),
     (
         "Skew and kurtosis",
-        "The shape of the daily returns: whether big moves lean one way, and how often extreme "
-        "days turn up.",
+        "Skew measures the asymmetry of daily returns; excess kurtosis measures how much more "
+        "often extreme returns occur than under a normal distribution.",
     ),
-    ("Correlation", "Whether two holdings move together, from -1 (opposite) to 1 (in step)."),
+    (
+        "Correlation",
+        "The degree to which two return series move together, from -1 (opposite) to 1 (identical).",
+    ),
     (
         "Contribution",
-        "A holding's weight times its return: how many points of the portfolio's return it "
-        "supplied.",
+        "A holding's weight multiplied by its return: the percentage points of the portfolio's "
+        "return attributable to it.",
     ),
-    ("Risk share", "How much of the portfolio's volatility a holding is responsible for."),
+    (
+        "Risk share",
+        "A holding's share of the portfolio's variance: its weight multiplied by its covariance "
+        "with the portfolio, divided by the portfolio's variance.",
+    ),
     (
         "Effective holdings",
-        "How many equal-sized holdings the portfolio behaves like. A few big positions pull it "
-        "down.",
+        "One divided by the sum of squared weights: the number of holdings of equal size with the "
+        "same concentration.",
     ),
-    ("Turnover", "How much of the portfolio was traded in a year, as a share of its value."),
+    (
+        "Turnover",
+        "Half the value bought and sold over the last year, as a percentage of the portfolio's "
+        "value.",
+    ),
     (
         "Sleeve",
-        "One of the portfolio's four parts, each with its own job and target weight: growth, "
+        "One of the portfolio's four parts, each with its own role and target weight: growth, "
         "income and value, defensive equities, and capital defence.",
     ),
     (
         "Monte Carlo",
-        "Hundreds of possible futures, made by replaying shuffled stretches of the portfolio's own "
-        "past.",
+        "A projection built from 500 simulated paths, each made by resampling blocks of 10 "
+        "consecutive days from the portfolio's own history.",
     ),
     (
         "Stress test",
-        "What a given fall would do to the portfolio at today's weights, with everything else "
-        "held still.",
+        "The effect of a specified fall on the portfolio at its latest weights, with all other "
+        "holdings unchanged.",
     ),
 ]
 
@@ -369,8 +398,8 @@ def _growth(history: History, start: int, bench_key: str | None) -> dict:
     return {
         "growth_lines": drawn,
         "growth_area": area_path(drawn[0]["d"], width, height),
-        # Five evenly spaced ticks, from the bottom up.
-        "growth_ticks": [f"{lo + (hi - lo) * f:.0f}" for f in (0, 0.25, 0.5, 0.75, 1)],
+        # Five evenly spaced ticks, from the bottom up, as the return since the start.
+        "growth_ticks": [_tick(lo + (hi - lo) * f) for f in (0, 0.25, 0.5, 0.75, 1)],
         "growth_x": [long_date(dates[i]) for i in (start, middle, len(dates) - 1)],
     }
 
@@ -470,6 +499,12 @@ def _contributions(history: History, start: int) -> dict:
         ],
         "contribution_total": pct(total, 2),
     }
+
+
+def _tick(value: float) -> str:
+    """An axis label for a value that started at 100: its return, to the nearest percent."""
+    change = round(value - 100)
+    return f"{change:+d}%" if change else "0%"
 
 
 def _holding_returns(history: History, key: str, s0: int) -> float | None:

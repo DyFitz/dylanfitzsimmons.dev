@@ -129,3 +129,8 @@ def test_monte_carlo_once_there_are_six_months():
     assert mc["years"] == "5 years"
     assert len(mc["samples"]) == 3
     assert mc["loss_text"].endswith("%")
+
+
+def test_the_cumulative_return_axis_is_labelled_in_percent():
+    ticks = [report._tick(v) for v in (91.6, 99.7, 100.4, 104.6)]
+    assert ticks == ["-8%", "0%", "0%", "+5%"]
