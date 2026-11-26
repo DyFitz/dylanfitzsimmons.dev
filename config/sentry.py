@@ -72,6 +72,10 @@ def start(dsn: str, release: str = "", environment: str = "production", **option
         # One request in ten is traced, so an error shows the request it came from without
         # using up the free plan.
         traces_sample_rate=0.1,
+        # No tracing headers on requests to other services: they need none, a firewall may
+        # take them for a bot (IBKR's began refusing requests once they were added), and
+        # they'd tell outside servers about this site's traces.
+        trace_propagation_targets=[],
         # This setup has been checked against the package's own checklist.
         _experiments={"agent_setup_complete": True},
         **options,

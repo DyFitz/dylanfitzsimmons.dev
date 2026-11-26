@@ -2,6 +2,7 @@ from datetime import date
 from io import BytesIO, StringIO
 
 import pytest
+import sentry_sdk
 from django.conf import settings as django_settings
 from django.core import mail
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -102,6 +103,48 @@ def test_a_refused_request_shows_what_came_back():
     refused = HTTPError("https://x.test", 403, "Forbidden", {}, BytesIO(b"<h1>Access Denied</h1>"))
     with pytest.raises(sources.SourceError, match=r"403.*\(Access Denied\)"):
         sources.fetch_flex_report("t", "q", opener=server(refused))
+
+
+def test_a_refusal_page_is_summarised_without_its_styles():
+    from urllib.error import HTTPError
+
+    page = (
+        b"<html><head><title>Access Denied</title><style>body { padding: 150px; }</style>"
+        b"</head><body><h1>Access Denied</h1>Reference #18.abc</body></html>"
+    )
+    refused = HTTPError("https://x.test", 403, "Forbidden", {}, BytesIO(page))
+    with pytest.raises(sources.SourceError) as caught:
+        sources.fetch_flex_report("t", "q", opener=server(refused))
+    assert "Reference #18.abc" in str(caught.value)
+    assert "padding" not in str(caught.value)
+
+
+def test_requests_to_other_services_carry_no_tracing_headers(sentry):
+    import threading
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
+    seen = {}
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self):
+            seen.update(self.headers)
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"ok")
+
+        def log_message(self, *args):
+            pass
+
+    httpd = HTTPServer(("127.0.0.1", 0), Handler)
+    threading.Thread(target=httpd.handle_request, daemon=True).start()
+    try:
+        with sentry_sdk.start_span(name="update"):
+            sources._get(f"http://127.0.0.1:{httpd.server_port}/")
+    finally:
+        httpd.server_close()
+
+    assert seen["User-Agent"] == sources.USER_AGENT
+    assert not {"sentry-trace", "baggage", "traceparent"} & {key.lower() for key in seen}
 
 
 def test_a_network_failure_is_a_source_error():

@@ -38,7 +38,10 @@ class SourceError(RuntimeError):
 
 def _gist(data: bytes) -> str:
     """The start of a reply, as plain text, to show what came back instead of the data."""
-    text = re.sub(r"<[^>]+>", " ", data[:2000].decode("utf-8", errors="replace"))
+    text = data[:4000].decode("utf-8", errors="replace")
+    # Error pages put their styles first, which would fill the summary before the message.
+    text = re.sub(r"<(style|script)\b.*?</\1\s*>", " ", text, flags=re.S | re.I)
+    text = re.sub(r"<[^>]+>", " ", text)
     return " ".join(text.split())[:200]
 
 
